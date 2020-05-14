@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Python源码 on yhliyr&#39;s blog</title>
+    <link>http://localhost:1313/categories/python%E6%BA%90%E7%A0%81/</link>
+    <description>Recent content in Python源码 on yhliyr&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Wed, 07 Feb 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://localhost:1313/categories/python%E6%BA%90%E7%A0%81/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>python字典的实现原理</title>
+      <link>http://localhost:1313/post/python%E5%AD%97%E5%85%B8%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</link>
+      <pubDate>Wed, 07 Feb 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/post/python%E5%AD%97%E5%85%B8%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</guid>
+      <description>[TOC] 1 python 27 字典结构 1. 字典通过哈希表实现 默认版本: Python2.7.x cpython 2.7 源码 dictobject.c dictobject.h 以下代码对源码有删减, 只保留主要逻辑 2. 字典中基本存储单元: PyDictEntry 哈希表初始大小 PyDict_MINSIZE 为 8</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>python字典的实现原理 - yhliyr&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="yangly" /><meta name="description" content="《流畅的Python》第三章字典扩展, Python3.6 CPython字典新特性..." /><meta name="keywords" content="Hugo, theme, even" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.69.2 with theme even" />
+
+
+<link rel="canonical" href="http://localhost:1313/post/python%E5%AD%97%E5%85%B8%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+<link href="/sass/main.min.c5b7928861aa2d3f0e306778c33e6689ea2b22356cfdc1a4e10e925019e911d1.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="python字典的实现原理" />
+<meta property="og:description" content="《流畅的Python》第三章字典扩展, Python3.6 CPython字典新特性..." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://localhost:1313/post/python%E5%AD%97%E5%85%B8%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/" />
+<meta property="article:published_time" content="2018-02-07T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-05-07T00:00:00+00:00" />
+<meta itemprop="name" content="python字典的实现原理">
+<meta itemprop="description" content="《流畅的Python》第三章字典扩展, Python3.6 CPython字典新特性...">
+<meta itemprop="datePublished" content="2018-02-07T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2020-05-07T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="3244">
+
+
+
+<meta itemprop="keywords" content="python,books,数据结构,源码," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="python字典的实现原理"/>
+<meta name="twitter:description" content="《流畅的Python》第三章字典扩展, Python3.6 CPython字典新特性..."/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo"> </a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo"> </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">python字典的实现原理</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2018-02-07 </span>
+        <div class="post-category">
+            <a href="/categories/python%E6%BA%90%E7%A0%81/"> Python源码 </a>
+            </div>
+        
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Contents</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#1-python-27-字典结构">1 python 27 字典结构</a></li>
+        <li><a href="#2-python36-cpython字典新特性-有序且性能更好-">2 Python36 CPython字典新特性: 有序且性能更好</a></li>
+        <li><a href="#3-python-dict-pep">3 Python dict PEP</a></li>
+        <li><a href="#4-拓展-哈希表hash-tables--二次探测序列quadratic-probing-sequence">4 拓展: 哈希表(hash tables)  二次探测序列（quadratic probing sequence）</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      <p>[TOC]</p>
+<h3 id="1-python-27-字典结构">1 python 27 字典结构</h3>
+<h4 id="1-字典通过哈希表实现-">1. 字典通过哈希表实现</h4>
+<ul>
+<li>默认版本: Python2.7.x</li>
+<li>cpython 2.7 源码 <a href="https://github.com/python/cpython/blob/master/Objects/dictobject.c#L163">dictobject.c</a>  <a href="https://github.com/python/cpython/blob/2.7/Include/dictobject.h">dictobject.h</a></li>
+<li>以下代码对源码有删减, 只保留主要逻辑</li>
+</ul>
+<h4 id="2-字典中基本存储单元-pydictentry">2. 字典中基本存储单元: PyDictEntry</h4>
+<ul>
+<li>
+<p>哈希表初始大小 <code>PyDict_MINSIZE </code>  为 8</p>
+<ul>
+<li>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-C" data-lang="C"><span class="cp">#define PyDict_MINSIZE 8
+</span><span class="cp"></span><span class="cm">/* PyDict_MINSIZE is the starting size for any new dict.
+</span><span class="cm"> * 8 allows dicts with no more than 5 active entries; experiments suggested
+</span><span class="cm"> * this suffices for the majority of dicts (consisting mostly of usually-small
+</span><span class="cm"> * dicts created to pass keyword arguments).
+</span><span class="cm"> * Making this 8, rather than 4 reduces the number of resizes for most
+</span><span class="cm"> * dictionaries, without any significant extra memory use.
+</span><span class="cm"> */</span>
+</code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+</li>
+<li>
+<p>字典中存储键值对的单元叫做 <code>PyDictEntry* </code>, 下文简称 <code>entry</code> (也称 slot), 字典通过 idx 来访问 entry(idx: 可以理解为数组的下标, 由键, 字典长度 和 hash 算法生成)</p>
+</li>
+</ul>
+<ul>
+<li>
+<p>entry 有三种状态: Unused/Active/Dummy (Dummy 是删除的结果)</p>
+</li>
+<li>
+<p>字典结构 PyDictObject</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">_dictobject</span> <span class="n">PyDictObject</span><span class="p">;</span>
+<span class="k">struct</span> <span class="n">_dictobject</span> <span class="p">{</span>
+    <span class="n">PyObject_HEAD</span>
+    <span class="n">Py_ssize_t</span> <span class="n">ma_fill</span><span class="p">;</span> <span class="c1">// ma_fill 是使用了的 entry 加 dummy entry 的数量和
+</span><span class="c1"></span>    <span class="n">Py_ssize_t</span> <span class="n">ma_used</span><span class="p">;</span> <span class="c1">// ma_used 是被占用了(即活跃的)的 entry 数量
+</span><span class="c1"></span>    <span class="n">Py_ssize_t</span> <span class="n">ma_mask</span><span class="p">;</span> <span class="c1">// 掩码, 等于所有 entry 数量 n -1, n = 2 ^ n
+</span><span class="c1"></span>    <span class="n">PyDictEntry</span> <span class="o">*</span><span class="n">ma_table</span><span class="p">;</span> <span class="c1">// 指向 PyDictEntry(存键值对)的数组
+</span><span class="c1"></span>    <span class="n">PyDictEntry</span> <span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="n">ma_lookup</span><span class="p">)(</span><span class="n">PyDictObject</span> <span class="o">*</span><span class="n">mp</span><span class="p">,</span> <span class="n">PyObject</span> <span class="o">*</span><span class="n">key</span><span class="p">,</span> <span class="kt">long</span> <span class="n">hash</span><span class="p">);</span>
+    <span class="n">PyDictEntry</span> <span class="n">ma_smalltable</span><span class="p">[</span><span class="n">PyDict_MINSIZE</span><span class="p">];</span>
+<span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>PyDictEntry 结构:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+    <span class="n">Py_ssize_t</span> <span class="n">me_hash</span><span class="p">;</span>
+    <span class="n">PyObject</span> <span class="o">*</span><span class="n">me_key</span><span class="p">;</span> 
+    <span class="n">PyObject</span> <span class="o">*</span><span class="n">me_value</span>
+<span class="p">}</span> <span class="n">PyDictEntry</span><span class="p">;</span>
+  
+<span class="c1">// 存储索引等于 哈希值 &amp; 掩码, 例如 n = 8, 掩码为 7(111), 相当于 取hash 值末尾三位为索引
+</span><span class="c1"></span><span class="o">&gt;&gt;&gt;</span> <span class="n">d</span><span class="p">[</span><span class="s">&#34;ftp&#34;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">21</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">b</span> <span class="o">=</span> <span class="n">bits</span><span class="p">(</span><span class="n">hash</span><span class="p">(</span><span class="s">&#34;ftp&#34;</span><span class="p">))</span>
+<span class="mi">1101001001111111111001001010100001</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">b</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="o">:</span><span class="p">]</span>
+<span class="mo">001</span>
+</code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>PyDictEntry 大体类似于:</p>
+<table>
+<thead>
+<tr>
+<th align="left">Idx</th>
+<th align="left">Hash</th>
+<th align="left">Key</th>
+<th align="left">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">000</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">001</td>
+<td align="left">&hellip;1010001</td>
+<td align="left">&ldquo;ftp&rdquo;</td>
+<td align="left">21</td>
+</tr>
+<tr>
+<td align="left">010</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">011</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">100</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">101</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">110</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">111</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+<h4 id="3-插入逻辑">3. 插入逻辑</h4>
+<ol>
+<li>
+<p>最好 时间O(1) 空间O(1), 最坏 时间O(n) 空间 O(n)</p>
+<ul>
+<li>普通情况时间复杂接近 O(1)</li>
+</ul>
+</li>
+<li>
+<p>当添加一个新键值对时, 调用栈</p>
+<ol>
+<li>PyDict_SetItem</li>
+<li>dict_set_item_by_hash_or_entry</li>
+<li>insertdict</li>
+<li>insertdict_by_entry</li>
+<li>dictresize</li>
+</ol>
+</li>
+<li>
+<p>具体实现</p>
+<ol>
+<li>
+<p>计算哈希(如果这个键的哈希值已经被缓存了则用缓存值)</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="n">PyDict_SetItem</span> <span class="o">-&gt;</span> <span class="n">dict_set_item_by_hash_or_entry</span> <span class="c1">// PyDict_SetItem: 计算hash 传入后者
+</span><span class="c1"></span>    <span class="n">dict_set_item_by_hash_or_entry</span><span class="p">(</span><span class="k">register</span> <span class="n">PyObject</span> <span class="o">*</span><span class="n">op</span><span class="p">,</span> <span class="n">PyObject</span> <span class="o">*</span><span class="n">key</span><span class="p">,</span> <span class="kt">long</span> <span class="n">hash</span><span class="p">,</span> <span class="n">PyDictEntry</span> <span class="o">*</span><span class="n">ep</span><span class="p">,</span> <span class="n">PyObject</span> <span class="o">*</span><span class="n">value</span><span class="p">);</span>
+      <span class="c1">// if 哈希表中没有新增 entry key, 先
+</span><span class="c1"></span>        <span class="n">insertdict</span><span class="p">(</span><span class="n">mp</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">hash</span><span class="p">,</span> <span class="n">value</span><span class="p">);</span>
+      <span class="c1">// else 相当于更新键值对, 已存在 entry, 更新 value 即可
+</span><span class="c1"></span>      <span class="n">insertdict_by_entry</span><span class="p">(</span><span class="n">mp</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">hash</span><span class="p">,</span> <span class="n">ep</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> 
+        <span class="c1">// 检测已使用大小, 重新调整数组大小
+</span><span class="c1"></span>        <span class="n">dictresize</span><span class="p">(</span><span class="n">mp</span><span class="p">,</span> <span class="p">(</span><span class="n">mp</span><span class="o">-&gt;</span><span class="n">ma_used</span> <span class="o">&gt;</span> <span class="mi">50000</span> <span class="o">?</span> <span class="mi">2</span> <span class="o">:</span> <span class="mi">4</span><span class="p">)</span> <span class="o">*</span> <span class="n">mp</span><span class="o">-&gt;</span><span class="n">ma_used</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>新增 entry key</p>
+<ol>
+<li>
+<p><code>insertdict</code> 先找到 entry, 再调用  <code>insertdict_by_entry</code></p>
+</li>
+<li>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"> <span class="k">static</span> <span class="kt">int</span>
+ <span class="nf">insertdict</span><span class="p">(</span><span class="k">register</span> <span class="n">PyDictObject</span> <span class="o">*</span><span class="n">mp</span><span class="p">,</span> <span class="n">PyObject</span> <span class="o">*</span><span class="n">key</span><span class="p">,</span> <span class="kt">long</span> <span class="n">hash</span><span class="p">,</span> <span class="n">PyObject</span> <span class="o">*</span><span class="n">value</span><span class="p">)</span>
+ <span class="p">{</span>
+     <span class="n">ep</span> <span class="o">=</span> <span class="n">mp</span><span class="o">-&gt;</span><span class="n">ma_lookup</span><span class="p">(</span><span class="n">mp</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">hash</span><span class="p">);</span> <span class="c1">// try get entry
+</span><span class="c1"></span>     <span class="k">return</span> <span class="n">insertdict_by_entry</span><span class="p">(</span><span class="n">mp</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">hash</span><span class="p">,</span> <span class="n">ep</span><span class="p">,</span> <span class="n">value</span><span class="p">);</span> <span class="c1">// 更新 entry
+</span><span class="c1"></span> <span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><code>mp-&gt;ma_lookup(mp, key, hash); </code> 即调用 lookdict_string,  lookdict</p>
+</li>
+</ol>
+</li>
+<li>
+<p>检测是否需要扩容</p>
+<ol>
+<li>
+<p>检测</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">// insertdict_by_entry 插入 entry 之后, 如果新增 entry 和 dummy entry 的总量超过了数组大小(ma_mask+1))的 2/3, 则重新调整字典的大小.
+</span><span class="c1"></span><span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">mp</span><span class="o">-&gt;</span><span class="n">ma_used</span> <span class="o">&gt;</span> <span class="n">n_used</span>   <span class="o">&amp;&amp;</span>   <span class="n">mp</span><span class="o">-&gt;</span><span class="n">ma_fill</span><span class="o">*</span><span class="mi">3</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">mp</span><span class="o">-&gt;</span><span class="n">ma_mask</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">2</span><span class="p">))</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="c1">// 扩容系数 GROWTH_RATE python2.7 为 4, 如果数组使用大小超过 50K 则扩容系数为 2
+</span><span class="c1"></span><span class="k">return</span> <span class="nf">dictresize</span><span class="p">(</span><span class="n">mp</span><span class="p">,</span> <span class="p">(</span><span class="n">mp</span><span class="o">-&gt;</span><span class="n">ma_used</span> <span class="o">&gt;</span> <span class="mi">50000</span> <span class="o">?</span> <span class="mi">2</span> <span class="o">:</span> <span class="mi">4</span><span class="p">)</span> <span class="o">*</span> <span class="n">mp</span><span class="o">-&gt;</span><span class="n">ma_used</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>调用 <code>dictresize</code></p>
+<ol>
+<li>
+<p>做了什么: 扩容</p>
+</li>
+<li>
+<p>怎么做的:</p>
+<ul>
+<li>
+<p>计算新数组大小</p>
+</li>
+<li>
+<p>新建新哈希数组, 赋给  <code>PyDictObject * mp</code></p>
+</li>
+<li>
+<p>将所有旧值拷贝到新数组中</p>
+</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">static</span> <span class="kt">int</span>
+  <span class="nf">dictresize</span><span class="p">(</span><span class="n">PyDictObject</span> <span class="o">*</span><span class="n">mp</span><span class="p">,</span> <span class="n">Py_ssize_t</span> <span class="n">minused</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="cm">/* Find the smallest table size &gt; minused. 先计算出始数组最小的容量大小*/</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">newsize</span> <span class="o">=</span> <span class="n">PyDict_MINSIZE</span><span class="p">;</span>
+       <span class="n">newsize</span> <span class="o">&lt;=</span> <span class="n">minused</span> <span class="o">&amp;&amp;</span> <span class="n">newsize</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">;</span>
+       <span class="n">newsize</span> <span class="o">&lt;&lt;=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="p">;</span>
+  <span class="c1">// 循环 oldtable, 调用 insertdict_clean(mp, ep-&gt;me_key, (long)ep-&gt;me_hash, ep-&gt;me_value); 插入
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div></li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>
+<p><code>lookdict_string</code> 及 <code>lookdict</code> 实现细节 - 解决哈希冲突</p>
+<ol>
+<li>
+<p>如果是非字符串调用 <code>lookdict(mp, key, hash)</code></p>
+<ul>
+<li>区别: <code>lookdict_string</code>
+<ol>
+<li>never raise an exception</li>
+<li>never return NULL</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>
+<p>key 为字符串的情况很常见, 所以单独实现 <code>lookdict_string</code></p>
+<ul>
+<li>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c">   <span class="k">static</span> <span class="n">PyDictEntry</span> <span class="o">*</span>
+ <span class="nf">lookdict_string</span><span class="p">(</span><span class="n">PyDictObject</span> <span class="o">*</span><span class="n">mp</span><span class="p">,</span> <span class="n">PyObject</span> <span class="o">*</span><span class="n">key</span><span class="p">,</span> <span class="k">register</span> <span class="kt">long</span> <span class="n">hash</span><span class="p">)</span>
+ <span class="p">{</span>
+     <span class="n">i</span> <span class="o">=</span> <span class="n">hash</span> <span class="o">&amp;</span> <span class="n">mask</span><span class="p">;</span>	<span class="c1">// 初始索引 PERTURB_SHIFT 干扰右移因子 为 5, 原因在下面
+</span><span class="c1"></span>     <span class="k">for</span> <span class="p">(</span><span class="n">perturb</span> <span class="o">=</span> <span class="n">hash</span><span class="p">;</span> <span class="p">;</span> <span class="n">perturb</span> <span class="o">&gt;&gt;=</span> <span class="n">PERTURB_SHIFT</span><span class="p">)</span> <span class="p">{</span>
+         <span class="n">i</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">&lt;&lt;</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">i</span> <span class="o">+</span> <span class="n">perturb</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> 
+         <span class="n">ep</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">ep0</span><span class="p">[</span><span class="n">i</span> <span class="o">&amp;</span> <span class="n">mask</span><span class="p">];</span>				<span class="c1">// 重新计算索引
+</span><span class="c1"></span>       <span class="c1">// 找到一个key为空, 或者已存在的相同 entry(key, hash, value值都相同, 且不为 dummy)
+</span><span class="c1"></span>     <span class="p">}</span>    
+ <span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+</li>
+</ol>
+</li>
+<li>
+<p>哈希冲突理论 - 索引(idx)出现哈希冲突, 使用开放定址法解决</p>
+<ul>
+<li>开放地址法中的简易模式线性探测法
+<ul>
+<li>如果地址 i 已经被使用, 则尝试 i + 1</li>
+<li>弊端:
+<ul>
+<li>字典中, 使用连续关键字作为 key 较为常见</li>
+<li>存储的位置一般为连续存储</li>
+<li>所以使用 i + 1 这种顺序查找空位往往会全部扫描才能找到, 效率低下</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Python 使用开放地址法 中的 <strong>二次探测序列</strong>（quadratic probing sequence）解决哈希冲突</li>
+<li>为什么没有使用拉链法
+<ul>
+<li>需要申请内存, 效率慢</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>二次探测序列</p>
+<ul>
+<li>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="n">i</span> <span class="o">=</span> <span class="n">hash</span> <span class="o">&amp;</span> <span class="n">mask</span><span class="p">;</span> <span class="c1">// 起始存储单元
+</span><span class="c1"></span><span class="n">perturb</span> <span class="o">=</span> <span class="n">hash</span><span class="p">;</span>  <span class="c1">// 初始干扰值
+</span><span class="c1"></span><span class="k">while</span> <span class="p">(</span><span class="err">存储单元非空</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="err">单元内值不等于关键字值</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">perturb</span> <span class="o">&gt;&gt;=</span> <span class="mi">5</span><span class="p">;</span> <span class="c1">// 5 为 PERTURB_SHIFT
+</span><span class="c1"></span>   <span class="n">i</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span><span class="o">*</span><span class="mi">5</span> <span class="o">+</span> <span class="n">perturb</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">mask</span><span class="p">;</span>
+   <span class="c1">// use j % 2**i as the next table index;
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>PERTURB_SHIFT 每次偏移量, 为什么最终为 5 个 bit?</p>
+<ul>
+<li>
+<blockquote>
+<p>You want it small so that the high bits of the hash code continue to affect the probe
+sequence across iterations; but you want it large so that in really bad cases
+the high-order hash bits have an effect on early iterations.</p>
+</blockquote>
+</li>
+<li>
+<p>右移数字小可以 在探测序列查找的迭代过程中, 让哈希值中高位的值一直持续影响探测</p>
+</li>
+<li>
+<p>右移数字大可以 在探测序列查找的迭代过程中, 让哈希值中高位的值尽早影响探测</p>
+</li>
+<li>
+<p>最后权衡选择5最好</p>
+</li>
+</ul>
+</li>
+<li>
+<p>perturb 最终为 0 的情况:</p>
+<ul>
+<li>上式即为  <code>j = 5 * j + 1</code></li>
+<li>idx = <code>j % (range(2^i))</code></li>
+<li>可以确保总会找到一个空位</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h4 id="4-字典长度调整-dictresize">4. 字典长度调整 <code>dictresize</code></h4>
+<ul>
+<li>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">static</span> <span class="kt">int</span> <span class="n">dictresize</span><span class="p">(</span><span class="n">PyDictObject</span> <span class="o">*</span><span class="n">mp</span><span class="p">,</span> <span class="n">Py_ssize_t</span> <span class="n">minused</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>当 entry 使用率超过 2/3, <code>dictresize()</code>函数将会被调用, 数组长度调整后的长度不小于活动槽数量的 4 倍, 即 minused = 4*ma_used</p>
+</li>
+<li>
+<p>删除键值对后, 即使最终活动槽的数量远小于总的数量也不会触发 <code>dictresize()</code>, 但是当删除较多键后又增加较少键, 会调用 <code>dictresize()</code>, 最终缩小调整数组大小,</p>
+</li>
+</ul>
+<h4 id="5-删除逻辑">5. 删除逻辑</h4>
+<ul>
+<li>
+<blockquote>
+<p>When an item is removed, the corresponding index is replaced by DKIX_DUMMY <a href="https://github.com/python/cpython/blob/master/Objects/dict-common.h#L19">DKIX_DUMMY</a> with a value of -2 and the entry in the entry array replaced by NULL, when inserting is performed the new values are appended to the entries array, Haven&quot;t been able to discern yet, but pretty sure when the indices fills up beyond the 2/3 threshold resizing is performed. This can lead to shrinking instead of growing if many DUMMY entries exist. – Jim Fasarakis Hilliard.</p>
+</blockquote>
+</li>
+<li>
+<p>删除时, 首先计算键的哈希值, 然后调用搜索函数返回到该条目, 将这个 entry 标记为哑槽(dummy entry)</p>
+</li>
+<li>
+<p>不直接删除而是标记为 dummy 状态的原因:</p>
+<ul>
+<li>为了保证探测链的连续性.</li>
+<li>使用开放地址法如果遇到哈希冲突会构成探测链, 如果删除的结点位于探测链中, 则之后结点会找不到</li>
+</ul>
+</li>
+</ul>
+<h4 id="6-字典原理通过哈希表实现而造成的特性">6. 字典原理通过哈希表实现而造成的特性</h4>
+<ol>
+<li>
+<p>Python 2.7 字典的实现原理是哈希表解释</p>
+</li>
+<li>
+<p>为什么不能依赖 dict 的顺序</p>
+</li>
+<li>
+<p>新加一个键值对会 dict.keys() 顺序会改变</p>
+</li>
+<li>
+<p>为什么 dict 的 key 不能使用可变对象</p>
+</li>
+<li>
+<p>如果 class 要实现 <code>__hash__</code> 方法, 需要</p>
+<ol>
+<li>散列越分散越好, 尽量避免相同值</li>
+<li>同一个 instance 拥有相同的 hash 值</li>
+<li>必须实现 <code>__eq__</code> 方法</li>
+<li><code>__hash__</code> 与 <code>__eq__</code> 要快, 因为使用频繁</li>
+</ol>
+</li>
+<li>
+<p>相同的值应该有相同的 哈希值</p>
+<ol>
+<li>比如 数字 9 int, float 等</li>
+</ol>
+</li>
+</ol>
+<h3 id="2-python36-cpython字典新特性-有序且性能更好-">2 Python36 CPython字典新特性: 有序且性能更好</h3>
+<blockquote>
+<ul>
+<li>保持顺序的前提下提高性能的原因 <a href="https://mail.python.org/pipermail/python-dev/2012-December/123028.html">[Python-Dev] More compact dictionaries with faster iteration</a></li>
+<li><a href="https://stackoverflow.com/questions/39980323/are-dictionaries-ordered-in-python-3-6">Are dictionaries ordered in Python 3.6+?</a></li>
+<li>Every problem in computer science can be solved with extra layer of indirection.</li>
+</ul>
+</blockquote>
+<ol>
+<li>python3.6 的新结构</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp"># 旧字典
+</span><span class="cp"></span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">_dictobject</span> <span class="n">PyDictObject</span><span class="p">;</span>
+<span class="k">struct</span> <span class="n">_dictobject</span> <span class="p">{</span>
+    <span class="n">PyObject_HEAD</span>
+    <span class="n">Py_ssize_t</span> <span class="n">ma_fill</span><span class="p">;</span>
+    <span class="n">Py_ssize_t</span> <span class="n">ma_used</span><span class="p">;</span>
+    <span class="n">Py_ssize_t</span> <span class="n">ma_mask</span><span class="p">;</span>
+    <span class="n">PyDictEntry</span> <span class="o">*</span><span class="n">ma_table</span><span class="p">;</span>
+    <span class="n">PyDictEntry</span> <span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="n">ma_lookup</span><span class="p">)(</span><span class="n">PyDictObject</span> <span class="o">*</span><span class="n">mp</span><span class="p">,</span> <span class="n">PyObject</span> <span class="o">*</span><span class="n">key</span><span class="p">,</span> <span class="kt">long</span> <span class="n">hash</span><span class="p">);</span>
+    <span class="n">PyDictEntry</span> <span class="n">ma_smalltable</span><span class="p">[</span><span class="n">PyDict_MINSIZE</span><span class="p">];</span>
+<span class="p">};</span>
+
+<span class="cp"># 新字典:
+</span><span class="cp"></span><span class="nl">layout</span><span class="p">:</span>
+<span class="o">+---------------+</span>
+<span class="o">|</span> <span class="n">dk_refcnt</span>     <span class="o">|</span>
+<span class="o">|</span> <span class="n">dk_size</span>       <span class="o">|</span>
+<span class="o">|</span> <span class="n">dk_lookup</span>     <span class="o">|</span>
+<span class="o">|</span> <span class="n">dk_usable</span>     <span class="o">|</span>
+<span class="o">|</span> <span class="n">dk_nentries</span>   <span class="o">|</span>
+<span class="o">+---------------+</span>
+<span class="o">|</span> <span class="n">dk_indices</span>    <span class="o">|</span>
+<span class="o">|</span>               <span class="o">|</span>
+<span class="o">+---------------+</span>
+<span class="o">|</span> <span class="n">dk_entries</span>    <span class="o">|</span>
+<span class="o">|</span>               <span class="o">|</span>
+<span class="o">+---------------+</span>
+</code></pre></td></tr></table>
+</div>
+</div><ol start="2">
+<li>对比</li>
+</ol>
+<blockquote>
+<p>For example, the dictionary:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#34;timmy&#34;</span><span class="o">:</span> <span class="s">&#34;red&#34;</span><span class="p">,</span> <span class="s">&#34;barry&#34;</span><span class="o">:</span> <span class="s">&#34;green&#34;</span><span class="p">,</span> <span class="s">&#34;guido&#34;</span><span class="o">:</span> <span class="s">&#34;blue&#34;</span><span class="p">}</span>
+<span class="c1">// is currently stored as:
+</span><span class="c1"></span><span class="n">entries</span> <span class="o">=</span> <span class="p">[[</span><span class="s">&#34;--&#34;</span><span class="p">,</span> <span class="s">&#34;--&#34;</span><span class="p">,</span> <span class="s">&#34;--&#34;</span><span class="p">],</span>
+         <span class="p">[</span><span class="o">-</span><span class="mi">8522787127447073495</span><span class="p">,</span> <span class="s">&#34;barry&#34;</span><span class="p">,</span> <span class="s">&#34;green&#34;</span><span class="p">],</span>
+         <span class="p">[</span><span class="s">&#34;--&#34;</span><span class="p">,</span> <span class="s">&#34;--&#34;</span><span class="p">,</span> <span class="s">&#34;--&#34;</span><span class="p">],</span>
+         <span class="p">[</span><span class="s">&#34;--&#34;</span><span class="p">,</span> <span class="s">&#34;--&#34;</span><span class="p">,</span> <span class="s">&#34;--&#34;</span><span class="p">],</span>
+         <span class="p">[</span><span class="s">&#34;--&#34;</span><span class="p">,</span> <span class="s">&#34;--&#34;</span><span class="p">,</span> <span class="s">&#34;--&#34;</span><span class="p">],</span>
+         <span class="p">[</span><span class="o">-</span><span class="mi">9092791511155847987</span><span class="p">,</span> <span class="s">&#34;timmy&#34;</span><span class="p">,</span> <span class="s">&#34;red&#34;</span><span class="p">],</span>
+         <span class="p">[</span><span class="s">&#34;--&#34;</span><span class="p">,</span> <span class="s">&#34;--&#34;</span><span class="p">,</span> <span class="s">&#34;--&#34;</span><span class="p">],</span>
+         <span class="p">[</span><span class="o">-</span><span class="mi">6480567542315338377</span><span class="p">,</span> <span class="s">&#34;guido&#34;</span><span class="p">,</span> <span class="s">&#34;blue&#34;</span><span class="p">]]</span>   
+
+<span class="c1">// Instead, the data should be organized as follows:
+</span><span class="c1"></span><span class="n">indices</span> <span class="o">=</span>  <span class="p">[</span><span class="n">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">None</span><span class="p">,</span> <span class="n">None</span><span class="p">,</span> <span class="n">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">None</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+<span class="n">entries</span> <span class="o">=</span>  <span class="p">[[</span><span class="o">-</span><span class="mi">9092791511155847987</span><span class="p">,</span> <span class="s">&#34;timmy&#34;</span><span class="p">,</span> <span class="s">&#34;red&#34;</span><span class="p">],</span>
+        <span class="p">[</span><span class="o">-</span><span class="mi">8522787127447073495</span><span class="p">,</span> <span class="s">&#34;barry&#34;</span><span class="p">,</span> <span class="s">&#34;green&#34;</span><span class="p">],</span>
+           <span class="p">[</span><span class="o">-</span><span class="mi">6480567542315338377</span><span class="p">,</span> <span class="s">&#34;guido&#34;</span><span class="p">,</span> <span class="s">&#34;blue&#34;</span><span class="p">]]</span> 
+     
+<span class="c1">// old: 3 * 8 * 8byte : 5 * 3 * 8byte = 总共占用 192 byte 空闲 120byte
+</span><span class="c1">// new: 8byte + 3 * 3 * 8byte : 5byte = 总共占用 80 byte 空闲 5byte 
+</span></code></pre></td></tr></table>
+</div>
+</div></blockquote>
+<ol start="3">
+<li>
+<p>实现原理 - 使用了两个 <code>array</code> 数组</p>
+<ol>
+<li>第一个数组保存索引及顺序
+<ul>
+<li><code>dk_indices</code>, 是一个哈希表, 保存了<code>entrys</code>中的 index (即存储了 entry 对应的位置), or <code>DKIX_EMPTY(-1)</code>or <code>DKIX_DUMMY(-2)</code>. <code>dk_indices</code> 的大小就是 <code>dk_size</code></li>
+</ul>
+</li>
+<li>第二个数组与旧 dict 一样存储 entry, 不过只保留有效的, 没有空位
+<ul>
+<li><code>dk_entries</code> is array of PyDictKeyEntry. 存储实际数据</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>
+<p>变化:</p>
+<ol>
+<li>
+<p>节省空间复杂度:</p>
+<ul>
+<li>旧字典使用稀疏数组 <code>sparse array</code>, 占用的无效空间最少为 1/3(为了保证探测序列能够以足够快的速度找到空闲槽), 新字典使用密集数组, 省空间.</li>
+</ul>
+</li>
+<li>
+<p>第二个优点:</p>
+<ul>
+<li>
+<blockquote>
+<p>Currently, keys(), values, and items() loop over the sparse table, skipping-over free slots in the hash table. Now, keys/values/items can loop directly over the dense table, using fewer memoryaccesses&hellip;dense table</p>
+</blockquote>
+</li>
+<li>
+<p>密集数组, 相对稀疏数组而言, 不存在空隙), 简而言之, 密集数组占地方小, 循环迭代快.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>第三个优点: <code>...resizing is faster and touches fewer pieces of memory...</code>, 调整字典大小需要的内存更少. 因为在调整大小过程中, 旧字典的每一个 <code>hash/key/value</code> 都要移动或者复制, 新字典只需更新 <code>indices</code> 就行了, 除了偶尔由于删除需要填补而移动之外, <code>hash/key/value</code> 位置是固定的.</p>
+</li>
+</ol>
+</li>
+</ol>
+<h3 id="3-python-dict-pep">3 Python dict PEP</h3>
+<ul>
+<li>todo</li>
+</ul>
+<h3 id="4-拓展-哈希表hash-tables--二次探测序列quadratic-probing-sequence">4 拓展: 哈希表(hash tables)  二次探测序列（quadratic probing sequence）</h3>
+<blockquote>
+<p><a href="https://book.douban.com/subject/19952400/">&laquo;算法第四版小红书&raquo;</a>, 第三章查找第四节散列表</p>
+</blockquote>
+<ul>
+<li>散列表查找算法分两步:
+<ul>
+<li>将键转化为数组的索引</li>
+<li>处理冲突, 使用<strong>拉链法</strong>和<strong>开放地址</strong>(其中最简单的方法叫<strong>线性探测法</strong>)</li>
+</ul>
+</li>
+</ul>
+<ol>
+<li>散列函数
+<ul>
+<li>每一种类型的键需要对应不同的散列函数</li>
+<li>正整数: <code>除留余数法</code>, 选择大小为素数M的数组, 对于任意正整数, 计算除以 M 的余数.</li>
+<li>浮点数: Java 采用的方法是将键表示为二进制, 再使用<code>除留余数法</code></li>
+<li>字符串: 将字符串转为较大的整数再计算</li>
+<li>组合键: 类似字符串</li>
+<li>软缓存, 缓存散列值</li>
+</ul>
+</li>
+<li>解决碰撞冲突方法
+<ol>
+<li>拉链法
+<ul>
+<li>定义: 将大小为 M 的数组中的每一个元素指向一条链表, 链表中的每个结点都存储了散列值为该元素的索引的键值对</li>
+<li>用 M 条链表保存 N 个键, 链表平均长度为 N/M</li>
+</ul>
+</li>
+<li>开放地址法中的线性探测法
+<ul>
+<li>开放地址法: 用大小为 M 的数组保存 N 个键值对, 其中 M&gt;N, 依靠空位解决碰撞冲突</li>
+<li>线性探测法: 当碰撞发生时, 继续查找下一个位置, 直到为空</li>
+<li>将散列表中的空元素作为查找结束的标志</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+<blockquote>
+<p>流畅的Python字典扩展:</p>
+<ol>
+<li><a href="https://book.douban.com/subject/3224524/">代码之美18章-Python字典类:如何打造全能战士</a> <a href="https://hg.python.org/cpython/file/tip/Objects/dictobject.c">CPython dictobject.c源文件</a></li>
+<li><a href="https://www.python.org/dev/peps/pep-0274/">PEP274</a></li>
+<li><a href="https://www.youtube.com/watch?v=C4Kc8xzcA68">Brandon Rhodes 的讲座&quot;The Mighty Dictionary&rdquo;</a></li>
+</ol>
+</blockquote>
+<blockquote>
+<p>参考:</p>
+<ol>
+<li><a href="http://www.laurentluce.com/posts/python-dictionary-implementation/">深入Python字典的内部实现(英文原文)</a> <a href="http://python.jobbole.com/85040/">其译文</a></li>
+<li><a href="https://foofish.net/python_dict_implements.html">python之禅</a></li>
+<li><a href="https://book.douban.com/subject/19952400/">&laquo;算法第四版小红书&raquo;</a></li>
+<li><a href="https://mail.python.org/pipermail/python-dev/2012-December/123028.html">[Python-Dev] More compact dictionaries with faster iteration</a></li>
+<li><a href="https://www.youtube.com/watch?v=66P5FMkWoVU">Brandon Rhodes The Dictionary Even Mightier PyCon 2017</a></li>
+</ol>
+</blockquote>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">Author</span>
+    <span class="item-content">yangly</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">LastMod</span>
+    <span class="item-content">
+        2020-05-07
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/python/">python</a>
+          <a href="/tags/books/">books</a>
+          <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a>
+          <a href="/tags/%E6%BA%90%E7%A0%81/">源码</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/%E8%BD%AF%E4%BB%B6%E6%8E%A8%E8%8D%90_ntfs-3g_for_mac/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">软件推荐 NTFS-3G_for_Mac</span>
+            <span class="prev-text nav-mobile">Prev</span>
+          </a>
+        <a class="next" href="/post/fluent_python/">
+            <span class="next-text nav-default">《流畅的 Python》读书笔记(一)</span>
+            <span class="next-text nav-mobile">Next</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="https://github.com/yhliyr" class="iconfont icon-github" title="github"></a>
+  <a href="http://localhost:1313/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  
+
+  <span class="copyright-year">
+    &copy; 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">yhliyr</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+
+
+
+<script type="text/javascript" src="/js/main.min.c12618f9a600c40bd024996677e951e64d3487006775aeb22e200c990006c5c7.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>

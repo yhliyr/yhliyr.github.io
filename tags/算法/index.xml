@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>算法 on yhliyr&#39;s blog</title>
+    <link>http://localhost:1313/tags/%E7%AE%97%E6%B3%95/</link>
+    <description>Recent content in 算法 on yhliyr&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 20 May 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://localhost:1313/tags/%E7%AE%97%E6%B3%95/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>《算法小红书》读书笔记</title>
+      <link>http://localhost:1313/post/%E7%AE%97%E6%B3%95%E7%BA%A2%E4%B9%A6%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Sun, 20 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/post/%E7%AE%97%E6%B3%95%E7%BA%A2%E4%B9%A6%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</guid>
+      <description>[TOC] Chapter0 前言 配套网站 Coursera 在线课程: Part 1 (data, sorting, searching) Part 2 topic data structures and algorithms data types stack, queue, bag, union-find, priority queue sorting quicksort, mergesort, heapsort searching BST, red-black BST, hash table graphs BFS, DFS, Prim, Kruskal, Dijkstra strings radix sorts, tries, KMP, regexps, data compression advanced B-tree, suffix array, maxflow 第1章 基础 1. 基</description>
+    </item>
+    
+  </channel>
+</rss>

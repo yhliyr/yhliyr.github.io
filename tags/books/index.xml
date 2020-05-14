@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>books on yhliyr&#39;s blog</title>
+    <link>http://localhost:1313/tags/books/</link>
+    <description>Recent content in books on yhliyr&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sat, 04 Aug 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://localhost:1313/tags/books/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Python描述符笔记</title>
+      <link>http://localhost:1313/post/python%E6%8F%8F%E8%BF%B0%E7%AC%A6%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Sat, 04 Aug 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/post/python%E6%8F%8F%E8%BF%B0%E7%AC%A6%E7%AC%94%E8%AE%B0/</guid>
+      <description>[TOC] 1 Python 的 @property/method 是由描述符实现的 Transformation 描述符类别 类别不同导致结果 @property 覆盖型(data descriptor) 实例不能覆盖 @property method/staticmethod/classmethod 非覆盖型(non-data descriptor) 不同的实例可以自定义自</description>
+    </item>
+    
+    <item>
+      <title>《算法小红书》读书笔记</title>
+      <link>http://localhost:1313/post/%E7%AE%97%E6%B3%95%E7%BA%A2%E4%B9%A6%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Sun, 20 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/post/%E7%AE%97%E6%B3%95%E7%BA%A2%E4%B9%A6%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</guid>
+      <description>[TOC] Chapter0 前言 配套网站 Coursera 在线课程: Part 1 (data, sorting, searching) Part 2 topic data structures and algorithms data types stack, queue, bag, union-find, priority queue sorting quicksort, mergesort, heapsort searching BST, red-black BST, hash table graphs BFS, DFS, Prim, Kruskal, Dijkstra strings radix sorts, tries, KMP, regexps, data compression advanced B-tree, suffix array, maxflow 第1章 基础 1. 基</description>
+    </item>
+    
+    <item>
+      <title>python字典的实现原理</title>
+      <link>http://localhost:1313/post/python%E5%AD%97%E5%85%B8%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</link>
+      <pubDate>Wed, 07 Feb 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/post/python%E5%AD%97%E5%85%B8%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</guid>
+      <description>[TOC] 1 python 27 字典结构 1. 字典通过哈希表实现 默认版本: Python2.7.x cpython 2.7 源码 dictobject.c dictobject.h 以下代码对源码有删减, 只保留主要逻辑 2. 字典中基本存储单元: PyDictEntry 哈希表初始大小 PyDict_MINSIZE 为 8</description>
+    </item>
+    
+    <item>
+      <title>《流畅的 Python》读书笔记(一)</title>
+      <link>http://localhost:1313/post/fluent_python/</link>
+      <pubDate>Sat, 20 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/post/fluent_python/</guid>
+      <description>[TOC] 第二部分 数据结构 Chapter2 List 列表推导式/生成器表达式在 Python3 有自己的局部作用域, 类似函数. 而 Python2 没有 元组, 还可以用于没有字段名的记录 collections.namedtuple 工厂函数 作用: 构建</description>
+    </item>
+    
+    <item>
+      <title>《流畅的 Python》读书笔记(二)</title>
+      <link>http://localhost:1313/post/fluent_python2/</link>
+      <pubDate>Sat, 20 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/post/fluent_python2/</guid>
+      <description>[TOC] 第五部分 控制流程 Chapter14 可迭代的对象, 迭代器和生成器### 0. 本章要点 所有生成器都是迭代器 迭代器用于从集合中取出元素 生成器用于&amp;quot;凭空&amp;q</description>
+    </item>
+    
+  </channel>
+</rss>

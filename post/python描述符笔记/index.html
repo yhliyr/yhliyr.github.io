@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Python描述符笔记 - yhliyr&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="yangly" /><meta name="description" content="[TOC] 1 Python 的 @property/method 是由描述符实现的 Transformation 描述符类别 类别不同导致结果 @property 覆盖型(data descriptor) 实例不能覆盖 @property method/staticmethod/classmethod 非覆盖型(non-data descriptor) 不同的实例可以自定义自" /><meta name="keywords" content="Hugo, theme, even" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.69.2 with theme even" />
+
+
+<link rel="canonical" href="http://localhost:1313/post/python%E6%8F%8F%E8%BF%B0%E7%AC%A6%E7%AC%94%E8%AE%B0/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+<link href="/sass/main.min.c5b7928861aa2d3f0e306778c33e6689ea2b22356cfdc1a4e10e925019e911d1.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="Python描述符笔记" />
+<meta property="og:description" content="[TOC] 1 Python 的 @property/method 是由描述符实现的 Transformation 描述符类别 类别不同导致结果 @property 覆盖型(data descriptor) 实例不能覆盖 @property method/staticmethod/classmethod 非覆盖型(non-data descriptor) 不同的实例可以自定义自" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://localhost:1313/post/python%E6%8F%8F%E8%BF%B0%E7%AC%A6%E7%AC%94%E8%AE%B0/" />
+<meta property="article:published_time" content="2018-08-04T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-05-07T00:00:00+00:00" />
+<meta itemprop="name" content="Python描述符笔记">
+<meta itemprop="description" content="[TOC] 1 Python 的 @property/method 是由描述符实现的 Transformation 描述符类别 类别不同导致结果 @property 覆盖型(data descriptor) 实例不能覆盖 @property method/staticmethod/classmethod 非覆盖型(non-data descriptor) 不同的实例可以自定义自">
+<meta itemprop="datePublished" content="2018-08-04T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2020-05-07T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="3100">
+
+
+
+<meta itemprop="keywords" content="python,books," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Python描述符笔记"/>
+<meta name="twitter:description" content="[TOC] 1 Python 的 @property/method 是由描述符实现的 Transformation 描述符类别 类别不同导致结果 @property 覆盖型(data descriptor) 实例不能覆盖 @property method/staticmethod/classmethod 非覆盖型(non-data descriptor) 不同的实例可以自定义自"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo"> </a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo"> </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">Python描述符笔记</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2018-08-04 </span>
+        <div class="post-category">
+            <a href="/categories/python/"> Python </a>
+            </div>
+        
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Contents</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#1-python-的-propertymethod-是由描述符实现的-">1 Python 的 @property/method 是由描述符实现的</a></li>
+        <li><a href="#2-定义-">2 定义</a></li>
+        <li><a href="#3-协议-">3 协议</a></li>
+        <li><a href="#4-调用-">4 调用</a></li>
+        <li><a href="#5-栗子-">5 栗子</a></li>
+        <li><a href="#6-property-">6 @property</a></li>
+        <li><a href="#7-functions--methods-">7 functions &amp; methods</a></li>
+        <li><a href="#8-staticmethod--classmethod-">8 staticmethod &amp; classmethod</a></li>
+        <li><a href="#9-supertodo-">9 super()(TODO)</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      <p>[TOC]</p>
+<h3 id="1-python-的-propertymethod-是由描述符实现的-">1 Python 的 @property/method 是由描述符实现的</h3>
+<table>
+<thead>
+<tr>
+<th align="left">Transformation</th>
+<th align="left">描述符类别</th>
+<th>类别不同导致结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">@property</td>
+<td align="left">覆盖型(data descriptor)</td>
+<td>实例不能覆盖 @property</td>
+</tr>
+<tr>
+<td align="left">method/staticmethod/classmethod</td>
+<td align="left">非覆盖型(non-data descriptor)</td>
+<td>不同的实例可以自定义自己的 method</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-定义-">2 定义</h3>
+<ol start="0">
+<li>白话版: 用来控制对象 设置属性, 获取属性, 删除属性的一个 object</li>
+<li>实现<code>__get__(), __set__(), and __delete__()</code></li>
+<li>Python 使用点<code>.</code>读取对象的属性, 默认读取对象属性是从, 对象的属性字典中获取
+<ul>
+<li>属性调用链: 比如<code>a.x</code>查找的顺序是<code>a.__dict__['x']</code> &gt; <code>type(a).__dict__['x']</code> &gt; &hellip; 访问所有的基类, 包括 metaclass</li>
+<li>如果查找的值是通过描述符实现的, 描述符方法会改变这个调用链</li>
+</ul>
+</li>
+<li>Raymond Hettinger 原文:</li>
+</ol>
+<blockquote>
+<p>In general, a descriptor is an object attribute with “binding behavior”, one whose attribute access has been overridden by methods in the descriptor protocol. Those methods are <strong>get</strong>(), <strong>set</strong>(), and <strong>delete</strong>(). If any of those methods are defined for an object, it is said to be a descriptor.</p>
+</blockquote>
+<h3 id="3-协议-">3 协议</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="n">descr</span><span class="o">.</span><span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span> <span class="o">--&gt;</span> <span class="n">value</span>
+<span class="n">descr</span><span class="o">.</span><span class="fm">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">--&gt;</span> <span class="bp">None</span>
+<span class="n">descr</span><span class="o">.</span><span class="fm">__delete__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span> <span class="o">--&gt;</span> <span class="bp">None</span>
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>data descriptor: 覆盖型描述符(数据描述符), 同时定义<code>__get__</code>和<code>__set__</code>方法</li>
+<li>non-data descriptor: 非覆盖型描述符(非数据描述符), 只定义了<code>__get__</code>方法</li>
+<li>其两者区别在于, 当读写属性时, 优先级是否比实例字典属性高</li>
+<li>即是否覆盖实例字典属性(object.<strong>dict</strong>)</li>
+</ul>
+<blockquote>
+<p>在 &lt;流畅的 Python&gt; 里, <code>data descriptor</code>称为<code>overridinng descriptor</code>
+<code>overridinng descriptor</code>, 翻译为<strong>覆盖/非覆盖</strong>一眼便知其特点, 推荐使用这个词</p>
+</blockquote>
+<h3 id="4-调用-">4 调用</h3>
+<table>
+<thead>
+<tr>
+<th align="center">类别</th>
+<th align="center"><code>a.x</code> =&gt;</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">直接调用</td>
+<td align="center"><code>x.__get__(a)</code></td>
+</tr>
+<tr>
+<td align="center">实例绑定</td>
+<td align="center"><code>object.__getattribute__()</code> =&gt; <code>type(a).__dict__['x'].__get__(a, type(a))</code></td>
+</tr>
+<tr>
+<td align="center">类绑定</td>
+<td align="center"><code>type.__getattribute__()</code> =&gt; <code>A.__dict__['x'].__get__(None, A)</code></td>
+</tr>
+<tr>
+<td align="center"><code>super(B, obj).m()</code></td>
+<td align="center">先从 <code>__class__.__mro__ </code> 里找到 A =&gt; <code>A.__dict__['m'].__get__(obj, obj.__class__)</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>a 是 类 A 的实例</p>
+</blockquote>
+<p>Direct Call
+The simplest and least common call is when user code directly invokes a descriptor method: x.<strong>get</strong>(a).</p>
+<p>Instance Binding
+If binding to a new-style object instance, a.x is transformed into the call: type(a).<strong>dict</strong>[‘x’].<strong>get</strong>(a, type(a)).
+Class Binding
+If binding to a new-style class, A.x is transformed into the call: A.<strong>dict</strong>[‘x’].<strong>get</strong>(None, A).
+Super Binding
+If a is an instance of super,
+then the binding super(B, obj).m() searches obj.<strong>class</strong>.<strong>mro</strong>
+for the base class A immediately preceding B
+and then
+invokes the descriptor with the call: A.<strong>dict</strong>[‘m’].<strong>get</strong>(obj, obj.<strong>class</strong>).</p>
+<ul>
+<li>
+<p>可以通过直接调用方法名来调用描述符。例如：<code>d.__get__(obj)</code></p>
+</li>
+<li>
+<p>根据调用主体的类型是对象(object) 或是 类(class), 调用过程的区别是:</p>
+<ul>
+<li>
+<p>如果是 object, 调用机制位于<a href="https://docs.python.org/3/reference/datamodel.html#object.__getattribute__"><code>object.__getattribute__()</code></a>, 把<code>b.x</code> 转换成了<code>type(b).__dict__['x'].__get__(b, type(b))</code>, 完整的实现细节位于 <a href="https://hg.python.org/cpython/file/3.4/Objects/object.c">Objects/object.c</a> 中的 <a href="https://docs.python.org/3/c-api/object.html#c.PyObject_GenericGetAttr">PyObject_GenericGetAttr()</a></p>
+</li>
+<li>
+<p>如果是 class, 调用机制位于<code>type.__getattribute__()</code>, 把<code>B.x</code>转换成<code>B.__dict__['x'].__get__(None, B)</code>, 其实现细节 Python 版:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="fm">__getattribute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="s2">&#34;Emulate type_getattro() in Objects/typeobject.c&#34;</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="nb">object</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="s1">&#39;__get__&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">v</span><span class="o">.</span><span class="fm">__get__</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">v</span>
+</code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+</li>
+<li>
+<p>结论:</p>
+<ul>
+<li>描述符由<code>__getattribute__()</code>方法调用</li>
+<li>重写<code>__getattribute__()</code>会阻止描述符的自动调用</li>
+<li><code>object.__getattribute__()</code>和<code>type.__getattribute__()</code>对<code>__get__()</code>的调用不一样</li>
+<li>覆盖型描述符, 总是覆盖实例字典属性(instance dictionaries)</li>
+<li>非覆盖型描述符, 可能会被实例字典属性覆盖</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>除了这一点: <em>类可以通过重写<code>__getattribute__()</code>来控制描述符的触发</em>, 其他的地方在&lt;流畅的 Python&gt; 里写的更清楚</p>
+</blockquote>
+<h3 id="5-栗子-">5 栗子</h3>
+<ol>
+<li>
+<p>RevealAccess, 监控属性访问</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"> <span class="k">class</span> <span class="nc">RevealAccess</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+     <span class="s2">&#34;&#34;&#34;
+</span><span class="s2">     类名意为: 显示访问
+</span><span class="s2">     可以对 set value &amp; get value 进行监控并打印日志的描述符
+</span><span class="s2">     &#34;&#34;&#34;</span>
+    
+     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initval</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;var&#39;</span><span class="p">):</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">initval</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+    
+     <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">objtype</span><span class="p">):</span>
+         <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Retrieving&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">val</span>
+    
+     <span class="k">def</span> <span class="fm">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+         <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Updating&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">val</span>
+    
+ <span class="n">In</span> <span class="p">[</span><span class="mi">6</span><span class="p">]:</span> <span class="k">class</span> <span class="nc">MyClass</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="o">...</span><span class="p">:</span>     <span class="n">x</span> <span class="o">=</span> <span class="n">RevealAccess</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;var &#34;x&#34;&#39;</span><span class="p">)</span>
+    <span class="o">...</span><span class="p">:</span>     <span class="n">y</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="o">...</span><span class="p">:</span>
+    
+ <span class="n">In</span> <span class="p">[</span><span class="mi">7</span><span class="p">]:</span> <span class="n">m</span> <span class="o">=</span> <span class="n">MyClass</span><span class="p">()</span>
+    
+ <span class="n">In</span> <span class="p">[</span><span class="mi">8</span><span class="p">]:</span> <span class="n">m</span><span class="o">.</span><span class="n">x</span>
+ <span class="n">Retrieving</span> <span class="n">var</span> <span class="s2">&#34;x&#34;</span>
+ <span class="n">Out</span><span class="p">[</span><span class="mi">8</span><span class="p">]:</span> <span class="mi">10</span>
+    
+ <span class="n">In</span> <span class="p">[</span><span class="mi">9</span><span class="p">]:</span> <span class="n">m</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="mi">20</span>
+ <span class="n">Updating</span> <span class="n">var</span> <span class="s2">&#34;x&#34;</span>
+    
+ <span class="n">In</span> <span class="p">[</span><span class="mi">10</span><span class="p">]:</span> <span class="n">m</span><span class="o">.</span><span class="n">x</span>
+ <span class="n">Retrieving</span> <span class="n">var</span> <span class="s2">&#34;x&#34;</span>
+ <span class="n">Out</span><span class="p">[</span><span class="mi">10</span><span class="p">]:</span> <span class="mi">20</span>
+    
+ <span class="n">In</span> <span class="p">[</span><span class="mi">11</span><span class="p">]:</span> <span class="n">m</span><span class="o">.</span><span class="n">y</span>
+ <span class="n">Out</span><span class="p">[</span><span class="mi">11</span><span class="p">]:</span> <span class="mi">5</span>
+</code></pre></td></tr></table>
+</div>
+</div></li>
+</ol>
+<h3 id="6-property-">6 @property</h3>
+<ol start="0">
+<li>
+<p>一句话: @property 是覆盖型描述符</p>
+</li>
+<li>
+<p><a href="https://docs.python.org/3/library/functions.html#property">property()</a></p>
+<ul>
+<li>
+<p>签名:</p>
+<ul>
+<li><code>property(fget=None, fset=None, fdel=None, doc=None) -&gt; property attribute</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<ul>
+<li>
+<p>文档示例 property 的用法:</p>
+<pre><code>  ```python
+  class C(object):
+      def getx(self): return self.__x
+      def setx(self, value): self.__x = value
+      def delx(self): del self.__x
+  x = property(getx, setx, delx, &quot;I'm the 'x' property.&quot;)
+  ```
+</code></pre>
+</li>
+</ul>
+<ol start="2">
+<li>
+<p>描述符实现 property() 的源码 Python 版:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"> <span class="k">class</span> <span class="nc">Property</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+     <span class="s2">&#34;Emulate PyProperty_Type() in Objects/descrobject.c&#34;</span>
+    
+     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fget</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">fset</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">fdel</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">fget</span> <span class="o">=</span> <span class="n">fget</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">fset</span> <span class="o">=</span> <span class="n">fset</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">fdel</span> <span class="o">=</span> <span class="n">fdel</span>
+         <span class="k">if</span> <span class="n">doc</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">fget</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+             <span class="n">doc</span> <span class="o">=</span> <span class="n">fget</span><span class="o">.</span><span class="vm">__doc__</span>
+         <span class="bp">self</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">doc</span>
+    
+     <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">objtype</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+         <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+             <span class="k">return</span> <span class="bp">self</span>
+         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fget</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&#34;unreadable attribute&#34;</span><span class="p">)</span>
+         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fget</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+    
+     <span class="k">def</span> <span class="fm">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fset</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&#34;can&#39;t set attribute&#34;</span><span class="p">)</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">fset</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+    
+     <span class="k">def</span> <span class="fm">__delete__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fdel</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&#34;can&#39;t delete attribute&#34;</span><span class="p">)</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">fdel</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+    
+     <span class="k">def</span> <span class="nf">getter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fget</span><span class="p">):</span>
+         <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="n">fget</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fset</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fdel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">)</span>
+    
+     <span class="k">def</span> <span class="nf">setter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fset</span><span class="p">):</span>
+         <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">fget</span><span class="p">,</span> <span class="n">fset</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fdel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">)</span>
+    
+     <span class="k">def</span> <span class="nf">deleter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fdel</span><span class="p">):</span>
+         <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">fget</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fset</span><span class="p">,</span> <span class="n">fdel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>回想一下, 我们是怎么用 @property 的:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"> <span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+     <span class="s2">&#34;&#34;&#34;使用 @property 控制用户设置的年龄不为负&#34;&#34;&#34;</span>
+     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">age</span><span class="p">):</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">age</span> <span class="o">=</span> <span class="n">age</span>
+    
+     <span class="nd">@property</span>
+     <span class="k">def</span> <span class="nf">age</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_age</span>
+     <span class="c1"># @property 语法糖相当于:</span>
+     <span class="c1"># def age(self):</span>
+     <span class="c1">#     return self._age</span>
+     <span class="c1"># age = Property(age) # fget=age</span>
+    
+     <span class="nd">@age.setter</span>
+     <span class="k">def</span> <span class="nf">age</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+         <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="p">:</span>
+             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;age must be positive!&#39;</span><span class="p">)</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">_age</span> <span class="o">=</span> <span class="n">value</span>
+     <span class="c1"># 相当于</span>
+     <span class="c1"># age = age.setter(value) # fset = value</span>
+     <span class="c1"># 即 age = type(age)(self.fget, fset, self.fdel, self.__doc__)</span>
+     <span class="c1"># 即 age = Property(fget=self.fget, fset=value, self.fdel, self.__doc__)</span>
+     <span class="c1"># fget 和 fset not None, Property 描述符`__set__`和`__get__`都实现了, 是覆盖型描述符,</span>
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>@property 使用了装饰器语法糖</li>
+<li><code>@age.setter</code>返回了新的 Property 实例, 实现了描述符的<code>__set__</code>方法</li>
+<li>旧式类只支持<code>__get__</code>, 所以 @property 不能使用 <code>@property.setter</code></li>
+</ul>
+</li>
+<li>
+<p>property() 的作用是, 动态的修改对属性的控制</p>
+<ul>
+<li>
+<p>应用举例:  通过<code>Cell('b10').value</code>访问一个表格的数据, 现在有一个新需求, 要求要重新计算此单元格的值, 而且不修改之前代码, 解决方法就是 property</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="k">class</span> <span class="nc">Cell</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="o">...</span>
+    <span class="k">def</span> <span class="nf">getvalue</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s2">&#34;Recalculate the cell before returning value&#34;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recalc</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">getvalue</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+</li>
+</ol>
+<h3 id="7-functions--methods-">7 functions &amp; methods</h3>
+<ol start="0">
+<li>
+<p>一句话总结: 绑定方法对象(bound method)是非覆盖型描述符</p>
+</li>
+<li>
+<p>Python 面向对象的特性是建立在函数这一概念之上的, Python 把函数(function)与面向对象(OO, 就是类啊子类啊什么的)两者结合到一起的就是<strong>非覆盖型描述符</strong></p>
+</li>
+<li>
+<p>类外函数称为(Function), 类内称为(Method)</p>
+<ul>
+<li>类字典存储着 method 作为 functions, 在 class 中, method 使用<code>def</code>和<code>lambda</code></li>
+<li>method 与 function 的区别
+<ul>
+<li>method 接受的第一个参数是 self</li>
+</ul>
+</li>
+<li>实例引用称为 self</li>
+</ul>
+</li>
+<li>
+<p>所有用户定义的函数都有<code>__get__</code>方法, 所以, 当这些函数被一个对象调用时(依附到类上), 都是非覆盖型描述符, 且返回一个<code>bound method</code>(绑定方法对象)</p>
+</li>
+<li>
+<p>Function 源码 Python 版, 函数(Function)也用到了描述符, 实现了<code>__get__</code>方法:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"> <span class="k">class</span> <span class="nc">Function</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+     <span class="o">.</span> <span class="o">.</span> <span class="o">.</span>
+     <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">objtype</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+         <span class="s2">&#34;Simulate func_descr_get() in Objects/funcobject.c&#34;</span>
+         <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+             <span class="k">return</span> <span class="bp">self</span>
+         <span class="k">return</span> <span class="n">types</span><span class="o">.</span><span class="n">MethodType</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span>
+         <span class="c1"># 如果没有 obj, 直接返回</span>
+         <span class="c1"># 有 obj, 返回 method type 类型</span>
+</code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>ipython:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"> <span class="n">In</span> <span class="p">[</span><span class="mi">36</span><span class="p">]:</span> <span class="k">class</span> <span class="nc">D</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+     <span class="o">...</span><span class="p">:</span>     <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+     <span class="o">...</span><span class="p">:</span>         <span class="k">return</span> <span class="n">x</span>
+     <span class="o">...</span><span class="p">:</span>
+ <span class="n">In</span> <span class="p">[</span><span class="mi">37</span><span class="p">]:</span> <span class="n">d</span> <span class="o">=</span> <span class="n">D</span><span class="p">()</span>
+    
+ <span class="c1"># 通过类字典属性访问函数, 不会触发描述符`__get__`(非覆盖型描述符)</span>
+ <span class="c1"># 只会返回实际函数对象</span>
+ <span class="n">In</span> <span class="p">[</span><span class="mi">38</span><span class="p">]:</span> <span class="n">D</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">]</span>
+ <span class="n">Out</span><span class="p">[</span><span class="mi">38</span><span class="p">]:</span> <span class="o">&lt;</span><span class="n">function</span> <span class="n">__main__</span><span class="o">.</span><span class="n">D</span><span class="o">.</span><span class="n">f</span><span class="o">&gt;</span>
+    
+ <span class="c1"># 点访问, 触发描述符`__get__()`, `obj` is None, 同样返回实际函数对象</span>
+ <span class="n">In</span> <span class="p">[</span><span class="mi">39</span><span class="p">]:</span> <span class="n">D</span><span class="o">.</span><span class="n">f</span>
+ <span class="n">Out</span><span class="p">[</span><span class="mi">39</span><span class="p">]:</span> <span class="o">&lt;</span><span class="n">function</span> <span class="n">__main__</span><span class="o">.</span><span class="n">D</span><span class="o">.</span><span class="n">f</span><span class="o">&gt;</span>
+    
+ <span class="c1"># 函数对象有`__qualname__`属性支持自省</span>
+ <span class="n">In</span> <span class="p">[</span><span class="mi">40</span><span class="p">]:</span> <span class="n">D</span><span class="o">.</span><span class="n">f</span><span class="o">.</span><span class="n">__qualname__</span>
+ <span class="n">Out</span><span class="p">[</span><span class="mi">40</span><span class="p">]:</span> <span class="s1">&#39;D.f&#39;</span>
+    
+ <span class="c1"># 实例调用, 触发描述符`__get__`, 返回一个实例 d 的绑定方法对象(bound method), (function wrapped in a bound method object)</span>
+ <span class="n">In</span> <span class="p">[</span><span class="mi">41</span><span class="p">]:</span> <span class="n">d</span><span class="o">.</span><span class="n">f</span>
+ <span class="n">Out</span><span class="p">[</span><span class="mi">41</span><span class="p">]:</span> <span class="o">&lt;</span><span class="n">bound</span> <span class="n">method</span> <span class="n">D</span><span class="o">.</span><span class="n">f</span> <span class="n">of</span> <span class="o">&lt;</span><span class="n">__main__</span><span class="o">.</span><span class="n">D</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x104568240</span><span class="o">&gt;&gt;</span>
+    
+ <span class="c1"># 其实 bound method 把基础函数(underlying function), 绑定的实例和绑定实例的类,都存了起来</span>
+ <span class="n">In</span> <span class="p">[</span><span class="mi">42</span><span class="p">]:</span> <span class="n">d</span><span class="o">.</span><span class="n">f</span><span class="o">.</span><span class="vm">__func__</span>
+ <span class="n">Out</span><span class="p">[</span><span class="mi">42</span><span class="p">]:</span> <span class="o">&lt;</span><span class="n">function</span> <span class="n">__main__</span><span class="o">.</span><span class="n">D</span><span class="o">.</span><span class="n">f</span><span class="o">&gt;</span>
+    
+ <span class="n">In</span> <span class="p">[</span><span class="mi">44</span><span class="p">]:</span> <span class="n">d</span><span class="o">.</span><span class="n">f</span><span class="o">.</span><span class="vm">__self__</span>
+ <span class="n">Out</span><span class="p">[</span><span class="mi">44</span><span class="p">]:</span> <span class="o">&lt;</span><span class="n">__main__</span><span class="o">.</span><span class="n">D</span> <span class="n">at</span> <span class="mh">0x104568240</span><span class="o">&gt;</span>
+    
+ <span class="n">In</span> <span class="p">[</span><span class="mi">45</span><span class="p">]:</span> <span class="n">d</span><span class="o">.</span><span class="n">f</span><span class="o">.</span><span class="vm">__class__</span>
+ <span class="n">Out</span><span class="p">[</span><span class="mi">45</span><span class="p">]:</span> <span class="n">method</span>
+    
+ <span class="n">In</span> <span class="p">[</span><span class="mi">54</span><span class="p">]:</span> <span class="n">d</span>
+ <span class="n">Out</span><span class="p">[</span><span class="mi">54</span><span class="p">]:</span> <span class="o">&lt;</span><span class="n">__main__</span><span class="o">.</span><span class="n">D</span> <span class="n">at</span> <span class="mh">0x104568240</span><span class="o">&gt;</span>
+    
+ <span class="n">In</span> <span class="p">[</span><span class="mi">55</span><span class="p">]:</span> <span class="n">D</span>
+ <span class="n">Out</span><span class="p">[</span><span class="mi">55</span><span class="p">]:</span> <span class="n">__main__</span><span class="o">.</span><span class="n">D</span>
+</code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>这一节在 &lt;流畅的 Python&gt; 中是 <code>20.3 方法是描述符</code></p>
+</li>
+</ol>
+<h3 id="8-staticmethod--classmethod-">8 staticmethod &amp; classmethod</h3>
+<table>
+<thead>
+<tr>
+<th align="left">Transformation</th>
+<th align="left">Called from an Object</th>
+<th align="left">Called from a Class</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">function</td>
+<td align="left">f(obj, *args)</td>
+<td align="left">f(*args)</td>
+</tr>
+<tr>
+<td align="left">staticmethod</td>
+<td align="left">f(*args)</td>
+<td align="left">f(*args)</td>
+</tr>
+<tr>
+<td align="left">classmethod</td>
+<td align="left">f(type(obj), *args)</td>
+<td align="left">f(klass, *args)</td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li>
+<p>非覆盖型描述符, 把<code>obj.f(*args)</code>转换成<code>f(obj, *args)</code>, 调用<code>klass.f(*args)</code>最终调用的是<code>f(*args)</code></p>
+<ul>
+<li>c.f =&gt; object.<strong>getattribute</strong>(c, &ldquo;f&rdquo;)</li>
+<li>C.f =&gt; object.<strong>getattribute</strong>(C, &ldquo;f&rdquo;)</li>
+<li>As a result, the function becomes identically accessible from either an object or a class.</li>
+</ul>
+</li>
+<li>
+<p>静态方法特点是谁调用都返回</p>
+<ul>
+<li>
+<p>用法举例: 统计学中的一些公式啊, 比如说 erf(x) 误差函数, 直接拿来用, 一般不会变动的函数, 无论是实例还是类调用都不改变其逻辑</p>
+</li>
+<li>
+<p>staticmethod 源码 Python 版:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="k">class</span> <span class="nc">StaticMethod</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="s2">&#34;Emulate PyStaticMethod_Type() in Objects/funcobject.c&#34;</span>
+      
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">f</span>
+      
+    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">objtype</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">f</span>
+</code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+</li>
+<li>
+<p>classmethod, 无论实例调用还是类调用, 都会在调用前将类的引用作为函数的第一个参数</p>
+<ul>
+<li>
+<p>类方法的一种作用是创建多种类构造器</p>
+</li>
+<li>
+<p>classmethod 源码 Python 版:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="k">class</span> <span class="nc">ClassMethod</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="s2">&#34;Emulate PyClassMethod_Type() in Objects/funcobject.c&#34;</span>
+      
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">f</span>
+      
+    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">klass</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">klass</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">klass</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">newfunc</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">(</span><span class="n">klass</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">newfunc</span>
+</code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+</li>
+</ol>
+<h3 id="9-supertodo-">9 super()(TODO)</h3>
+<ol>
+<li>
+<p>super() 的概念:</p>
+<ul>
+<li>
+<p>super() 不是父类，而是继承顺序(MRO)里的下一个类</p>
+</li>
+<li>
+<p>help(super)</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="o">|</span>  <span class="nb">super</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">same</span> <span class="k">as</span> <span class="nb">super</span><span class="p">(</span><span class="vm">__class__</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">first</span> <span class="n">argument</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="o">|</span>  <span class="nb">super</span><span class="p">(</span><span class="nb">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">unbound</span> <span class="nb">super</span> <span class="nb">object</span>
+<span class="o">|</span>  <span class="nb">super</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">bound</span> <span class="nb">super</span> <span class="nb">object</span><span class="p">;</span> <span class="n">requires</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<p>|  super(type, type2) -&gt; bound super object; requires issubclass(type2, type)
+```</p>
+</li>
+<li>
+<p>super() 原理:</p>
+</li>
+</ol>
+<ul>
+<li>覆盖了<code> __getattribute__</code>方法</li>
+</ul>
+<ol start="3">
+<li>
+<p>如何使用</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"> <span class="nb">super</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">instance</span><span class="o">-</span><span class="ow">or</span><span class="o">-</span><span class="n">subclass</span><span class="p">)</span><span class="o">.</span><span class="n">method</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>可以说对应这个:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"> <span class="n">right</span><span class="o">-</span><span class="n">method</span><span class="o">-</span><span class="ow">in</span><span class="o">-</span><span class="n">the</span><span class="o">-</span><span class="n">MRO</span><span class="o">-</span><span class="n">applied</span><span class="o">-</span><span class="n">to</span><span class="p">(</span><span class="n">instance</span><span class="o">-</span><span class="ow">or</span><span class="o">-</span><span class="n">subclass</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div></li>
+</ol>
+<blockquote>
+<p>参考:</p>
+<p>流畅的Python</p>
+<p><a href="https://docs.python.org/3/howto/descriptor.html">Descriptor HowTo Guide</a></p>
+<p><a href="https://stackoverflow.com/questions/17330160/how-does-the-property-decorator-work">How does the @property decorator work?</a></p>
+<p><a href="http://python-reference.readthedocs.io/en/latest/docs/dunderdsc/">Descriptor Protocol</a></p>
+<p><a href="https://www.artima.com/weblogs/viewpost.jsp?thread=236275">Things to Know About Python Super</a></p>
+</blockquote>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">Author</span>
+    <span class="item-content">yangly</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">LastMod</span>
+    <span class="item-content">
+        2020-05-07
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/python/">python</a>
+          <a href="/tags/books/">books</a>
+          </div>
+      <nav class="post-nav">
+        
+        <a class="next" href="/post/%E5%88%87%E7%89%87%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/">
+            <span class="next-text nav-default">翻译 - Python切片的实现原理</span>
+            <span class="next-text nav-mobile">Next</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="https://github.com/yhliyr" class="iconfont icon-github" title="github"></a>
+  <a href="http://localhost:1313/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  
+
+  <span class="copyright-year">
+    &copy; 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">yhliyr</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+
+
+
+<script type="text/javascript" src="/js/main.min.c12618f9a600c40bd024996677e951e64d3487006775aeb22e200c990006c5c7.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>

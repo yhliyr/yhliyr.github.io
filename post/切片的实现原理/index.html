@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>翻译 - Python切片的实现原理 - yhliyr&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="yangly" /><meta name="description" content="[TOC] 原文链接: How is slicing implemented in python? 来自 Quora 作者: Vladislav Zorov 翻译理由: 作者在分析切片的原理的同时, 也很详细的说明了如何去看源码, 虽然只有27个赞&amp;hellip;" /><meta name="keywords" content="Hugo, theme, even" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.69.2 with theme even" />
+
+
+<link rel="canonical" href="http://localhost:1313/post/%E5%88%87%E7%89%87%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+<link href="/sass/main.min.c5b7928861aa2d3f0e306778c33e6689ea2b22356cfdc1a4e10e925019e911d1.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="翻译 - Python切片的实现原理" />
+<meta property="og:description" content="[TOC] 原文链接: How is slicing implemented in python? 来自 Quora 作者: Vladislav Zorov 翻译理由: 作者在分析切片的原理的同时, 也很详细的说明了如何去看源码, 虽然只有27个赞&hellip;" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://localhost:1313/post/%E5%88%87%E7%89%87%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/" />
+<meta property="article:published_time" content="2018-07-27T00:00:00+00:00" />
+<meta property="article:modified_time" content="2018-07-27T00:00:00+00:00" />
+<meta itemprop="name" content="翻译 - Python切片的实现原理">
+<meta itemprop="description" content="[TOC] 原文链接: How is slicing implemented in python? 来自 Quora 作者: Vladislav Zorov 翻译理由: 作者在分析切片的原理的同时, 也很详细的说明了如何去看源码, 虽然只有27个赞&hellip;">
+<meta itemprop="datePublished" content="2018-07-27T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2018-07-27T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="1446">
+
+
+
+<meta itemprop="keywords" content="python," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="翻译 - Python切片的实现原理"/>
+<meta name="twitter:description" content="[TOC] 原文链接: How is slicing implemented in python? 来自 Quora 作者: Vladislav Zorov 翻译理由: 作者在分析切片的原理的同时, 也很详细的说明了如何去看源码, 虽然只有27个赞&hellip;"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo"> </a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo"> </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">翻译 - Python切片的实现原理</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2018-07-27 </span>
+        <div class="post-category">
+            <a href="/categories/%E7%BF%BB%E8%AF%91/"> 翻译 </a>
+            </div>
+        
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Contents</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#问题-python-是怎么实现切片的-">问题: Python 是怎么实现切片的?</a></li>
+        <li><a href="#答案-">答案:</a></li>
+        <li><a href="#补充拓展-">补充拓展</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      <p>[TOC]</p>
+<blockquote>
+<p><a href="https://www.quora.com/How-is-slicing-implemented-in-python">原文链接: How is slicing implemented in python?</a>
+来自 Quora 作者: <a href="https://www.quora.com/profile/Vladislav-Zorov">Vladislav Zorov</a>
+翻译理由: 作者在分析切片的原理的同时, 也很详细的说明了如何去看源码, 虽然只有27个赞&hellip;</p>
+</blockquote>
+<h3 id="问题-python-是怎么实现切片的-">问题: Python 是怎么实现切片的?</h3>
+<h3 id="答案-">答案:</h3>
+<p>查看源码</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-Python" data-lang="Python"><span class="n">In</span> <span class="p">[</span><span class="mi">13</span><span class="p">]:</span> <span class="kn">from</span> <span class="nn">dis</span> <span class="kn">import</span> <span class="n">dis</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">14</span><span class="p">]:</span> <span class="n">dis</span><span class="p">(</span><span class="s2">&#34;lst[::-1]&#34;</span><span class="p">)</span>
+  <span class="mi">1</span>           <span class="mi">0</span> <span class="n">LOAD_NAME</span>                <span class="mi">0</span> <span class="p">(</span><span class="n">lst</span><span class="p">)</span>
+              <span class="mi">3</span> <span class="n">LOAD_CONST</span>               <span class="mi">0</span> <span class="p">(</span><span class="bp">None</span><span class="p">)</span>
+              <span class="mi">6</span> <span class="n">LOAD_CONST</span>               <span class="mi">0</span> <span class="p">(</span><span class="bp">None</span><span class="p">)</span>
+              <span class="mi">9</span> <span class="n">LOAD_CONST</span>               <span class="mi">2</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+             <span class="mi">12</span> <span class="n">BUILD_SLICE</span>              <span class="mi">3</span>
+             <span class="mi">15</span> <span class="n">BINARY_SUBSCR</span>
+             <span class="mi">16</span> <span class="n">RETURN_VALUE</span>
+</code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p><a href="https://docs.python.org/3.7/library/dis.html">dis</a> 模块支持通过反汇编分析CPython bytecode。反汇编字节码的意思就是接收这一系列的字节，然后打印出我们能够理解的字符(opcodes)。</p>
+<p>dis.dis(x=None, *, file=None)
+拆卸 x 对象。 x 可以表示模块，类，方法，函数，生成器，代码对象，源代码字符串或原始字节码的字节序列。对于模块，它会拆散所有函数。对于一个类，它反汇编所有的方法（包括类和静态方法）。对于代码对象或原始字节码序列，每个字节码指令打印一行。字符串首先被编译为使用 compile() 内置函数代码对象，然后被反汇编。如果没有提供对象，则此函数将反汇编最后一个回溯。</p>
+</blockquote>
+<p><code>LOAD_NAME</code> 和 <code>LOAD_CONST</code> 只不过是将一些常量压栈, 有意思的操作码(opcodes)是<code>BUILD_SLICE</code> 和 <code>BINARY_SUBSCR</code></p>
+<p>我们去 CPython 在 GitHub 的镜像库上搜索关键字 <code>BUILD_SLICE</code> <a href="https://github.com/python/cpython/search?q=BUILD_SLICE&amp;utf8=%E2%9C%93">python/cpython</a> - 发现 “compile.c” 和 “ceval.c” 比较因吹思艇; “compile.c” 中是声明, “ceval.c” 中是执行, 我们要看就是后者</p>
+<p>我们发现在<code>TARGET(BUILD_SLICE)</code>里调用了<code>PySlice_New</code>, 再次返回之前的搜索页面搜索它, 于是我们在 <a href="https://github.com/python/cpython/blob/c93fed68841688a0cfd98e8adb39b297a32655d6/Objects/sliceobject.c">sliceobject.c</a>中找到这货, 不过有点意思的是, 看起来只是一个 &ldquo;helper class&rdquo; 来处理索引, 检查 stop 参数是否超出最大值, 切片长度非负等等</p>
+<p>所以我们再看看<a href="#1-cavalc-binary_subscr"><code>BINARY_SUBSCR</code></a>, 这个看起来是由下标<code>a[n]</code>触发, 下标为栈最顶值, 用于栈次顶值, 所以切片对象是通过下标组成列表对象(<code>BINARY_SUBSCR</code> 将会 pop 3 个<code>LOAD_CONST</code>, 代码位于 &ldquo;ceval.c&rdquo;)</p>
+<p>回到之前的 &ldquo;sliceobject.c&rdquo;, <a href="https://github.com/python/cpython/blob/c93fed68841688a0cfd98e8adb39b297a32655d6/Objects/listobject.c">listobject.c</a>-别被代码量吓着了, 其实挺容易找到这个函数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">static</span> <span class="n">PyObject</span> <span class="o">*</span>
+<span class="n">list_subscript</span><span class="p">(</span><span class="n">PyListObject</span><span class="o">*</span> <span class="n">self</span><span class="p">,</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">item</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在这个函数里边, 有正常的索引获取, 也有我们要找的: 切片</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">PySlice_Check</span><span class="p">(</span><span class="n">item</span><span class="p">))</span> <span class="p">{</span>
+    <span class="n">Py_ssize_t</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">slicelength</span><span class="p">,</span> <span class="n">cur</span><span class="p">,</span> <span class="n">i</span><span class="p">;</span>
+    <span class="n">PyObject</span><span class="o">*</span> <span class="n">result</span><span class="p">;</span>
+    <span class="n">PyObject</span><span class="o">*</span> <span class="n">it</span><span class="p">;</span>
+    <span class="n">PyObject</span> <span class="o">**</span><span class="n">src</span><span class="p">,</span> <span class="o">**</span><span class="n">dest</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">PySlice_GetIndicesEx</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">Py_SIZE</span><span class="p">(</span><span class="n">self</span><span class="p">),</span>
+        <span class="o">&amp;</span><span class="n">start</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">stop</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">step</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">slicelength</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">slicelength</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">PyList_New</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">step</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">list_slice</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="p">{</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">PyList_New</span><span class="p">(</span><span class="n">slicelength</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">result</span><span class="p">)</span> <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+
+        <span class="n">src</span> <span class="o">=</span> <span class="n">self</span><span class="o">-&gt;</span><span class="n">ob_item</span><span class="p">;</span>
+        <span class="n">dest</span> <span class="o">=</span> <span class="p">((</span><span class="n">PyListObject</span> <span class="o">*</span><span class="p">)</span><span class="n">result</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">ob_item</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">cur</span> <span class="o">=</span> <span class="n">start</span><span class="p">,</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">slicelength</span><span class="p">;</span> <span class="n">cur</span> <span class="o">+=</span> <span class="p">(</span><span class="n">size_t</span><span class="p">)</span><span class="n">step</span><span class="p">,</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">it</span> <span class="o">=</span> <span class="n">src</span><span class="p">[</span><span class="n">cur</span><span class="p">];</span>
+            <span class="n">Py_INCREF</span><span class="p">(</span><span class="n">it</span><span class="p">);</span>
+            <span class="n">dest</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">it</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>当步长为 1 (step=1)时的循环, 就很像我们要找的了</p>
+<p>so, 别的先不说, 切片列表其实就是个循环. 不过是用 C 循环的, 切片速度比你自己用 Python <code>list.append</code> 循环快多了</p>
+<p>对于其他类型可以支持下标切片的对象, 可能原理会有所不同; 例如 <code>range</code> 与 <code>list</code> 就有很大的区别</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="o">&gt;&gt;&gt;</span> <span class="n">list</span><span class="p">(</span><span class="n">range</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+<span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">list</span><span class="p">(</span><span class="n">range</span><span class="p">(</span><span class="mi">5</span><span class="p">))[</span><span class="o">::-</span><span class="mi">1</span><span class="p">]</span>
+<span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)[</span><span class="o">::-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">range</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><code>range</code> 像是重新计算了起始位置, 步长, 终止位置(start, step, end), 但是啥都没干, 因为已经切过了&hellip;(注: Python3 的 <code>range</code>, 2 里边是 <code>xrange</code>)</p>
+<h3 id="补充拓展-">补充拓展</h3>
+<ol>
+<li>
+<p>caval.c 中的 <code>BINARY_SUBSCR</code>, POP() 就是 <code>LOAD_CONST</code> 的那个栈 pop, <code>PyObject_GetItem(dic, key)</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"> <span class="n">TARGET</span><span class="p">(</span><span class="n">BINARY_SUBSCR</span><span class="p">)</span> <span class="p">{</span>
+     <span class="n">PyObject</span> <span class="o">*</span><span class="n">sub</span> <span class="o">=</span> <span class="n">POP</span><span class="p">();</span>
+     <span class="n">PyObject</span> <span class="o">*</span><span class="n">container</span> <span class="o">=</span> <span class="n">TOP</span><span class="p">();</span>
+     <span class="n">PyObject</span> <span class="o">*</span><span class="n">res</span> <span class="o">=</span> <span class="n">PyObject_GetItem</span><span class="p">(</span><span class="n">container</span><span class="p">,</span> <span class="n">sub</span><span class="p">);</span>
+     <span class="n">Py_DECREF</span><span class="p">(</span><span class="n">container</span><span class="p">);</span>
+     <span class="n">Py_DECREF</span><span class="p">(</span><span class="n">sub</span><span class="p">);</span>
+     <span class="n">SET_TOP</span><span class="p">(</span><span class="n">res</span><span class="p">);</span>
+     <span class="k">if</span> <span class="p">(</span><span class="n">res</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+         <span class="k">goto</span> <span class="n">error</span><span class="p">;</span>
+     <span class="n">DISPATCH</span><span class="p">();</span>
+ <span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>实现一个 python3 里的 <code>range</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"> <span class="k">class</span> <span class="nc">Myrange</span><span class="p">:</span>
+     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num</span><span class="p">):</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">num</span> <span class="o">=</span> <span class="n">num</span>
+    
+     <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+         <span class="k">return</span> <span class="bp">self</span>
+    
+     <span class="k">def</span> <span class="nf">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">i</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">num</span><span class="p">:</span>
+             <span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">i</span>
+             <span class="bp">self</span><span class="o">.</span><span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+             <span class="k">return</span> <span class="n">i</span>
+         <span class="k">else</span><span class="p">:</span>
+             <span class="k">raise</span> <span class="ne">StopIteration</span><span class="p">()</span> 
+</code></pre></td></tr></table>
+</div>
+</div></li>
+</ol>
+<p>有个缺陷就是<code>Myrange</code>是一个迭代器, 而Python3 的<code>range</code>不是, 只是一个惰性的可迭代对象</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="n">In</span> <span class="p">[</span><span class="mi">20</span><span class="p">]:</span> <span class="kn">import</span> <span class="nn">collections</span>
+<span class="n">In</span> <span class="p">[</span><span class="mi">22</span><span class="p">]:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">Myrange</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">Iterator</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">22</span><span class="p">]:</span> <span class="bp">False</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">24</span><span class="p">]:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">Myrange</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">collections</span><span class="o">.</span><span class="n">Iterator</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">24</span><span class="p">]:</span> <span class="bp">True</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">31</span><span class="p">]:</span> <span class="nb">iter</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">31</span><span class="p">]:</span> <span class="o">&lt;</span><span class="n">range_iterator</span> <span class="n">at</span> <span class="mh">0x10440f030</span><span class="o">&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>使用 next 无法调用 <code>range</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="n">In</span> <span class="p">[</span><span class="mi">36</span><span class="p">]:</span> <span class="n">a</span> <span class="o">=</span> <span class="n">Myrange</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">In</span> <span class="p">[</span><span class="mi">37</span><span class="p">]:</span> <span class="nb">next</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">37</span><span class="p">]:</span> <span class="mi">0</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">38</span><span class="p">]:</span> <span class="nb">next</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">38</span><span class="p">]:</span> <span class="mi">1</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">39</span><span class="p">]:</span> <span class="nb">next</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">39</span><span class="p">]:</span> <span class="mi">2</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">40</span><span class="p">]:</span> <span class="nb">next</span><span class="p">(</span><span class="nb">range</span><span class="p">)</span>
+<span class="o">---------------------------------------------------------------------------</span>
+<span class="ne">TypeError</span>                                 <span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">)</span>
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">40</span><span class="o">-</span><span class="n">cae19a709515</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span><span class="p">()</span>
+<span class="o">----&gt;</span> <span class="mi">1</span> <span class="nb">next</span><span class="p">(</span><span class="nb">range</span><span class="p">)</span>
+
+<span class="ne">TypeError</span><span class="p">:</span> <span class="s1">&#39;type&#39;</span> <span class="nb">object</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">an</span> <span class="n">iterator</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>range 是序列(列表，元组和字符串)，但并不包含任何内存中的内容</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="n">In</span> <span class="p">[</span><span class="mi">41</span><span class="p">]:</span> <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Sequence</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">42</span><span class="p">]:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">Sequence</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[</span><span class="mi">42</span><span class="p">]:</span> <span class="bp">True</span>
+</code></pre></td></tr></table>
+</div>
+</div>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">Author</span>
+    <span class="item-content">yangly</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">LastMod</span>
+    <span class="item-content">
+        2018-07-27
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/python/">python</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/python%E6%8F%8F%E8%BF%B0%E7%AC%A6%E7%AC%94%E8%AE%B0/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">Python描述符笔记</span>
+            <span class="prev-text nav-mobile">Prev</span>
+          </a>
+        <a class="next" href="/post/%E7%AE%97%E6%B3%95%E7%BA%A2%E4%B9%A6%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">
+            <span class="next-text nav-default">《算法小红书》读书笔记</span>
+            <span class="next-text nav-mobile">Next</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="https://github.com/yhliyr" class="iconfont icon-github" title="github"></a>
+  <a href="http://localhost:1313/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  
+
+  <span class="copyright-year">
+    &copy; 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">yhliyr</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+
+
+
+<script type="text/javascript" src="/js/main.min.c12618f9a600c40bd024996677e951e64d3487006775aeb22e200c990006c5c7.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>

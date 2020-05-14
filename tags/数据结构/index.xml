@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>数据结构 on yhliyr&#39;s blog</title>
+    <link>http://localhost:1313/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</link>
+    <description>Recent content in 数据结构 on yhliyr&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 20 May 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://localhost:1313/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>《算法小红书》读书笔记</title>
+      <link>http://localhost:1313/post/%E7%AE%97%E6%B3%95%E7%BA%A2%E4%B9%A6%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Sun, 20 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/post/%E7%AE%97%E6%B3%95%E7%BA%A2%E4%B9%A6%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</guid>
+      <description>[TOC] Chapter0 前言 配套网站 Coursera 在线课程: Part 1 (data, sorting, searching) Part 2 topic data structures and algorithms data types stack, queue, bag, union-find, priority queue sorting quicksort, mergesort, heapsort searching BST, red-black BST, hash table graphs BFS, DFS, Prim, Kruskal, Dijkstra strings radix sorts, tries, KMP, regexps, data compression advanced B-tree, suffix array, maxflow 第1章 基础 1. 基</description>
+    </item>
+    
+    <item>
+      <title>python字典的实现原理</title>
+      <link>http://localhost:1313/post/python%E5%AD%97%E5%85%B8%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</link>
+      <pubDate>Wed, 07 Feb 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/post/python%E5%AD%97%E5%85%B8%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/</guid>
+      <description>[TOC] 1 python 27 字典结构 1. 字典通过哈希表实现 默认版本: Python2.7.x cpython 2.7 源码 dictobject.c dictobject.h 以下代码对源码有删减, 只保留主要逻辑 2. 字典中基本存储单元: PyDictEntry 哈希表初始大小 PyDict_MINSIZE 为 8</description>
+    </item>
+    
+  </channel>
+</rss>

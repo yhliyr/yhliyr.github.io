@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>《算法小红书》读书笔记 - yhliyr&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="yangly" /><meta name="description" content="[TOC] Chapter0 前言 配套网站 Coursera 在线课程: Part 1 (data, sorting, searching) Part 2 topic data structures and algorithms data types stack, queue, bag, union-find, priority queue sorting quicksort, mergesort, heapsort searching BST, red-black BST, hash table graphs BFS, DFS, Prim, Kruskal, Dijkstra strings radix sorts, tries, KMP, regexps, data compression advanced B-tree, suffix array, maxflow 第1章 基础 1. 基" /><meta name="keywords" content="Hugo, theme, even" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.69.2 with theme even" />
+
+
+<link rel="canonical" href="http://localhost:1313/post/%E7%AE%97%E6%B3%95%E7%BA%A2%E4%B9%A6%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+<link href="/sass/main.min.c5b7928861aa2d3f0e306778c33e6689ea2b22356cfdc1a4e10e925019e911d1.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="《算法小红书》读书笔记" />
+<meta property="og:description" content="[TOC] Chapter0 前言 配套网站 Coursera 在线课程: Part 1 (data, sorting, searching) Part 2 topic data structures and algorithms data types stack, queue, bag, union-find, priority queue sorting quicksort, mergesort, heapsort searching BST, red-black BST, hash table graphs BFS, DFS, Prim, Kruskal, Dijkstra strings radix sorts, tries, KMP, regexps, data compression advanced B-tree, suffix array, maxflow 第1章 基础 1. 基" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://localhost:1313/post/%E7%AE%97%E6%B3%95%E7%BA%A2%E4%B9%A6%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" />
+<meta property="article:published_time" content="2018-05-20T00:00:00+00:00" />
+<meta property="article:modified_time" content="2018-05-20T00:00:00+00:00" />
+<meta itemprop="name" content="《算法小红书》读书笔记">
+<meta itemprop="description" content="[TOC] Chapter0 前言 配套网站 Coursera 在线课程: Part 1 (data, sorting, searching) Part 2 topic data structures and algorithms data types stack, queue, bag, union-find, priority queue sorting quicksort, mergesort, heapsort searching BST, red-black BST, hash table graphs BFS, DFS, Prim, Kruskal, Dijkstra strings radix sorts, tries, KMP, regexps, data compression advanced B-tree, suffix array, maxflow 第1章 基础 1. 基">
+<meta itemprop="datePublished" content="2018-05-20T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2018-05-20T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="2760">
+
+
+
+<meta itemprop="keywords" content="算法,books,数据结构," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="《算法小红书》读书笔记"/>
+<meta name="twitter:description" content="[TOC] Chapter0 前言 配套网站 Coursera 在线课程: Part 1 (data, sorting, searching) Part 2 topic data structures and algorithms data types stack, queue, bag, union-find, priority queue sorting quicksort, mergesort, heapsort searching BST, red-black BST, hash table graphs BFS, DFS, Prim, Kruskal, Dijkstra strings radix sorts, tries, KMP, regexps, data compression advanced B-tree, suffix array, maxflow 第1章 基础 1. 基"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo"> </a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo"> </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">《算法小红书》读书笔记</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2018-05-20 </span>
+        <div class="post-category">
+            <a href="/categories/python/"> Python </a>
+            </div>
+        
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Contents</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#chapter0-前言-">Chapter0 前言</a></li>
+        <li><a href="#第1章-基础-">第1章 基础</a></li>
+        <li><a href="#第2章-排序-">第2章 排序</a></li>
+        <li><a href="#第3章-查找-">第3章 查找</a></li>
+        <li><a href="#第4章-图-">第4章 图</a></li>
+        <li><a href="#第5章-字符串-">第5章 字符串</a></li>
+        <li><a href="#第6章-背景-">第6章 背景</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      <p>[TOC]</p>
+<h3 id="chapter0-前言-">Chapter0 前言</h3>
+<ul>
+<li><a href="https://algs4.cs.princeton.edu/home/">配套网站</a></li>
+<li>Coursera 在线课程: <a href="https://www.coursera.org/learn/algorithms-part1/home/info">Part 1 (data, sorting, searching)</a> Part 2</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>topic</th>
+<th>data structures and algorithms</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>data</td>
+<td>types stack, queue, bag, union-find, priority queue</td>
+</tr>
+<tr>
+<td>sorting</td>
+<td>quicksort, mergesort, heapsort</td>
+</tr>
+<tr>
+<td>searching</td>
+<td>BST, red-black BST, hash table</td>
+</tr>
+<tr>
+<td>graphs</td>
+<td>BFS, DFS, Prim, Kruskal, Dijkstra</td>
+</tr>
+<tr>
+<td>strings</td>
+<td>radix sorts, tries, KMP, regexps, data compression</td>
+</tr>
+<tr>
+<td>advanced</td>
+<td>B-tree, suffix array, maxflow</td>
+</tr>
+</tbody>
+</table>
+<h3 id="第1章-基础-">第1章 基础</h3>
+<h4 id="1-基础编程模型">1. 基础编程模型</h4>
+<ul>
+<li>
+<p>表达式, &amp;&amp; 运算符高于 ||</p>
+</li>
+<li>
+<p>Java 中创建数组</p>
+<ol>
+<li>
+<p>声明数组的名字和类型</p>
+</li>
+<li>
+<p>创建数组</p>
+</li>
+<li>
+<p>初始化数组元素</p>
+<pre><code> // 完整模式
+ double[] a;               // 声明数组
+ a = new double[N];        // 创建数组
+ for (int i = 0; i &lt; N; i++) // 初始化数组
+     a[i] = 0.0;
+    
+ // 简化写法, 默认值就是 0.0
+ double[] a = new double[N];
+    
+ // 声明初始化
+ int[] a = {1, 1, 2, 3, 5, 8}
+</code></pre>
+</li>
+</ol>
+</li>
+<li>
+<p>自动转换, 例如 Java 在连接字符串(使用 + 号)时会自动将任意数据类型的值转换为字符串, 即有一个参数为字符串, 结果也是一个字符串</p>
+</li>
+<li>
+<p>println() 会附件一个换行符, printf() 能够格式化输出</p>
+</li>
+<li>
+<p>Java 字节码</p>
+<ul>
+<li>运行于 Java 虚拟机上的代码, 保证 Java 运行在各种设备上</li>
+</ul>
+</li>
+<li>
+<p>Java 中 1/0 会出现异常, 1.0/0.0 的值是 Infinity</p>
+</li>
+<li>
+<p>for 和 while 的区别: for 循环结束其递增变量不可用, 而 while 循环可用</p>
+</li>
+<li>
+<p>int a[] 和 int[] a, 两者是等价的, 前者是 C 语言中的方式, 后者是 Java 提倡的</p>
+</li>
+<li>
+<p>索引是 0 开头的原因, 来源于机器语言要计算数组元素的地址, 需要起始地址加上索引, 如果是 1, 会浪费 第一个元素的空间</p>
+</li>
+<li>
+<p>Java 中, 一个静态方法不能将另一个静态方法作为参数</p>
+</li>
+</ul>
+<h4 id="2-数据抽象">2. 数据抽象</h4>
+<h4 id="3-背包-队列和栈">3. 背包, 队列和栈</h4>
+<ul>
+<li>数据类型: Bag, Queue, Stack</li>
+<li>泛型, 迭代</li>
+<li>链式数据结构的重要性, 链表</li>
+</ul>
+<ol>
+<li>泛型, 参数化类型</li>
+<li>背包, 一种不支持从中删除元素的集合数据类型</li>
+</ol>
+<h4 id="4-算法分析">4. 算法分析</h4>
+<ol>
+<li>
+<p>科学方法</p>
+<ul>
+<li>观察特点, 精确测量</li>
+<li>假设模型</li>
+<li>预测</li>
+<li>根据结果与预测, 改进模型</li>
+<li>直到预测与观察一致</li>
+</ul>
+</li>
+<li>
+<p>原则</p>
+<ul>
+<li>实验可复现(reproducible)</li>
+<li>可证伪(falsifiable)</li>
+</ul>
+</li>
+<li>
+<p>order of growth</p>
+</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>order of growth</th>
+<th>name</th>
+<th>typical code framework</th>
+<th>description</th>
+<th>example</th>
+<th>T(2N) / T(N)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>constant</td>
+<td>a = b + c;</td>
+<td>statement</td>
+<td>add two numbers</td>
+<td>1</td>
+</tr>
+<tr>
+<td>log N</td>
+<td>logarithmic</td>
+<td>while (N &gt; 1) {  N = N / 2;  &hellip;   }</td>
+<td>divide in half</td>
+<td>binary search</td>
+<td>~1</td>
+</tr>
+<tr>
+<td>N</td>
+<td>linear</td>
+<td>for (int i = 0; i &lt; N; i++) {&hellip; }</td>
+<td>loop</td>
+<td>find the maximum</td>
+<td>2</td>
+</tr>
+<tr>
+<td>N log N</td>
+<td>linearithmic</td>
+<td>[see mergesort lecture]</td>
+<td>divide and conquer</td>
+<td>mergesort</td>
+<td>~2</td>
+</tr>
+<tr>
+<td>N2</td>
+<td>quadratic</td>
+<td>for (int i = 0; i &lt; N; i++)  for (int j = 0; j &lt; N; j++){&hellip; }</td>
+<td>double loop</td>
+<td>check all pairs</td>
+<td>4</td>
+</tr>
+<tr>
+<td>N3</td>
+<td>cubic</td>
+<td>for (int i = 0; i &lt; N; i++)</td>
+<td>for (int j = 0; j &lt; N; j++)for (int k = 0; k &lt; N; k++) {&hellip; }</td>
+<td>triple loop</td>
+<td>check all triples</td>
+</tr>
+<tr>
+<td>2N</td>
+<td>exponential</td>
+<td>[see combinatorial search lecture]</td>
+<td>exhaustive search</td>
+<td>check all subsets</td>
+<td>T(N)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="5-案例研究-union-find-算法">5. 案例研究: union-find 算法</h4>
+<ol>
+<li>动态连通性</li>
+</ol>
+<ul>
+<li>union-find 算法的 API,</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>public class UF</th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td><strong>UF(int N)</strong></td>
+<td>initialize union-find data structure with N  objects (0 to N – 1)(以整数标识(0到 N-1)初始化 N 个触点)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong>union(int p, int q)</strong></td>
+<td>add connection between p and q (在 p 和 q 之间添加一条连接)</td>
+</tr>
+<tr>
+<td>boolean</td>
+<td><strong>connected(int p, int q)</strong></td>
+<td>are p and q in the same component? (如果 p 和 q 在同一分量中则返回 TRUE)</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong>find(int p)</strong></td>
+<td>component identifier for p (0 to N – 1) (p 所在的分量的标志符(0 到 N-1))</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong>count()</strong></td>
+<td>number of components (连通分量的数量)</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>如果两个触点在不同的分量中
+<ul>
+<li>union(): 将两个分量归并</li>
+<li>find(): 返回给定触点所在的联通分量的标志符</li>
+<li>connected: 判断两个触点是否存在于同一分量之中</li>
+<li>count(): 返回所有连通分量的数量</li>
+</ul>
+</li>
+<li>开始有 N 个分量, union() 操作后分量数为 N-1</li>
+</ul>
+<ol start="2">
+<li>实现</li>
+</ol>
+<ul>
+<li>
+<p>quick-find 算法, 代码:</p>
+<pre><code>  ::JAVA
+  public int find(int p)
+  {   return id[p]; }
+    
+  public void union(int p, int q)
+  {   // 将 p 和 q 归并到相同的分量中
+      int pID = find(p);
+      int qID = find(q);
+    
+      // 如果 p 和 q 已经在相同的分量之中则不做改变
+      if (pID == qID) return;
+    
+      // 将 p 的分量重命名为 q 的 id  
+      for (int i = 0; i&lt; id.length; i++)
+          if (id[i] == pID) id[i] = qID;
+      count--;
+  }
+</code></pre>
+</li>
+<li>
+<p>quick-find 分析</p>
+<ul>
+<li>使用此算法直到最后只剩一个连通分量, 那么最少需要(N + 3)(N - 1)次数组访问, 即 N^2 级别</li>
+<li>调用 N-1 次 union(), 每次访问数组 N+3</li>
+</ul>
+</li>
+<li>
+<p>quick-union 算法</p>
+<pre><code>  ::java
+  public class QuickUnionUF {
+      private int[] id;
+        
+      public QuickUnionUF(int N) {
+          id = new int[N];
+          for (int i = 0; i &lt; N; i++) id[i] = i;
+      }
+      private int root(int i){
+          while (i != id[i]) i = id[i];
+          return i;
+      }
+    
+      public boolean connected(int p, int q) {
+          return root(p) == root(q);
+      }
+        
+      public void union(int p, int q) {
+          int i = root(p);
+          int j = root(q);
+          id[i] = j;
+      }
+  }
+</code></pre>
+</li>
+<li>
+<p>加权 quick-union(Weighted quick-union)</p>
+<ul>
+<li>
+<p>特点:</p>
+<ul>
+<li>Modify quick-union to avoid tall trees.</li>
+<li>Keep track of size of each tree (number of objects).</li>
+<li>Balance by linking root of smaller tree to root of larger tree.</li>
+<li>make the root of the smaller tree (in terms of the number of nodes) point to the root of the larger tree.</li>
+</ul>
+</li>
+<li>
+<p>code:</p>
+<pre><code>  ::java
+  public class WeightedQuickUnionUF {
+      private int[] id;
+      private int[] sz; // 各个根节点对应分量的大小
+      private int count; // 连通分量的数量
+            
+      public  WeightedQuickUnionUF(int N) {
+          count = N
+          id = new int[N];
+          for (int i = 0; i &lt; N; i++) id[i] = i;
+          sz = new int[N];
+          for (int i = 0; i &lt; N; i++) sz[i] = i;
+      }
+      private int root(int i){
+          // 跟随链接找到根节点
+          while (i != id[i]) i = id[i];
+          return i;
+      }
+      public int count() {
+          return count;
+      }
+      public boolean connected(int p, int q) {
+          return root(p) == root(q);
+      }                
+      public void union(int p, int q) {
+          int i = root(p);
+          int j = root(q);
+          id[i] = j;
+          if (i==j) return;
+          // 将小树的根节点连接到大树的根节点
+          if (sz[i] &lt; sz[j]) { id[i] = j; sz[j] += sz[i];}
+          else               { id[j] = i; sz[i] += sz[j];}
+          count--;
+      }
+  }
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>树的深度为什么是 lg 数量级? 设一棵完全二叉树节点个数为N，高度为h。所以总节点个数N满足以下不等式：</p>
+<ul>
+<li>1 + 21 + 22 +……+ 2h-1 &lt; N &lt;= 1 + 21 + 22 +……+ 2h</li>
+<li>即 2h - 1 &lt; N &lt;= 2h+1 - 1</li>
+<li>所以 2h &lt; N+1 &lt;= 2h+1，</li>
+<li>h &lt; log2(N+1) &lt;= h+1 (两边同取以2为底的对数得)</li>
+<li>算法上 lg 一般默认 以 2 为底的 log</li>
+</ul>
+</li>
+<li>
+<p>比较</p>
+<ul>
+<li>Quick-find defect.
+<ul>
+<li>Union too expensive (N array accesses).</li>
+<li>Trees are flat, but too expensive to keep them flat.</li>
+</ul>
+</li>
+<li>Quick-union defect.
+<ul>
+<li>Trees can get tall.</li>
+<li>Find too expensive (could be N array accesses).</li>
+</ul>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>algorithm</th>
+<th>initialize</th>
+<th>union</th>
+<th>find</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>quick-find</td>
+<td>N</td>
+<td>N</td>
+<td>1</td>
+</tr>
+<tr>
+<td>quick-union</td>
+<td>N</td>
+<td>N†</td>
+<td>N</td>
+</tr>
+<tr>
+<td>weighted QU</td>
+<td>N</td>
+<td>lgN†</td>
+<td>lg N</td>
+</tr>
+<tr>
+<td>quick-union is worst case</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>† includes cost of finding roots</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+<ol start="3">
+<li>
+<p>展望</p>
+</li>
+<li>
+<p>coursera</p>
+<ul>
+<li>
+<p><a href="https://www.sigmainfy.com/blog/categories#Interview">测验解答博客Interview Questions: Union–Find (ungraded)
+</a></p>
+</li>
+<li>
+<p>Percolation</p>
+<ul>
+<li>每一格开放的概率为 p, 阻塞概率为(1-p), (Each site is open with probability p )</li>
+<li>渗透系统: 当顶层格子连通底层格子</li>
+<li>设 常数 p*
+<ul>
+<li>当 p &gt; p*, 认为渗透系统</li>
+<li>当 p &lt; p*, 认为系统不渗透</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>算法实现</p>
+<ul>
+<li>Q. How to check whether an N-by-N system percolates?
+<ul>
+<li>Create an object for each site and name them 0 to N 2 – 1.</li>
+<li>Sites are in same component if connected by open sites.</li>
+<li>Percolates iff any site on bottom row is connected to site on top row.</li>
+</ul>
+</li>
+<li>C・lever trick. Introduce 2 virtual sites (and connections to top and bottom).
+<ul>
+<li>Percolates iff virtual top site is connected to virtual bottom site.</li>
+</ul>
+</li>
+<li>Q. How to model opening a new site?
+<ul>
+<li>A. Mark new site as open; connect it to all of its adjacent open sites.</li>
+</ul>
+</li>
+<li>Q. What is percolation threshold p* ?
+<ul>
+<li>A. About 0.592746(constant known only via simulation) for large square lattices.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>Steps to developing a usable algorithm.</p>
+<ul>
+<li>Model the problem.</li>
+<li>Find an algorithm to solve it. ・Fast enough? Fits in memory?</li>
+<li>If not, figure out why.</li>
+<li>Find a way to address the problem. ・Iterate until satisfied.</li>
+</ul>
+</li>
+<li>
+<p>蒙特卡洛模拟(Monte Carlo simulation)</p>
+<ul>
+<li>构造或描述概率过程</li>
+<li>实现从已知概率分布抽样</li>
+<li>建立各种估计量</li>
+</ul>
+</li>
+<li>
+<p>利用蒙特卡洛模拟渗透系统</p>
+<ul>
+<li>Initialize all sites to be blocked.</li>
+<li>Repeat the following until the system percolates
+<ul>
+<li>Choose a site uniformly at random among all blocked sites.</li>
+<li>Open the site.</li>
+</ul>
+</li>
+<li>The fraction of sites that are opened when the system percolates provides an estimate of the percolation threshold.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h3 id="第2章-排序-">第2章 排序</h3>
+<h4 id="0-coursera">0. Coursera</h4>
+<ol>
+<li>
+<p>Stacks and Queues</p>
+<ul>
+<li>Client: program using operations defined in interface.</li>
+<li>Implementation: actual code implementing operations.</li>
+<li>Interface: description of data type, basic opera</li>
+<li>resizing arrays
+<ul>
+<li>当字典剩余空间用完, 新建字典大小为原字典的两倍, 然后拷贝所有数据</li>
+<li>shrink, 临界点为原字典 1/4 时, 新建 1/2 的字典, 然后拷贝数据到新字典</li>
+<li>Invariant. Array is between 25% and 100% full</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>generics(泛型)</p>
+<ul>
+<li>
+<p>将类型参数化, 泛型就是我定义一个类（叫泛型类型），这个类有个类型参数：class Stack<!-- raw HTML omitted -->，</p>
+</li>
+<li>
+<p>使用的时候（叫做泛型实例）指定一下类型就可以了：Stack<!-- raw HTML omitted --> s = &hellip; 泛型就是多个类型的共同抽象。</p>
+<p>Stack<!-- raw HTML omitted --> s = new Stack<!-- raw HTML omitted -->();
+Apple  a = new Apple();
+Orange b = new Orange();
+s.push(a);
+s.push(b); // compile-time error
+a = s.pop();</p>
+</li>
+<li>
+<p>java 中的 iterable: has method that returns an Iterator</p>
+</li>
+<li>
+<p>Iterator: has methods</p>
+<ul>
+<li>hasNext()</li>
+<li>next()</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>Interview Questions: Stacks and Queues</p>
+<ol>
+<li>
+<p>Queue with two stacks. Implement a queue with two stacks so that each queue operations takes a constant amortized number of stack operations.</p>
+<ol>
+<li>
+<p>方法一:</p>
+<ul>
+<li>
+<p>enQueue(q, x)</p>
+<ol>
+<li>当 stack1 非空, 把 stack1 全部数据 push 到 stack2</li>
+<li>Push x 到 stack1</li>
+<li>push 所有数据 从 stack2 到 stack1</li>
+</ol>
+</li>
+<li>
+<p>dnQueue(q)</p>
+<ol>
+<li>如果 stack1 为空, 报错</li>
+<li>stack1.pop()</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>
+<p>方法二:</p>
+<ul>
+<li>enQueue(q,  x)
+<ol>
+<li>stack1.push(x)</li>
+</ol>
+</li>
+<li>deQueue(q)
+<ol>
+<li>如果 stack1 和 stack2 都为空, 报错</li>
+<li>如果 stack2 为空, stack1 非空, 把 stack1 的全部数据 push 到 stack2 中</li>
+<li>stack2.pop()</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>
+<p>方法三, 一个 stack,</p>
+<ul>
+<li>
+<p>enQueue(x)</p>
+<ol>
+<li>stack1.push(x)</li>
+</ol>
+</li>
+<li>
+<p>deQueue:</p>
+<ol>
+<li>如果 stack1 为空, 报错</li>
+<li>如果 stack1 只有一个元素, 返回此元素</li>
+<li>将 stack1 递归 pop, pop 的每个值储存到变量 res, 然后 stack1.push(res), 直到 stack1 只有一个元素, 返回 此元素</li>
+</ol>
+</li>
+<li>
+<p>code:</p>
+<pre><code>  ::java           
+  // Java Program to implement a queue using one stack
+  import java.util.Stack;
+                 
+  public class QOneStack 
+  {
+      //class of queue having two stacks
+      static class Queue
+      {
+          Stack&lt;Integer&gt; stack1;
+      }
+                     
+      /* Function to push an item to stack*/
+      static void push(Stack&lt;Integer&gt; top_ref,int new_data)
+      {
+          /* put in the data */
+          top_ref.push(new_data);
+      }
+                     
+      /* Function to pop an item from stack*/
+      static int pop(Stack&lt;Integer&gt; top_ref)
+      {
+          /*If stack is empty then error */
+          if(top_ref == null)
+          {
+              System.out.println(&quot;Stack Underflow&quot;);
+              System.exit(0);    
+          }
+          //return element from stack
+          return top_ref.pop(); 
+      }
+                     
+      /* Function to enqueue an item to queue */
+      static void enQueue(Queue q,int x)
+      {
+          push(q.stack1,x);
+      }
+                     
+      /* Function to dequeue an item from queue */
+      static int deQueue(Queue q)
+      {
+          int x,res=0;
+          /* If the stacks is empty then error */
+          if(q.stack1.isEmpty())
+          {
+              System.out.println(&quot;Q is Empty&quot;);
+              System.exit(0);
+          }
+          //Check if it is a last element of stack
+          else if(q.stack1.size() == 1)
+          {
+              return pop(q.stack1);
+          }
+          else
+          {
+              /* pop an item from the stack1 */
+              x=pop(q.stack1);
+                             
+              /* store the last dequeued item */
+              res = deQueue(q);
+                             
+              /* push everything back to stack1 */
+              push(q.stack1,x);
+              return res;
+          }
+          return 0;
+      }
+                     
+      /* Driver function to test above functions */
+      public static void main(String[] args) 
+      {
+          /* Create a queue with items 1 2 3*/
+          Queue q = new Queue();
+          q.stack1 = new Stack&lt;&gt;();
+                         
+          enQueue(q, 1);
+          enQueue(q, 2);
+          enQueue(q, 3);
+                         
+          /* Dequeue items */
+          System.out.print(deQueue(q) + &quot; &quot;);
+          System.out.print(deQueue(q) + &quot; &quot;);
+          System.out.print(deQueue(q) + &quot; &quot;);
+      }
+</code></pre>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>
+<p>Stack with max. Create a data structure that efficiently supports the stack operations (push and pop) and also a return-the-maximum operation. Assume the elements are reals numbers so that you can compare them.</p>
+</li>
+<li>
+<p>Java generics. Explain why Java prohibits generic array creation.</p>
+</li>
+</ol>
+</li>
+<li>
+<p>Elementary Sorts</p>
+</li>
+</ol>
+<h4 id="1-初级排序算法">1. 初级排序算法</h4>
+<h4 id="2-归并排序">2. 归并排序</h4>
+<h4 id="3-快速排序">3. 快速排序</h4>
+<h4 id="4-优先队列">4. 优先队列</h4>
+<h4 id="5-应用">5. 应用</h4>
+<h3 id="第3章-查找-">第3章 查找</h3>
+<h3 id="第4章-图-">第4章 图</h3>
+<h3 id="第5章-字符串-">第5章 字符串</h3>
+<h3 id="第6章-背景-">第6章 背景</h3>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">Author</span>
+    <span class="item-content">yangly</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">LastMod</span>
+    <span class="item-content">
+        2018-05-20
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/%E7%AE%97%E6%B3%95/">算法</a>
+          <a href="/tags/books/">books</a>
+          <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/%E5%88%87%E7%89%87%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">翻译 - Python切片的实现原理</span>
+            <span class="prev-text nav-mobile">Prev</span>
+          </a>
+        <a class="next" href="/post/%E8%BD%AF%E4%BB%B6%E6%8E%A8%E8%8D%90_ntfs-3g_for_mac/">
+            <span class="next-text nav-default">软件推荐 NTFS-3G_for_Mac</span>
+            <span class="next-text nav-mobile">Next</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="https://github.com/yhliyr" class="iconfont icon-github" title="github"></a>
+  <a href="http://localhost:1313/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  
+
+  <span class="copyright-year">
+    &copy; 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">yhliyr</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+
+
+
+<script type="text/javascript" src="/js/main.min.c12618f9a600c40bd024996677e951e64d3487006775aeb22e200c990006c5c7.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>

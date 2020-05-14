@@ -1,0 +1,2094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>《流畅的 Python》读书笔记(一) - yhliyr&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="yangly" /><meta name="description" content="[TOC] 第二部分 数据结构 Chapter2 List 列表推导式/生成器表达式在 Python3 有自己的局部作用域, 类似函数. 而 Python2 没有 元组, 还可以用于没有字段名的记录 collections.namedtuple 工厂函数 作用: 构建" /><meta name="keywords" content="Hugo, theme, even" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.69.2 with theme even" />
+
+
+<link rel="canonical" href="http://localhost:1313/post/fluent_python/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+<link href="/sass/main.min.c5b7928861aa2d3f0e306778c33e6689ea2b22356cfdc1a4e10e925019e911d1.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="《流畅的 Python》读书笔记(一)" />
+<meta property="og:description" content="[TOC] 第二部分 数据结构 Chapter2 List 列表推导式/生成器表达式在 Python3 有自己的局部作用域, 类似函数. 而 Python2 没有 元组, 还可以用于没有字段名的记录 collections.namedtuple 工厂函数 作用: 构建" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://localhost:1313/post/fluent_python/" />
+<meta property="article:published_time" content="2018-01-20T00:00:00+00:00" />
+<meta property="article:modified_time" content="2018-01-20T00:00:00+00:00" />
+<meta itemprop="name" content="《流畅的 Python》读书笔记(一)">
+<meta itemprop="description" content="[TOC] 第二部分 数据结构 Chapter2 List 列表推导式/生成器表达式在 Python3 有自己的局部作用域, 类似函数. 而 Python2 没有 元组, 还可以用于没有字段名的记录 collections.namedtuple 工厂函数 作用: 构建">
+<meta itemprop="datePublished" content="2018-01-20T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2018-01-20T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="10242">
+
+
+
+<meta itemprop="keywords" content="books," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="《流畅的 Python》读书笔记(一)"/>
+<meta name="twitter:description" content="[TOC] 第二部分 数据结构 Chapter2 List 列表推导式/生成器表达式在 Python3 有自己的局部作用域, 类似函数. 而 Python2 没有 元组, 还可以用于没有字段名的记录 collections.namedtuple 工厂函数 作用: 构建"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo"> </a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo"> </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">《流畅的 Python》读书笔记(一)</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2018-01-20 </span>
+        <div class="post-category">
+            <a href="/categories/python/"> Python </a>
+            </div>
+        
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Contents</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#第二部分-数据结构-">第二部分 数据结构</a>
+      <ul>
+        <li><a href="#chapter2-list-">Chapter2 List</a></li>
+        <li><a href="#chapter3-dict-and-set-">Chapter3 Dict and Set</a></li>
+        <li><a href="#chapter4-text-versus-bytes-">Chapter4 Text versus Bytes</a></li>
+      </ul>
+    </li>
+    <li><a href="#第三部分-把函数视作对象-">第三部分 把函数视作对象</a>
+      <ul>
+        <li><a href="#chapter5-一等函数first-class-">Chapter5 一等函数(first-class)</a></li>
+        <li><a href="#chapter6-first-class-设计模式重要-">Chapter6 First Class 设计模式(重要)</a></li>
+        <li><a href="#chapter7-函数装饰器和闭包-">Chapter7 函数装饰器和闭包</a></li>
+      </ul>
+    </li>
+    <li><a href="#第四部分-面向对象惯用法-">第四部分 面向对象惯用法</a>
+      <ul>
+        <li><a href="#chapter8-对象引用可变性垃圾回收-">Chapter8 对象引用/可变性/垃圾回收</a></li>
+        <li><a href="#chapter9-符合-python-风格的对象-">Chapter9 符合 Python 风格的对象</a></li>
+        <li><a href="#chapter10-序列的修改-散列和切片-">Chapter10 序列的修改, 散列和切片</a></li>
+        <li><a href="#chapter11-接口-从协议到抽象基类-">Chapter11 接口: 从协议到抽象基类</a></li>
+        <li><a href="#chapter12-继承的优缺点-">Chapter12 继承的优缺点</a></li>
+        <li><a href="#chapter13-正确重载运算符-todo">Chapter13 正确重载运算符 TODO###</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      <p>[TOC]</p>
+<h2 id="第二部分-数据结构-">第二部分 数据结构</h2>
+<h3 id="chapter2-list-">Chapter2 List</h3>
+<ol>
+<li>
+<p>列表推导式/生成器表达式在 Python3 有自己的局部作用域, 类似函数. 而 Python2 没有</p>
+</li>
+<li>
+<p>元组, 还可以用于没有字段名的记录</p>
+</li>
+<li>
+<p>collections.namedtuple 工厂函数</p>
+<p>作用: 构建一个带字段名的元组, 一个有名字的类</p>
+<pre><code> ::Python
+ from collections import namedtuple
+ In [32]: City = namedtuple('City', 'name country population coo
+     ...: rdinates')
+ In [33]: tokyo = City('Tyokyo', 'JP', 23,(35.6, 139.6))
+ In [34]: tokyo
+ Out[34]: City(name='Tyokyo', country='JP', population=23, coordinates=(35.6, 139.6))
+ In [54]: City._fields
+ Out[54]: ('name', 'country', 'population', 'coordinates')
+ In [47]: tokyo._asdict()
+ Out[47]:
+ OrderedDict([('name', 'Tyokyo'),
+              ('country', 'JP'),
+              ('population', 23),
+              ('coordinates', (35.6, 139.6))])
+ # 第一个参数'City'是类名, 第二个参数是类的各个字段的名字, 或者一个包含字符串的可迭代对象
+ # 属性: 类属性:  _make() _field 实例属性: _asdict() _field
+</code></pre>
+<p><a href="http://manjusaka.itscoder.com/2016/12/28/Someone-tell-me-that-you-think-Python-is-simple-2/">namedtuple源码解析</a></p>
+</li>
+<li>
+<p>使用名字切片</p>
+<pre><code> ::Python
+ sli = slice(0, 6) # 创建切片
+ string = '0123456'
+ string[sli]       # 相当于 string[0,6]
+</code></pre>
+</li>
+<li>
+<p>列表操作符 <code>*</code>
+<code>my_list = [[]] * 3</code> 中的三个列表都是引用了同一个列表</p>
+</li>
+<li>
+<p>如果实现了特殊方法 <code>__isadd__</code>, <code>+=</code> 的作用是在原对象上进行改动,
+反之的话, 会创建新的对象. 相同的, <code>*=</code> 对应 <code>__imul__</code></p>
+</li>
+<li>
+<p>tuple 的一个坑</p>
+<pre><code> ::Python
+ In [59]: t = (1, 2, [30, 40])
+ In [60]: t[2] += [50, 60]
+ # 结果: 报错 'TypeError: 'tuple' object does not support item assignment'
+ # 并且值改变
+ In [62]: t[2]
+ Out[62]: [30, 40, 50, 60]
+</code></pre>
+<ul>
+<li>s[a] += b 分为三步
+<ol>
+<li>将 <code>s[a]</code>的值存入 TOS(Top Of Stack), 栈的顶端</li>
+<li>计算 <code>TOS += b</code></li>
+<li><code>s[a] = TOS</code> TOS赋值, 因为 <code>s</code> 是不可变, 报错</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>
+<p><code>list.sort</code> 与 <code>sorted</code> 内部算法是 Timsort, 交替使用插入排序归并排序</p>
+<ul>
+<li>相同参数: <code>reverse</code> <code>key</code>
+<ul>
+<li><code>reverse</code> 默认 False 为升序</li>
+<li><code>key</code> 例子: <code>key=str.lower</code>, <code>key=len</code>(按长度升序), <code>key=str</code>, <code>key=int</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><code>bisect</code> 模块, 两个函数 <code>bisect</code>和<code>insort</code>, 都利用了二分查找算法</p>
+<ul>
+<li><code>bisect(haystack, needle)</code> 在haystack里搜索needle的位置</li>
+<li><code>insort(seq, item)</code> 把变量 item 插入到seq中</li>
+</ul>
+</li>
+<li>
+<p><code>array.array</code> array(typecode [, initializer]) -&gt; array  <code>d</code> 类型是一个双精度浮点数组, array.tofile array.fromfile</p>
+</li>
+<li>
+<p><code>memoryview</code></p>
+<ul>
+<li><code>memory(number).cast('B')</code> 将memv里的内容转换为&rsquo;B&rsquo;类型, 即无符号字符</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="chapter3-dict-and-set-">Chapter3 Dict and Set</h3>
+<ol>
+<li>
+<p>常见字</p>
+<ol>
+<li>
+<p>字典推导式:</p>
+<pre><code> ::Python
+ DIAL_CODES = [(86, 'China'), (91, 'India'), (1, 'United States')]
+ country_code = {country: code for code, country in DIAL_CODES}    
+</code></pre>
+</li>
+<li>
+<p>常见映射方法 <code>dict</code> <code>collections.defaultdict</code> <code>collections.OrderedDict</code></p>
+</li>
+</ol>
+</li>
+<li>
+<p>如何处理查找不到的键</p>
+<ul>
+<li>
+<p>使用 <code>d.get(k, default)</code></p>
+<pre><code>  :::python
+  my_dict.setdefault(key, []).append(new_valule)
+  # 相当于
+  if key no in my_dict:
+      my_dict[key] = []
+  mydict[key].append(new_value)
+</code></pre>
+</li>
+<li>
+<p><code>__missing__</code> 当在 <code>__getitem__</code> 碰到找不到的键的时候, 会调用<code>__missing__</code>方法
+而对<code>get</code>或者<code>__contains__</code>(in运算符)没有影响</p>
+</li>
+</ul>
+</li>
+<li>
+<p>标准库中dict类型的变种</p>
+<ol>
+<li><code>collections.OrderedDict</code> 添加时保持顺序</li>
+<li><code>collections.ChainMap</code> 可以容纳数个不同的映射对象</li>
+<li><code>collections.counter</code> 可以接受一个字符串, 统计各个字母出现的次数</li>
+</ol>
+</li>
+<li>
+<p>set 和 frozenset 类型</p>
+<ul>
+<li>
+<p>集合中的元素必须是可散列的, set 不可散列, frozenset 可散列</p>
+</li>
+<li>
+<p>空集必须写成 <code>set()</code> 形式</p>
+<pre><code>  ::Python
+  # 求 needles 元素在 haystack 里出现的次数
+  found = len(needles &amp; haystack) 
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>散列表工作原理</p>
+<ol>
+<li>散列表是一个稀疏数组(总有空白元素的数组称为稀疏(sparse)数组), 其中元素叫做表元(bucket)
+dict 散列表中, 每个键值对占用一个表元, 一个表元分两个部分, 对键的引用和对值的引用, 所有表元的大小是一致的. Python3.3后, str, bytes, datetime 对象的散列值过程中多了随机&rsquo;加盐&rsquo;,目的是为了防止 Dos 攻击而采取的一种安全措施.
+Python 保证表元三分之一是空的, 当即将满的时候, 原有散列表会被复制到一个更大的空间里.</li>
+<li>可散列: 如果一个对象是可散列的, 那么在这个对象生命周期中, 他的散列值是不变的.
+而且需要实现两个方法 <code>__hash__()</code>, <code>__qe__()</code> (可以与其他键做比较)</li>
+<li>可散列类型: str bytes 数值类型 frozenset, 不一定是不可变类型(比如含有可变类型对象的元组)</li>
+<li>散列表算法:
+<ul>
+<li>以键查找值: 调用 hash(search_key)来计算 search_key 的散列值, 取值的末尾几位数字当作偏移量, 通过这个偏移量在散列表里面查找表元, 如果为空报异常, 不为空的话, 检查<code>search_key == found_key</code> 是否为真, 真就返回<code>found_value</code>, 如果为假, 称为散列冲突, 会<strong>多取几位 search_key 的末尾数字</strong>重新计算偏移量, 重新计算表元, 若依然不相等, 则重复此步骤.</li>
+<li>更新键值: 同查找一样, 只不过找到表元后, 更新值对象</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>
+<p>散列表原理带来的字典特点(键类型, 顺序)</p>
+<ol>
+<li>键必须是可散列的
+<ul>
+<li>支持<code>hash()</code> 函数, 并通过<code>__hash__()</code>方法得到的散列值不变</li>
+<li>支持通过<code>__eq__()</code>方法检测相等性</li>
+<li>若 a==b, 则 hash(a)==hash(a)</li>
+<li>所有用户自定义的对象默认为可散列</li>
+</ul>
+</li>
+<li>字典占内存大
+<ul>
+<li>原因: 使用了稀疏(sparse)的散列表</li>
+<li>可以使用元组代替字典存储大的数据, 原因:1)避免了散列表产生的空间.2)无需把记录中字段的名字在每个元素里都存一遍</li>
+</ul>
+</li>
+<li>查询速度快
+<ul>
+<li>使用空间换时间</li>
+</ul>
+</li>
+<li>键的次序取决于添加顺序
+<ul>
+<li>相等的字典可能键的次序不一样</li>
+</ul>
+</li>
+<li>添加新键可能改变已有键的顺序
+<ul>
+<li>因为可能由于扩容造成散列冲突, 导致次序变化. 所以在遍历的字典的时候同时对字典进行修改会出错</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>
+<p>set 的实现及导致的结果</p>
+<ol>
+<li>set/forzenset 的实现也依赖于散列表, 但散列表存放的只是元素的引用(A set is a dictionary without storage for the value)</li>
+<li>字典/散列表/集合共同的特点:
+<ul>
+<li>集合里的元素必须是可散列的</li>
+<li>集合很消耗内存</li>
+<li>集合可以高效的判断元素是否位于某个集合</li>
+<li>元素的次序取决于被添加到集合里的次序</li>
+<li>集合添加新元素, 可能会改变已有元素的次序</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>
+<p>第三章扩展</p>
+<ol>
+<li><a href="https://book.douban.com/subject/3224524/">代码之美18章-Python字典类:如何打造全能战士</a> <a href="https://hg.python.org/cpython/file/tip/Objects/dictobject.c">CPython dictobject.c源文件</a></li>
+<li><a href="https://www.python.org/dev/peps/pep-0274/">PEP274</a></li>
+<li><a href="http://pyvideo.org/pycon-us-2010/the-mighty-dictionary-55.html">Brandon Rhodes 的讲座&quot;The Mighty Dictionary&rdquo;</a></li>
+</ol>
+</li>
+</ol>
+<h3 id="chapter4-text-versus-bytes-">Chapter4 Text versus Bytes</h3>
+<ol>
+<li>
+<p>字符, 码位, 字节</p>
+<ul>
+<li>码位, 字符的标识, Unicode标准中以4~6个十六进制数字表示, 且加前缀&quot;U+&rdquo;</li>
+<li>Python2 的bytes类型不同于 Python3 的bytes类型</li>
+<li></li>
+</ul>
+</li>
+<li>
+<p>bytes, bytearray, memoryview</p>
+<ul>
+<li><code>bytes()</code>方法参数:
+<ul>
+<li>一个str对象, 一个encoding关键字参数</li>
+<li>一个可迭代对象, 提供0~255之间的数值</li>
+<li>一个整数(Python3.6已经移除)</li>
+<li>一个实现了缓冲协议的对象(如bytes/bytearray/memoryview/array.array)</li>
+</ul>
+</li>
+<li></li>
+</ul>
+</li>
+<li>
+<p>Unicode, 陈旧字符集的编解码器</p>
+</li>
+<li>
+<p>编码错误</p>
+<ul>
+<li><code>encode('cp237', errors='ignore')</code>或者<code>encode('cp437', errors='replace')</code>, &lsquo;replace&rsquo;是把无法编码的字符替换为&rsquo;?&rsquo;</li>
+</ul>
+</li>
+<li>
+<p>处理文本文件的最佳实践</p>
+</li>
+<li>
+<p>默认编码, 标准I/O问题</p>
+</li>
+<li>
+<p>规范Unicode文本</p>
+</li>
+<li>
+<p>规范化的实用函数</p>
+</li>
+<li>
+<p>使用locale模块和PyUCA库正确的排序Unicode文本</p>
+</li>
+<li>
+<p>Unicode 数据库中的字符元数据</p>
+</li>
+<li>
+<p>字符串和字节序列都能处理的API</p>
+</li>
+</ol>
+<hr>
+<h2 id="第三部分-把函数视作对象-">第三部分 把函数视作对象</h2>
+<h3 id="chapter5-一等函数first-class-">Chapter5 一等函数(first-class)</h3>
+<ol>
+<li>
+<p>一等对象: 1)在运行时创建 2)能赋值给变量 3)能作为参数传递给函数 4) 能作为函数的返回结果</p>
+</li>
+<li>
+<p>函数式编程</p>
+</li>
+<li>
+<p>高阶函数(接受函数作为参数, 或者把函数作为结果返回)</p>
+</li>
+</ol>
+<ul>
+<li>map, sorted, filter, reduce &hellip;</li>
+</ul>
+<ol start="4">
+<li>lambda:</li>
+</ol>
+<ul>
+<li>sorted(my_list, key=lambda word: word[::-1])</li>
+</ul>
+<ol start="5">
+<li>
+<p>7种可调用对象: 用户定义的函数, 内置函数, 内置方法, 方法, 类, 类的实例, 生成器函数</p>
+</li>
+<li>
+<p>函数内省 <code>__dict__</code></p>
+</li>
+<li>
+<p>函数参数. 函数对象有个 <code>__default__</code> 属性, 值是一个元组, 保存着定位参数和关键字参数的默认值</p>
+</li>
+<li>
+<p><code>inspect.Signature</code></p>
+</li>
+<li>
+<p>函数注解 <code>-&gt;</code></p>
+<ul>
+<li>
+<p><code>-&gt; str:</code> 注解的意思是返回的对象类型是字符串</p>
+</li>
+<li>
+<p>注解部分会存储在<code>__annotations__</code> 属性(一个字典)中</p>
+<pre><code>  ::Python
+  def clip(text:str, max_len:'int &gt; 0'=80) -&gt; str:
+  ...
+  &gt;&gt;&gt; clip.__annotations__
+  {'text': &lt;class 'str'&gt;, 'max_len': 'int &gt; 0', 'return': &lt;class 'str'&gt;}
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>支持函数式编程的包 - operator</p>
+<ol>
+<li>
+<p><code>reduce</code> 计算阶乘</p>
+<pre><code> ::Python
+ from functools import reduce
+ def fact(n):
+     return reduce(lambda x, y: x*y, range(1, n+1))
+</code></pre>
+</li>
+<li>
+<p><code>operator.mul</code></p>
+<pre><code> ::Python
+ from functools import reduce
+ from operator import mul
+ def fact(n):
+     return reduce(mul, range(1, n+1))
+</code></pre>
+</li>
+<li>
+<p><code>operator.attrgetter</code>
+<code>sorted(metro_areas, key=attrgetter('coord.lat'))</code></p>
+</li>
+<li>
+<p><code>operator.methodcaller</code></p>
+<pre><code> ::Python
+ In [124]: from operator import methodcaller
+ In [125]: s = 'The time has come'
+ In [129]: hiphenate = methodcaller('replace', ' ', '-')
+ In [130]: hiphenate(s)
+ Out[130]: 'The-time-has-come'
+</code></pre>
+</li>
+<li>
+<p><code>functools.partial</code>
+partial 第一参数是一个可调用对象, 后面是任意个要绑定的定位参数和关键字参数</p>
+<pre><code> ::Python
+ &gt;&gt;&gt; from operator import mul
+ &gt;&gt;&gt; from functools import partial
+ &gt;&gt;&gt; triple = partial(mul, 3)
+ &gt;&gt;&gt; triple(7)
+ 27
+</code></pre>
+</li>
+</ol>
+</li>
+</ol>
+<h3 id="chapter6-first-class-设计模式重要-">Chapter6 First Class 设计模式(重要)</h3>
+<ol>
+<li>
+<p>三个折扣规则</p>
+<ul>
+<li>1000积分以上的顾客, 每个订单%5折扣</li>
+<li>同一订单中, 单个商品数量20个以上, 享10%折扣</li>
+<li>订单中不同商品达到10个以上, 享7%折扣</li>
+</ul>
+</li>
+<li>
+<p>几种设计模式:</p>
+<ul>
+<li>第一种: 构造一个 Promotion 抽象基类, 三个折扣规则分为三个类继承自基类</li>
+<li>第二种: 无抽象基类, 规则为函数实现</li>
+<li>第三种: 函数实现规则, 使用列表存储, 然后使用生成器遍历</li>
+<li>第四种: 使用 globals() endswith('_promo&rsquo;)</li>
+<li>inspect.getmembers()</li>
+<li>使用装饰器讲函数注册到列表, 然后再使用取列表最大折扣
+<ul>
+<li>好处: 简洁, 启用禁用方便, 装饰器可以在其他模块中定义, 解耦</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h3 id="chapter7-函数装饰器和闭包-">Chapter7 函数装饰器和闭包</h3>
+<ol>
+<li>
+<p>基础</p>
+<ol>
+<li>特点
+<ul>
+<li>将函数替换成其他函数</li>
+<li>装饰器在加载模块时立即执行</li>
+</ul>
+</li>
+<li>执行装饰器的时间
+<ul>
+<li>装饰器导入模块立即执行</li>
+<li>被装饰的函数在明确调用时运行</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>
+<p>局部变量的判断</p>
+<ul>
+<li>Python 不要求声明变量, 但是会假定变量为局部变量</li>
+<li>使用 <code>dis.dis</code> 模块, 反汇编 Python 函数字节码</li>
+<li><code>LOAD_FAST</code> 加载本地</li>
+<li><code>LOAD_GLOBAL</code> 加载全局</li>
+</ul>
+</li>
+<li>
+<p>闭包作用/工作原理</p>
+<ul>
+<li>
+<p><code>avg</code> 函数计算不断增加的总值的平均值</p>
+</li>
+<li>
+<p>其中 <code>series</code> 是一个自由变量(free variable)</p>
+<pre><code>  ::Python
+  In [9]: avg.__code__.co_varnames   # 局部变量
+  Out[9]: ('new_value', 'total')
+  In [10]: avg.__code__.co_freevars  # 自由变量
+  Out[10]: ('series',)
+</code></pre>
+</li>
+<li>
+<p><code>__code__</code> 表示编译后的函数定义体</p>
+<pre><code>  ::Python
+  In [11]: avg.__closure__
+  Out[11]: (&lt;cell at 0x10436cb58: list object at 0x104652588&gt;,)
+  In [12]: avg.__closure__[0].cell_contents
+  Out[12]: [12, 19, 24]
+</code></pre>
+</li>
+<li>
+<p>series的绑定储存在 <code>__closure__</code> 属性中, 每一个元素是一个 cell对象</p>
+</li>
+</ul>
+</li>
+<li>
+<p>nonlocal</p>
+</li>
+</ol>
+<ul>
+<li>作用: 把变量标记为自由变量, 即在函数或其他作用域中使用外层(非全局)变量。</li>
+</ul>
+<ol start="5">
+<li>
+<p>实现装饰器</p>
+<ol>
+<li>
+<p>普通装饰器的缺点:</p>
+<ul>
+<li>覆盖了被装饰器的 <code>__name__</code> <code>__doc__</code> 属性</li>
+<li>不支持关键字参数</li>
+</ul>
+</li>
+<li>
+<p>使用 <code>functools.wraps</code> 改进以上的缺点</p>
+<pre><code> ::Python
+ import time
+ import functools
+
+ def clock(func):
+     @functools.wraps(func)
+     def clocked(*args, **kwargs):
+         t0 = time.time()
+         result = func(*args, **kwargs)
+         elapsed = time.time() - t0
+         name = func.__name__
+         arg_lst = []
+         if args:
+             arg_lst.append(', '.join(repr(arg) for arg in args))
+         if kwargs:
+             print('[{:.8f}s] {}({}) -&gt; {!r}'.format(elapsed, name, arg_str, result))
+             arg_lst.append(', '.join(pairs))
+         arg_str = ', '.join(arg_lst)
+         print('[%0.8fs] %s(%s) -&gt; %r ' % (elapsed, name, arg_str, result))
+         return result
+     return clocked
+</code></pre>
+</li>
+</ol>
+</li>
+<li>
+<p>标准库中的装饰器, 内置三个: property, classmethod, staticmethod</p>
+<ul>
+<li>
+<p>functools.wraps</p>
+</li>
+<li>
+<p>functools.lru_cache</p>
+<ul>
+<li>作用: lru(Least Recently Used), 缓存一定长度的函数结果, 可以重复利用</li>
+</ul>
+</li>
+<li>
+<p>functools.singledispatch</p>
+<ul>
+<li>作用: @singledispatch 装饰器将被装饰的普通函数变成范函数(根据第一个参数的类型), 以不同方式执行相同操作的一组函数.</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>
+<p>优点: 支持模块化扩展, 各个模块可以为它支持的各个类型注册一个专门函数, 可以代替<code>if/elif/elif...</code></p>
+<pre><code>      ::Python
+      from functools import singledispatch
+      from collections import abc 
+      import numbers
+      import html
+      @singledispatch
+      def htmlize(obj):
+          content = html.escape(repr(obj))
+          return '&lt;pre&gt;{}&lt;/pre&gt;'.format(content)
+      @htmlize.register(str)
+      def _(text):
+          content = html.escape(text).replace('\n', '&lt;br&gt;\n')
+          return '&lt;p&gt;{}&lt;/p&gt;'.format(content)
+      @htmlize.register(numbers.Integral)
+      def _(n):
+          return '&lt;pre&gt;{0} (0x{0:x})&lt;/pre&gt;'.format(n)
+      @htmlize.register(tuple)
+      @htmlize.register(abc.MutableSequence)
+      def _(seq):
+          inner = '&lt;/li&gt;\n&lt;li&gt;'.join(htmlize(item) for item in seq)
+          return '&lt;ul&gt;\n&lt;li&gt;' + inner + '&lt;/li&gt;\n&lt;/ul&gt;'
+  print(htmlize(78))
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>带参数装饰器</p>
+<pre><code> ::Python
+ import time
+ DEFAULT_FMT = '[{elapsed:0.8f}s] {name}({args}) -&gt; {result}'
+ def clock(fmt=DEFAULT_FMT):
+     def decorate(func):
+         def clocked(*args, **kwargs):
+             t0 = time.perf_counter()
+             _result = func(*args, **kwargs)
+             elapsed = time.perf_counter() - t0
+             name = func.__name__
+             arg_str = ', '.join(repr(arg) for arg in args)
+             result = repr(_result)
+             print(fmt.format(**locals()))
+             return _result
+         return clocked
+     return decorate
+    
+ @clock
+ def snooze(seconds):
+     time.sleep(seconds)
+ for i in range(3):
+     snooze(.123)
+</code></pre>
+</li>
+</ol>
+<hr>
+<h2 id="第四部分-面向对象惯用法-">第四部分 面向对象惯用法</h2>
+<h3 id="chapter8-对象引用可变性垃圾回收-">Chapter8 对象引用/可变性/垃圾回收</h3>
+<h4 id="0-对象标识-值-元组的不可变性-但其中值可变">0. 对象标识, 值, 元组的不可变性, 但其中值可变&hellip;</h4>
+<h4 id="1-python-变量不是盒子-是标签标签">1. Python 变量不是&rsquo;盒子&rsquo;, 是&rsquo;标签&rsquo;/&lsquo;标签&rsquo;</h4>
+<h4 id="2-标识-相等性-别名">2. 标识, 相等性, 别名</h4>
+<ol>
+<li><code>==</code> 与 <code>is</code>
+<ul>
+<li><code>==</code> 比较的两个对象中保存的数据, <code>is</code> 比较对象的标识</li>
+<li>推荐写法: <code>x is None</code>, <code>x is not None</code></li>
+<li><code>is</code> 比 <code>==</code> 运算速度快, 因为它不能重载</li>
+<li><code>a == b</code> 是语法糖, 等同于 <code>a.__eq__(b)</code>, 继承自object的<code>__eq__</code>方法比较两个对象的ID, 结果与 <code>is</code>一样.</li>
+</ul>
+</li>
+<li>元组的不可变性是指保存的引用不变, 与引用的对象无关, 即如果元组内保存可变对象(如列表), 则列表内元素可变</li>
+</ol>
+<h4 id="3-浅复制">3. 浅复制</h4>
+<ul>
+<li>列表中, 构造方法<code>list()</code> 与 <code>[:]</code> 是浅复制(只复制容器, 副本中的元素是对原容器中的元素做引用, 如果改变副本中的可变元素, 原容器中的元素也会相应改变</li>
+<li>特殊方法: <code>__copy__</code> <code>__deepcopy__</code></li>
+</ul>
+<h4 id="4-函数的参数作为引用时">4. 函数的参数作为引用时</h4>
+<ul>
+<li>
+<p>参数传递类型: 共享传参(call by sharing), 即 形参为实参的引用, 形参是实参的别名,  使用此模式的其他面向对象语言:Ruby, Smalltalk, Java的引用类型</p>
+</li>
+<li>
+<p>Python函数的参数默认值，是在编译阶段就绑定的。默认参数是函数的属性，它的值可能会随着函数被调用而改变。</p>
+</li>
+<li>
+<p>不要使用可变类型作为参数的默认值</p>
+</li>
+<li>
+<p>预防可变参数导致的坑: 1. 默认参数设置为 <code>None</code> 2. 当为 <code>None</code> 时初始化参数</p>
+<pre><code>  ::Python
+  def __init__(self, passengers=None):
+      if passengers is None:
+          self.passengers = []
+      else:
+          self.passengers = list(passengers)
+</code></pre>
+</li>
+</ul>
+<h4 id="5-del-和垃圾回收">5. del 和垃圾回收</h4>
+<ol>
+<li>
+<p><code>__del__</code> 销毁实例时调用, 释放外部资源</p>
+</li>
+<li>
+<p><code>del s1</code> 不删除对象, 而是删除对象的引用. del 并不一定会调用 <code>__del__</code> 魔术方法</p>
+<pre><code> ::Python
+ In [1]: import weakref
+ In [2]: s1 = {1, 2}
+ In [3]: s2 = s1
+ In [4]: def bye():
+    ...:     print('Gone with the wind..')
+    ...:
+ In [5]: ender = weakref.finalize(s1, bye) 
+ # 给 s1引用的对象(即{1,2}) 注册 bye 回调, 当 对象 gc 时调用 bye
+ In [6]: ender.alive
+ Out[6]: True
+ In [8]: del s1
+ In [9]: ender.alive
+ Out[9]: True
+ # del s1 只是删除对象的引用, 没有 gc
+ In [10]: s2 = 'spam'
+ Gone with the wind..
+ In [11]: ender.alive
+ Out[11]: False
+ # s2 不再引用 对象{1,2} 后, 对象被引用数为0,  调用 gc 对象被销毁, 引发回调
+ # weakref.finalize() 是弱引用, 不增加引用计数
+</code></pre>
+</li>
+</ol>
+<blockquote>
+<p>Help on finalize in module weakref object:
+class finalize(builtins.object)
+|  Class for finalization of weakrefable objects
+|
+|  finalize(obj, func, *args, **kwargs) returns a callable finalizer
+|  object which will be called when obj is garbage collected. The
+|  first time the finalizer is called it evaluates func(*arg, **kwargs)
+|  and returns the result. After this the finalizer is dead, and
+|  calling it just returns None.</p>
+</blockquote>
+<h4 id="6-弱引用">6. 弱引用</h4>
+<ol>
+<li>
+<p>弱引用不增加引用数量, 即不影响垃圾回收(gc)</p>
+</li>
+<li>
+<p>使用 weakref.ref 实例获取所指对象
+(注意以下代码要用自带的 REPL, 不要用 Ipython, 具体<a href="https://stackoverflow.com/questions/17580289/assigning-a-value-to-single-underscore-in-python-ipython-interpreter">解释:</a></p>
+<ul>
+<li>
+<p>The Python interpreter assigns the last expression value to _</p>
+</li>
+<li>
+<p>只有 Python 自带的解释器才有这个特性</p>
+<pre><code>  ::Python
+  &gt;&gt;&gt; import weakref
+  &gt;&gt;&gt; a_set = {0,1}
+  &gt;&gt;&gt; wref = weakref.ref(a_set)
+  &gt;&gt;&gt; wref
+  &lt;weakref at 0x1068dc138; to 'set' at 0x1068d44a8&gt;
+  &gt;&gt;&gt; wref()
+  {0, 1}
+  # 调用wref() 返回, 对象 {0, 1} 会被 `_` 引用
+  &gt;&gt;&gt; a_set = {123,123,123}
+  &gt;&gt;&gt; # a_set 引用其他对象, {0,1}对象 仅被 `_` 引用
+  &gt;&gt;&gt; wref()
+  {0, 1}
+  &gt;&gt;&gt; wref() is None
+  False
+  # 调用这个表达式时, {0,1}被 `_` 引用, 但是之后 `_` 绑定到 False, {0,1} 对象被引用数为0
+  &gt;&gt;&gt; wref() is None
+  True
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>WeakValueDictionary</p>
+<ul>
+<li>
+<p>WeakValueDictionary 类实现的是可变映射,  值是对象的弱引用, 当此对象被 GC 后, 对应的键会自动删除, 相应的还有 WeakKeyDictionary</p>
+</li>
+<li>
+<p>下列代码中 <code>del catalog</code> 之后 <code>Parmesan</code> 还存在的原因是, 在之前的 for 循环中, 临时变量 <code>cheese</code> 引用了对象, 可能会导致变量的存在时间比预期长, 显式删除才能完全删除</p>
+<pre><code>  ::Python
+  class Cheese():
+      def __init__(self, kind):
+          self.kind = kind
+      def __repr__(self):
+          return 'Cheese(%r)' % self.kind
+
+  import weakref
+  stock = weakref.WeakValueDictionary()
+  catalog = [Cheese('Red Leicester'), Cheese('Tilsit'),
+                  Cheese('Brie'), Cheese('Parmesan')]
+  for cheese in catalog:
+      stock[cheese.kind] = cheese
+
+  sorted(stock.keys())
+  # ['Brie', 'Parmesan', 'Red Leicester', 'Tilsit']
+  del catalog
+  sorted(stock.keys())
+  ['Parmesan']
+  del cheese
+  sorted(stock.keys())
+  # []
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>弱引用的局限(CPython)</p>
+<ul>
+<li>set 可以作为弱引用的目标</li>
+<li>基本的 list 和 dict 不能作为弱引用的目标, 但是其子类可以</li>
+<li>int 和 tuple 及其子类都不能作为弱引用的目标</li>
+</ul>
+</li>
+</ol>
+<h4 id="7-python-不可变类型的一些小特性">7. Python 不可变类型的一些小特性</h4>
+<ol>
+<li>t 是一个元组, 那么 t[:] 和 tuple(t) 不能创建副本, 而是返回同一个对象的引用, str, bytes, forzeset 也都这样</li>
+<li>常用字符串及数字在内存中驻留, 是 Cpython 的一些优化细节</li>
+</ol>
+<h3 id="chapter9-符合-python-风格的对象-">Chapter9 符合 Python 风格的对象</h3>
+<h4 id="0--本章要点">0.  本章要点:</h4>
+<ul>
+<li>生成对象其他表示形式的内置函数 (如 repr(), bytes())</li>
+<li>使用类方法实现备选构造函数</li>
+<li>扩展 format(), str.format()</li>
+<li>实现只读属性</li>
+<li>把对象变为可散列的, 以便在集合中作为 dict的键使用</li>
+<li>使用 <code>__slots__</code> 的主要需求是节省内存, 而不是为了避免创建实例属性
+概念:</li>
+<li>@classmethod 与 @staticmethod 的用法</li>
+<li>私有属性(@private), 受保护属性的用法, 约定, 局限</li>
+</ul>
+<h4 id="1-对象表示形式">1. 对象表示形式</h4>
+<ol>
+<li>repr() 以 便于开发者理解的方式返回对象的字符串表示形式, <code>__repr__</code></li>
+<li>str() 以 便于用户理解的方式返回对象的字符串表示形式, <code>__str__</code></li>
+<li><code>__bytes__</code></li>
+</ol>
+<h4 id="2-向量类">2. 向量类</h4>
+<pre><code>::Python
+from array import array 
+import math
+
+class Vector2d:
+    typecode = 'd'
+    def __init__(self, x, y):
+        self.x = float(x)
+        self.y = float(y)
+    # In [5]: v1 = Vector2d(3, 4)
+    # In [6]: print(v1.x, v1.y)
+    # 3.0 4.0
+
+    def __iter__(self):
+        return (i for i in (self.x, self.y))
+    # In [8]: x, y = v1
+    # In [9]: x,y
+    # Out[9]: (3.0, 4.0)
+
+    def __repr__(self):
+        class_name = type(self).__name__
+        return '{}({!r},{!r})'.format(class_name, *self)
+    # In [7]: v1
+    # Out[7]: Vector2d(3.0,4.0)
+
+    def __eq__(self, other):
+        return tuple(self) == tuple(other)
+    # In [10]: v1_clone = eval(repr(v1))
+    # In [11]: v1 == v1_clone
+    # Out[11]: True
+
+    def __str__(self):
+        # return (self.x, self.y)
+        return str(tuple(self))
+    # In [12]: print(v1)
+    # (3.0, 4.0)
+
+    def __bytes__(self):
+        return (bytes([ord(self.typecode)]) +
+                bytes(array(self.typecode, self)))
+    # In [13]: oetets = bytes(v1)
+    # Out[13]: b'd\\x00\\x00\\x00\\x00....@'
+    
+    def __abs__(self):
+        return math.hypot(self.x, self.y) 
+    # In [15]: abs(v1)
+    # Out[15]: 5.0
+
+    def __bool__(self):
+        return bool(abs(self))
+    # In [16]: bool(v1), bool(Vector2d(0, 0))
+    # Out[16]: (True, False)
+</code></pre>
+<ul>
+<li>Normally str.format() will call the object.<strong>format</strong>() method on the object itself, but by using !r, repr(object).<strong>format</strong>() is used instead.</li>
+</ul>
+<h4 id="3-备选构造方法">3. 备选构造方法</h4>
+<ul>
+<li>
+<p>在类 Vector2d 中添加方法 frombytes</p>
+<pre><code>  ::Python
+  @classmethod 
+  def frombytes(cls, octets):
+      typecode = chr(octets[0])
+      # memoryview() 函数返回给定参数的内存查看对象(Momory view)。
+      # 所谓内存查看对象，是指对支持缓冲区协议的数据进行包装，在不需要复制对象基础上允许Python代码访问。
+      # 对象符合缓冲区协议的对象，为了给别的代码使用缓冲区里的数据，而不必拷贝，就可以直接使用。
+      memv = memoryview(octets[1:]).cast(typecode)
+      return cls(*memv)
+</code></pre>
+</li>
+</ul>
+<h4 id="4-classmethod-staticmethod">4. classmethod staticmethod</h4>
+<ul>
+<li>扩展: <a href="https://julien.danjou.info/blog/2013/guide-python-static-class-abstract-methods">The definitive guide on how to use static, class or abstract methods in Python</a></li>
+</ul>
+<h4 id="5-格式化显示">5. 格式化显示</h4>
+<ol>
+<li>
+<p>format() 函数, 两种方式:</p>
+<pre><code> ::Python
+ In [3]: brl = 1/2.43
+ In [4]: brl
+ Out[4]: 0.4115226337448559
+ In [6]: format(brl, '0.4f')
+ Out[6]: '0.4115'
+ In [7]: '1 BRL = {rate:0.2f} USD'.format(rate=brl)
+ Out[7]: '1 BRL = 0.41 USD'
+</code></pre>
+</li>
+<li>
+<p><a href="https://docs.python.org/3/library/string.html#formatspec">格式规范微语言文档</a></p>
+<pre><code> ::Python
+ def __format__(self, fmt_spec=''):
+     # 以 'p' 结尾, 使用极坐标
+     if fmt_spec.endswith('p'):
+         fmt_spec = fmt_spec[:-1]
+         coords = (abs(self), self.angle())
+         outer_fmt = '&lt;{}, {}&gt;'
+     else:
+         coords = self
+         outer_fmt = '({}, {})'
+     components = (format(c, fmt_spec) for c in coords)
+     return outer_fmt.format(*components)
+
+ def angle(self):
+     return math.atan2(self.y, self.x)
+</code></pre>
+</li>
+</ol>
+<h4 id="6-可散列的-vector2d">6. 可散列的 Vector2d</h4>
+<ol>
+<li>
+<p>可散列需要实现两个方法: <code>__hash__</code> <code>__eq__</code>, 所以需要使变量(self.x)不可变</p>
+</li>
+<li>
+<p>全部代码:</p>
+<pre><code> ::Python
+ from array import array 
+ import math
+
+ class Vector2d:
+     '''
+     &gt;&gt;&gt; v1 = Vector2d(3, 4)
+     &gt;&gt;&gt; print(v1.x, v1.y)
+     3.0 4.0
+     &gt;&gt;&gt; x, y = v1
+     &gt;&gt;&gt; x, y
+     (3.0, 4.0)
+     &gt;&gt;&gt; v1
+     Vector2d(3.0,4.0)
+     &gt;&gt;&gt; v1_clone = eval(repr(v1))
+     &gt;&gt;&gt; v1 == v1_clone
+     True
+     &gt;&gt;&gt; print(v1)
+     (3.0, 4.0)
+     &gt;&gt;&gt; abs(v1)
+     5.0
+     &gt;&gt;&gt; bool(v1), bool(Vector2d(0, 0)) 
+     (True, False)
+
+ Test of ``.formbytes()`` class method:
+
+     &gt;&gt;&gt; v1_clone = Vector2d.frombytes(bytes(v1))
+     &gt;&gt;&gt; v1_clone
+     Vector2d(3.0,4.0)
+     &gt;&gt;&gt; v1 == v1_clone
+     True
+
+ Tests of ``format()`` with Cartesian coordinates:
+
+     &gt;&gt;&gt; format(v1)
+     '(3.0, 4.0)'
+     &gt;&gt;&gt; format(v1, '.2f')
+     '(3.00, 4.00)'
+     &gt;&gt;&gt; format(v1, '.3e')
+     '(3.000e+00, 4.000e+00)'
+
+ Tests of the ``angle`` method:
+
+     &gt;&gt;&gt; Vector2d(0, 0).angle()
+     0.0
+     &gt;&gt;&gt; Vector2d(1, 0).angle()
+     0.0
+     &gt;&gt;&gt; epsilon = 10**-8
+     &gt;&gt;&gt; abs(Vector2d(0,1).angle() - math.pi/2) &lt; epsilon
+     True
+     &gt;&gt;&gt; abs(Vector2d(1,1).angle() - math.pi/4) &lt; epsilon 
+     True
+
+ Test of ``format()`` with polar coordinates:
+
+     &gt;&gt;&gt; format(Vector2d(1, 1), 'p') 
+     '&lt;1.4142135623730951, 0.7853981633974483&gt;'
+     &gt;&gt;&gt; format(Vector2d(1, 1), '.3ep')
+     '&lt;1.414e+00, 7.854e-01&gt;'
+     &gt;&gt;&gt; format(Vector2d(1, 1), '0.5fp')
+     '&lt;1.41421, 0.78540&gt;'
+
+ Test of hashing:
+
+     &gt;&gt;&gt; v1 = Vector2d(3,4)
+     &gt;&gt;&gt; v2 = Vector2d(3.1, 4.2)
+     &gt;&gt;&gt; hash(v1)
+     7
+     &gt;&gt;&gt; len(set([v1, v2]))
+     2
+     '''
+     typecode = 'd'
+     __slots__= ('__x', '__y')
+        
+     def __init__(self, x, y):
+         self.__x = float(x)
+         self.__y = float(y)
+     @property
+     def x(self):
+         return self.__x
+     @property
+     def y(self):
+         return self.__y    
+
+     def __iter__(self):
+         return (i for i in (self.x, self.y))
+     # In [8]: x, y = v1
+     # In [9]: x,y
+     # Out[9]: (3.0, 4.0)
+
+     def __repr__(self):
+         class_name = type(self).__name__
+         return '{}({!r},{!r})'.format(class_name, *self)
+     # In [7]: v1
+     # Out[7]: Vector2d(3.0,4.0)
+
+     def __eq__(self, other):
+         return tuple(self) == tuple(other)
+     # In [10]: v1_clone = eval(repr(v1))
+     # In [11]: v1 == v1_clone
+     # Out[11]: True
+
+     def __str__(self):
+         # return (self.x, self.y)
+         return str(tuple(self))
+     # In [12]: print(v1)
+     # (3.0, 4.0)
+
+     def __bytes__(self):
+         return (bytes([ord(self.typecode)]) +
+                 bytes(array(self.typecode, self)))
+     # In [13]: oetets = bytes(v1)
+     # Out[13]: b'd\\x00\\x00\\x00\\x00....@'
+        
+     def __abs__(self):
+         return math.hypot(self.x, self.y) 
+     # In [15]: abs(v1)
+     # Out[15]: 5.0
+
+     def __bool__(self):
+         return bool(abs(self))
+     # In [16]: bool(v1), bool(Vector2d(0, 0))
+     # Out[16]: (True, False)
+
+     def __format__(self, fmt_spec=''):
+         # 以 'p' 结尾, 使用极坐标
+         if fmt_spec.endswith('p'):
+             fmt_spec = fmt_spec[:-1]
+             coords = (abs(self), self.angle())
+             outer_fmt = '&lt;{}, {}&gt;'
+         else:
+             coords = self
+             outer_fmt = '({}, {})'
+         components = (format(c, fmt_spec) for c in coords)
+         return outer_fmt.format(*components)
+
+     def angle(self):
+         return math.atan2(self.y, self.x)
+
+     def __hash__(self):
+         return hash(self.x) ^ hash(self.y)
+
+     @classmethod
+     def frombytes(cls, octets):
+         typecode = chr(octets[0])
+         memv = memoryview(octets[1:]).cast(typecode)
+         return cls(*memv)
+
+ if __name__=='__main__':
+     import doctest
+     doctest.testmod(verbose=True)
+</code></pre>
+</li>
+</ol>
+<h4 id="7-python-的私有属性-和-受保护的-属性">7. Python 的私有属性 和 &ldquo;受保护的&rdquo; 属性</h4>
+<p>双下划线前缀私有属性, 使用 <code>._classname__attribute</code> 还是可以访问到的, 并不是真正的私有和不可变</p>
+<pre><code>::Python
+In [2]: v1 = Vector2d(3, 4)
+In [3]: v1.__dict__
+Out[3]: {'_Vector2d__x': 3.0, '_Vector2d__y': 4.0}
+In [4]: v1._Vector2d__x
+Out[4]: 3.0
+</code></pre>
+<h4 id="8-使用-__slots__-类属性节省空间">8. 使用 <strong>slots</strong> 类属性节省空间</h4>
+<ol>
+<li>
+<p><code>__dict__</code> 存储实例属性, 是一个字典, 会消耗大量内存</p>
+</li>
+<li>
+<p><code>__slots__</code> 可以限定属性, 节省内存</p>
+<pre><code> ::Python
+ class Vector2d:
+     __slots__= ('__x', '__y')
+</code></pre>
+</li>
+<li>
+<p>特点:</p>
+<ul>
+<li>继承 <code>__slots__</code> 属性没有效果, Python只会使用各个子类中定义的 slots</li>
+<li>类中定义了 slots 属性后, 实例中只能使用其中所列的属性</li>
+<li><code>__weakref__</code> 属性默认存在, 但是在定义 <code>__slots__</code> 的类中, 需要把 <code>__weakref__</code> 添加到 <code>__slots__</code> 中, 才能使用弱引用</li>
+</ul>
+</li>
+</ol>
+<h4 id="9-覆盖类属性">9. 覆盖类属性</h4>
+<p>子类属性可以覆盖父类属性</p>
+<h3 id="chapter10-序列的修改-散列和切片-">Chapter10 序列的修改, 散列和切片</h3>
+<h4 id="0-本章要点">0. 本章要点</h4>
+<ul>
+<li>鸭子类型与协议</li>
+<li>序列, <code>__len__</code>, <code>__getitem__</code></li>
+<li>切片</li>
+<li><code>__getattr__</code> 实现属性的动态存取</li>
+</ul>
+<h4 id="1-vector-类-用户定义的序列类型">1. Vector 类: 用户定义的序列类型</h4>
+<ul>
+<li>使用组合模式实现 Vector 类, 而不适用继承.</li>
+<li>浮点数组, 不可变扁平序列方法</li>
+</ul>
+<h4 id="2-vector-类">2. Vector 类</h4>
+<ul>
+<li>
+<p>code:</p>
+<pre><code>  ::Python
+  def __init__(self, components):
+      self._components = array(self.typecode, components)
+  def __iter__(self):
+      # return (i for i in (self.x, self.y))
+      return iter(self._components)
+  def __repr__(self):
+      # reprlib.repr() 函数获取对象的邮箱长度表示形式
+      components = reprlib.repr(self._components)
+      # 提取列表形式的str
+      components = components[components.find('['):-1]
+      return 'Vector({})'.format(components)
+      # class_name = type(self).__name__
+      # return '{}({!r},{!r})'.format(class_name, *self)
+  def __bytes__(self):
+      return (bytes([ord(self.typecode)]) +
+              # bytes(array(self.typecode, self)))
+              bytes(self._components))
+  def __abs__(self):
+      # return math.hypot(self.x, self.y) 
+      return math.sqrt(sum(x*x for x in self))
+  @classmethod
+  def frombytes(cls, octets):
+      typecode = chr(octets[0])
+      memv = memoryview(octets[1:]).cast(typecode)
+      # return cls(*memv)
+      return cls(memv)
+</code></pre>
+</li>
+</ul>
+<h4 id="3-协议和鸭子类型">3. 协议和鸭子类型</h4>
+<ul>
+<li>序列协议只需要实现 <code>__len__</code> <code>__getitem__</code> 方法</li>
+</ul>
+<h4 id="4-切片">4. 切片</h4>
+<ol start="0">
+<li>
+<p>简单实现: Vector 的实例是数组</p>
+<pre><code> ::Python
+ # 实现切片:
+ def __len__(self):
+     return len(self._components)
+ def __getitem__(self, index):
+     return self._components[index]
+</code></pre>
+</li>
+<li>
+<p>切片原理</p>
+</li>
+</ol>
+<ul>
+<li>
+<p>slice 函数, 将平常使用的索引转化为标准形式</p>
+<pre><code>  ::Python
+  In [14]: slice(None, 10, 2).indices(5)
+  Out[14]: (0, 5, 2)
+  # 'ABCDE'[:10:2] 等同于 'ABCDE'[0:5:2]
+  In [15]: slice(-3, None, None).indices(5)
+  Out[15]: (2, 5, 1)
+  # 'ABCDE'[-3:] 等同于'ABCDE'[2:5:1]
+</code></pre>
+</li>
+</ul>
+<ol start="2">
+<li>
+<p>能处理切片的 <strong>getitem</strong> 方法</p>
+<pre><code> ::Python
+ # 实现切片的两个方法:
+ def __len__(self):
+     return len(self._components)
+ def __getitem__(self, index):
+     # return self._components[index]
+     cls = type(self)
+     # 如果 index 参数的值是 slice 对象
+     if isinstance(index, slice):
+         # 调用类的构造方法, 使用_components 数组的切片构造一个新的实例
+         return cls(self._components[index])
+     # 如果 index 是 int     
+     elif isinstance(index, numbers.Integral):
+         return self._components[index]
+     else:
+         msg = '{cls.__name__} indices must be integers'
+         raise TypeError(msg.format(cls=cls))
+</code></pre>
+</li>
+</ol>
+<h4 id="5-动态存取属性">5. 动态存取属性</h4>
+<ul>
+<li>
+<p>简单来说, 对于 my_obj.x 表达式, Python</p>
+<ol>
+<li>会检查 my_obj 实例有没有名为 x 的属性</li>
+<li>如果没有, 到类(<code>my_obj.__class__</code>) 中查找</li>
+<li>根据继承顺序树查找</li>
+<li>调用 my_obj 所属类中定义的 <code>__getattr__(self, attrname)</code> 方法, attrname 是属性名称的字符</li>
+</ol>
+</li>
+<li>
+<p><code>__getattr__</code> 方法:</p>
+<pre><code>  ::Python
+  shortcut_names = 'xyzt'
+  def __getattr__(self, name):
+      cls = type(self)
+      if len(name) == 1:
+          pos = cls.shortcut_names.find(name)
+          if 0 &lt;= pos &lt; len(self._components):
+              return self._components[pos]
+      msg = '{.__name__!r} object has no attribute {!r}'
+      raise AttributeError(msg.format(cls, name))
+</code></pre>
+</li>
+<li>
+<p><code>__getattr__</code> 方法的内部机制:</p>
+<pre><code>  ::Python
+  In [39]: v = Vector(range(5))
+  In [40]: v
+  Out[40]: Vector([0.0, 1.0, 2.0, 3.0, 4.0])
+  In [41]: v.x
+  Out[41]: 0.0
+  In [42]: v.x = 10
+  In [43]: v.x
+  Out[43]: 10
+  In [44]: v  # 向量的分量没有变
+  Out[44]: Vector([0.0, 1.0, 2.0, 3.0, 4.0])
+</code></pre>
+<ul>
+<li>仅当对象没有属性时, 才会调用 <code>__getattr__</code></li>
+<li>v.x = 10, 赋值之后 v 对象有 x 属性了, 所以在此访问 x 属性会直接调用值</li>
+<li><code>__getattr__</code> 方法的实现是从 self._components 属性中获取 <code>shortcut_names</code> 所列的&quot;虚拟属性&rdquo;</li>
+</ul>
+</li>
+<li>
+<p><code>__setattr__</code> 方法:</p>
+</li>
+</ul>
+<h4 id="6-散列和快速等值测试todo">6. 散列和快速等值测试(TODO&hellip;)</h4>
+<ul>
+<li>
+<p>可散列需要实现的两个方法: <code>__hash__</code>, <code>__eq__</code></p>
+</li>
+<li>
+<p>计算 0 到 5 累计异或的三种方式:</p>
+<pre><code>  ::Python
+  In [47]: import functools
+  In [48]: n = 0
+  In [49]: for i in range(1,6):
+      ...:     n ^= i
+      ...:
+  In [50]: n
+  Out[50]: 1
+  In [51]: functools.reduce(lambda a, b: a^b, range(6))
+  Out[51]: 1
+  In [52]: import operator
+  In [53]: functools.reduce(operator.xor, range(6))
+  Out[53]: 1
+</code></pre>
+</li>
+<li>
+<p>代码:</p>
+<pre><code>  ::Python
+  def __eq__(self, other):
+      return tuple(self) == tuple(other)
+
+  def __hash__(self):
+      # generator, 生成器表达式
+      # hashes = (hash(x) for x in self._components)
+      # return functools.reduce(operator.xor, hasher, 0)
+      hashes = map(hash, self._components)
+      return functools.reduce(operator.xor, hashes)
+</code></pre>
+</li>
+</ul>
+<h4 id="7-格式化todo">7. 格式化(TODO)</h4>
+<h3 id="chapter11-接口-从协议到抽象基类-">Chapter11 接口: 从协议到抽象基类</h3>
+<h4 id="0-本章要点-1">0. 本章要点:</h4>
+<ul>
+<li>要点从鸭子类型的代表特征动态协议, 到 抽象基类(Abstract Base Class)</li>
+<li>抽象基类的常见用途: 实现接口时作为超类使用
+<ol>
+<li>抽象基类如何检查具体子类是否符合接口定义</li>
+<li>如何使用注册机制声明一个类实现了某个接口, 而不进行子类化操作</li>
+<li>如何让抽象基类自动&quot;识别&quot;任何符合接口的类-不进行子类化或注册</li>
+</ol>
+</li>
+</ul>
+<h4 id="1-python-中的接口和协议">1. Python 中的接口和协议</h4>
+<ul>
+<li>接口: 对象公开方法的子集, 让对象在系统中扮演特定的角色</li>
+<li>接口是实现特定角色的方法集合</li>
+<li>协议是接口, 但不是正式的(只由文档和约定定义), 因此协议不能像正式接口那样施加限制.</li>
+<li>对于 Python 程序员来说, &ldquo;x 对象&rdquo; &ldquo;x 协议&rdquo; &ldquo;x 接口&quot;是一个意思</li>
+</ul>
+<h4 id="2-python-喜欢序列">2. Python 喜欢序列</h4>
+<ul>
+<li>
+<p>仅实现 <code>__getitem__</code> 可以使用 in 操作, 迭代, 访问元素</p>
+</li>
+<li>
+<p>实现序列协议的一部分, 没有实现<code>__iter__</code> 和 <code>__contains__</code> 也能运行</p>
+<pre><code>  ::Python
+  In [1]: class Foo:
+     ...:     def __getitem__(self, pos):
+     ...:         return range(0, 30, 10)[pos]
+     ...:
+  In [2]: f = Foo()
+  In [3]: f[1]
+  Out[3]: 10
+  In [4]: f[1]
+  Out[4]: 10
+  In [5]: for i in f: print(i)
+  0
+  10
+  20
+  In [6]: 20 in f
+  Out[6]: True
+  In [7]: 50 in f
+  Out[7]: False
+</code></pre>
+</li>
+<li>
+<p>鸭子类型: 如果走起路来像鸭子，叫起来也像鸭子，那么它就是鸭子。一个对象的特征不是由它的类型决定，而是通过对象中的方法决定.</p>
+</li>
+</ul>
+<h4 id="3-使用猴子补丁在运行时实现协议">3. 使用猴子补丁在运行时实现协议</h4>
+<ul>
+<li>
+<p>将一个函数复制给类的 <code>__setitem__</code> 属性</p>
+<pre><code>  ::Python
+  In [43]: def set_card(deck, position, card):
+      ...:     deck._cards[position] = card
+      ...:
+  In [44]: FrenchDeck.__setitem__ = set_card
+</code></pre>
+</li>
+<li>
+<p>猴子补丁: 在运行时修改类或模块, 而不改动源码</p>
+</li>
+</ul>
+<h4 id="4-alex-martelli-的水禽python-引入抽象基类的原因">4. Alex Martelli 的水禽(Python 引入抽象基类的原因)</h4>
+<ul>
+<li>白鹅类型(goose typing), 只要 cls 是抽象基类, 即 cls 的元类是 abc.ABCMeta, 就可以使用 isinstance(obj, cls)</li>
+<li>优点:
+<ul>
+<li>可以使用 register 类方法在终端用户的代码中把某个类&quot;声明&quot;为一个抽象基类的&quot;虚拟&quot;子类</li>
+</ul>
+</li>
+<li><code>Struggle</code> 类实现了 <code>__len__</code> 方法, <code>abc.Sized</code> 就能把 <code>Struggle</code> 识别为自己的子类</li>
+</ul>
+<h4 id="5-定义抽象基类的子类">5. 定义抽象基类的子类</h4>
+<ul>
+<li>
+<p>code:</p>
+<pre><code>  ::Python
+  import collections
+  Card = collections.namedtuple('Card', ['rank', 'suit'])
+
+  class FrenchDeck2(collections.MutableSequence):
+      ranks = [str(n) for n in range(2, 11)] + list('JQKA')
+      suits = 'spades diamonds clubs hearts'.split()
+
+      def __init__(self):
+          self._cards = [Card(rank, suit) for suit in self.suits
+                                          for rank in self.ranks]
+      def __len__(self):
+          return len(self._cards)
+
+      def __getitem__(self, position):
+          return self._cards[position]
+
+      def __setitem__(self, position, value):
+          self._cards[position] = value
+
+      def __delitem__(self, position):
+          del self._cards[position]
+
+      def insert(self, position, value):
+          self._cards.insert(position, value)
+</code></pre>
+</li>
+<li>
+<p>导入时(加载并编译 frenchdeck2.py 时), Python 不会检查抽象方法的实现, 在运行实例化 FrenchDeck2 类时才会真正检查, 即便实现 FrenchDeck2 类不需要 <code>__delitem__</code> 和 <code>insert</code> 抽象方法提供的行为, 也得实现, 因为 <code>MutableSequence</code> 抽象基类需要, 不然会报错</p>
+</li>
+<li>
+<p>Sequence: <code>__getitem__</code>, <code>__contains__</code>, <code>__iter__</code>, <code>__reversed__</code>, <code>index</code>, <code>count</code></p>
+</li>
+<li>
+<p>MutableSequence: <code>__setitem__</code>, <code>__delitem__</code>, <code>insert</code>, <code>append</code>, <code>reverse</code>, <code>extend</code>, <code>pop</code>, <code>remove</code>, <code>__iadd__</code></p>
+</li>
+</ul>
+<h4 id="6-标准库中的抽象基类">6. 标准库中的抽象基类</h4>
+<ol>
+<li><code>collections.abc</code> 模块中的抽象基类
+<ul>
+<li>Iterable 通过 <code>__iter__</code> 方法支持迭代, Container 通过 <code>__contains__</code> 方法支持 in 运算符 和 Sized 通过 <code>__len__</code> 方法支持 len() 函数</li>
+<li>Sequence, Mapping, Set</li>
+<li>MappingVIew, Callable, Hashable</li>
+</ul>
+</li>
+<li>抽象基类的数字塔(numbers)
+<ul>
+<li>检查一个数是不是整数, 可以使用 isinstance(x, numbers.Integral)</li>
+</ul>
+</li>
+</ol>
+<h4 id="7-定义并使用一个抽象基类">7. 定义并使用一个抽象基类</h4>
+<ol start="0">
+<li>
+<p>场景: 展示随机广告, 随机挑选无重复</p>
+<ul>
+<li>
+<p>定义一个名为 Tombola 的抽象基类, 四个方法, 前两个为抽象方法</p>
+<ul>
+<li>.load(&hellip;) 装入元素</li>
+<li>.pick() 从容器中随机取出一个元素, 返回选中的元素</li>
+<li>.loaded() 如果容器中至少有一个元素, 返回 True</li>
+<li>.inspect() 返回一个有序元组, 由容器中的现有元素构成</li>
+</ul>
+</li>
+<li>
+<p>tombola.py:</p>
+<pre><code>  ::Python
+  import abc
+  class Tombola(abc.ABC):
+      @abc.abstractmethod
+      def load(self, iterable):
+          &quot;&quot;&quot;从可迭代对象中添加元素&quot;&quot;&quot;
+
+      @abc.abstractmethod
+      def pick(self):
+          &quot;&quot;&quot;随机删除元素, 然后将其返回
+             如果实例为空, 这个方法应该抛出 `LookupError`
+          &quot;&quot;&quot;
+
+      def loaded(self):
+          &quot;&quot;&quot;如果至少有一个元素, 返回 `True`, 否则返回 `False`&quot;&quot;&quot;
+          return bool(self.inspect())
+
+      def inspect(self):
+          &quot;&quot;&quot;返回一个有序元组, 由当前元素构成&quot;&quot;&quot;
+          items = []
+          while True:
+              try:
+                  items.append(self.pick())
+              except LookupError:
+                  break
+          self.load(items)
+          return tuple(sorted(items))
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>抽象基类句法详解</p>
+<ul>
+<li>
+<p>声明抽象类方法的推荐方式: (装饰器顺序, @abstractmethdo 应该放在最里层)</p>
+<pre><code>  ::Python
+  class MyABC(abc.ABC):
+      @classmethod
+      @abc.abstractmethod
+      def an_abstract_classmethod(cls, ...):
+          pass
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>定义 Tombola 抽象基类的子类</p>
+<ul>
+<li>
+<p>BingoCage 类实现了抽象方法 load 和 pick, 继承了 <code>loaded</code> 方法, 覆盖了 <code>inspect</code> 方法, 增加了 <code>__call__</code> 方法</p>
+<pre><code>  ::Python
+  import random
+
+  class BingoCage(Tombola):
+      def __init__(self, items):
+          self._randomizer = random.SystemRandom()
+          self._items = []
+          self.load(items)
+
+      def load(self, items):
+          self._items.extend(items)
+          self._randomizer.shuffle(self._items)
+
+      def pick(self):
+          try:
+              return self._items.pop()
+          except IndexError:
+              raise LookupError('pick from empty BingoCage')
+
+      def __call__(self):
+          self.pick()
+</code></pre>
+</li>
+<li>
+<p>LotteryBlower 在 <code>__init__</code> 方法中, self._balls 保存的是 list(iterable), list 会创建原对象的副本</p>
+<pre><code>  ::Python
+  class LotteryBlower(Tombola):
+      def __init__(self, iterable):
+          self._balls = list(iterable) # list 创建参数的副本
+
+      def load(self, iterable):
+          self._balls.extend(iterable)
+      def pick(self):
+          try:
+              position = random.randrange(len(self._balls))
+          except ValueError:
+              raise LookupError('pick from empty LotteryBlower')
+          return self._balls.pop(position)
+
+      def loaded():
+          return bool(self._balls)
+
+      def inspect(selef):
+          return tuple(sorted(self._balls))
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>Tombola 的虚拟子类</p>
+<ol>
+<li>
+<p>注册虚拟子类的方式是在抽象基类上调用 register 方法, 之后注册的类会变成抽象基类的虚拟子类, <code>issubclass</code>, <code>isinstance</code> 都能识别, 但是注册的类不会从抽象基类中继承任何方法或属性</p>
+</li>
+<li>
+<p>register 可以通过函数调用或者装饰器来使用</p>
+<pre><code> ::Python
+ @Tombola.register
+ class TomboList(list):
+     def pick(self):
+         if self:
+             position = randrange(len(self))
+             return self.pop(position)
+         else:
+             raise LookupError('pop from empty TomboList')            
+
+     load = list.extend
+
+     def loaded(self):
+         return bool(self)
+     def inspect(self):
+         return tuple(sorted(self))
+
+ &gt;&gt;&gt; issubclass(TomboList, Tombola)
+ True
+ &gt;&gt;&gt; t = TomboList(range(100))
+ &gt;&gt;&gt; isinstance(t, Tombola)
+ True
+ &gt;&gt;&gt; TomboList.__mro__
+ (&lt;class 'tombolist.TomboList'&gt;, &lt;class 'list'&gt;, &lt;class 'object'&gt;)
+</code></pre>
+</li>
+<li>
+<p><code>Tombolist.__mro__</code> 中只有真实的超类, 没有 Tombola, 所以Tombolist 没有从 Tombola 中继承任何方法</p>
+</li>
+</ol>
+</li>
+</ol>
+<h4 id="8-tombola-子类的测试方法">8. Tombola 子类的测试方法</h4>
+<p>pass</p>
+<h4 id="9-python-使用-register-的方式">9. Python 使用 register 的方式</h4>
+<ul>
+<li>类装饰器, 普通函数调用,</li>
+</ul>
+<h4 id="10-鹅的行为有可能像鸭子">10. 鹅的行为有可能像鸭子</h4>
+<ul>
+<li>实现<code>__len__</code> 方法就会归为 abc.Sized 的子类, 这是因为 abc.Sized 实现了一个特殊的类方法 <code>__subclasshook__</code></li>
+</ul>
+<h4 id="11本章小结">11.本章小结</h4>
+<ul>
+<li>如果一个类实现了 <code>__getitem__</code> 方法, 就可以实现迭代和 in 操作</li>
+</ul>
+<h4 id="延伸阅读">延伸阅读</h4>
+<ul>
+<li>
+<p>PEP 484, 类型提示</p>
+</li>
+<li>
+<p>如果一门语言很少隐式转换类型, 说明它是强类型语言, 如果经常这么做, 那么他是弱类型语言</p>
+</li>
+<li>
+<p>强类型语言: Java, C++, Python</p>
+</li>
+<li>
+<p>弱类型语言: PHP, JavaScript, Perl</p>
+</li>
+<li>
+<p>静态类型: 在编译时检查类型的语言是静态类型语言 Fortran</p>
+</li>
+<li>
+<p>动态类型: 在运行时检查类型的语言是动态类型语言 Lisp</p>
+</li>
+<li>
+<p>JavaScript:</p>
+<pre><code>  ::JavaScript
+  '' == '0'   // false
+  0 == ''     // true
+  0 == '0'    // true
+  '' &lt; 0      // false
+  '' &lt; '0'    // true
+</code></pre>
+</li>
+<li>
+<p>python 不会自动在字符串和数字之间强制转换, 所以 Python3 上述表达式的结果 <code>==</code> 都是 False, <code>&lt;</code> 会抛出 TypeError</p>
+</li>
+<li>
+<p>故 Python 是动态强类型语言</p>
+</li>
+<li>
+<p>接口</p>
+<ul>
+<li>Java 添加 interface 语言结果, 允许一个类实现多个接口</li>
+<li>Go 不支持继承, 与 Python 相比, Go 相当于 每个抽象基类都实现了 <code>__subclasshook__</code> 方法</li>
+</ul>
+</li>
+</ul>
+<h3 id="chapter12-继承的优缺点-">Chapter12 继承的优缺点</h3>
+<h4 id="0-本章要点-2">0. 本章要点</h4>
+<ul>
+<li>子类化内置类型的缺点</li>
+<li>多重继承和方法解析顺序</li>
+<li>Java 不支持多重继承, C++ 容易滥用多重继承</li>
+</ul>
+<h4 id="1-子类化内置类型很麻烦">1. 子类化内置类型很麻烦</h4>
+<ul>
+<li>
+<p>内置类型 dict 的 <code>__init__</code> 和 <code>__update__</code> 会忽略子类覆盖的 <code>__setitem__</code> 方法</p>
+<pre><code>  ::Python
+  In [62]: class DoppelDict(dict):
+      ...:     def __setitem__(self, key, value):
+      ...:         super().__setitem__(key, [value]*2)
+      ...:
+
+  In [63]: dd = DoppelDict(one=1)
+  In [64]: dd # 'one' 值没有重复
+  Out[64]: {'one': 1}
+  In [65]: dd['two'] = 2
+  In [66]: dd
+  Out[66]: {'one': 1, 'two': [2, 2]}
+  In [67]: dd.update(three=3)
+  In [68]: dd # update 方法也没有使用 `__setitem__`
+  Out[68]: {'one': 1, 'three': 3, 'two': [2, 2]}
+</code></pre>
+</li>
+<li>
+<p>dict.update 方法会忽略 <code>AnswerDict.__getitem__</code> 方法</p>
+<pre><code>  ::Python
+  In [69]: class AnswerDict(dict):
+      ...:     def __getitem__(self, key):
+      ...:         return 42
+      ...:
+  In [70]: ad = AnswerDict(a='foo')
+  Out[71]: 42
+  In [72]: d = {}
+  In [73]: d.update(ad)
+  In [74]: d
+  Out[74]: {'a': 'foo'}
+  In [75]: d['a']
+  Out[75]: 'foo'
+  In [76]: ad
+</code></pre>
+</li>
+<li>
+<p>结论: 不要子类化内置类型, 直接子类化内置类型(dict, list, str) 会容易出错, 此类问题只发生在 C 语言实现的内置类型内部的方法委托上, 而且只影响直接继承内置类型的用户自定义类</p>
+</li>
+<li>
+<p>用户自定义类应该继承 collections 模块</p>
+<pre><code>  ::Python
+  In [77]: import collections
+  In [80]: class DoppelDict2(collections.UserDict):
+      ...:     def __setitem__(self, key, value):
+      ...:         super().__setitem__(key, [value]*2)
+      ...:
+
+  In [81]: dd = DoppelDict2(one=1)
+  In [82]: dd
+  Out[82]: {'one': [1, 1]}
+  In [83]: dd.update(three=3)
+  In [84]: dd
+  Out[84]: {'one': [1, 1], 'three': [3, 3]}
+</code></pre>
+</li>
+</ul>
+<h4 id="2-多重继承和方法解析顺序">2. 多重继承和方法解析顺序</h4>
+<ul>
+<li>
+<p>菱形问题, 不同父类, 同名方法</p>
+<pre><code>  ::Python
+  class A:
+      def ping(self):
+          print('ping', self)
+
+  class B(A):
+      def pong(self):
+          print('pong:', self)
+
+  class C(A):
+      def pong(self):
+          print('PONG:', self)
+
+  class D(B, C):
+      def ping(self):
+          super().ping()
+          print('post-ping:', self)
+
+      def pingpong(self):
+          self.ping()
+          super().ping()
+          self.pong()
+          super().pong()
+          C.pong(self)
+  d = D()
+  d.pong() # 调用的是 B 类的方法
+  # pong: &lt;__main__.D object at 0x110445d68&gt;
+  C.pong(d)
+  # PONG: &lt;__main__.D object at 0x110445d68&gt;
+</code></pre>
+</li>
+<li>
+<p>继承父类同名方法的调用顺序: 方法发解析顺序(Method Resolution Order, MRO)</p>
+<ul>
+<li>
+<p><code>__mro__</code> 属性, 值为元组 上例中 <code>D.__mro__</code> 的值为: <code>(&lt;class '__main__.D'&gt;, &lt;class '__main__.B'&gt;, &lt;class '__main__.C'&gt;, &lt;class '__main__.A'&gt;, &lt;class 'object'&gt;)</code>, 即调用顺序为 D -&gt; B -&gt; C -&gt; A -&gt; object</p>
+</li>
+<li>
+<p>指定调用某一超类:</p>
+<pre><code>  ::Python
+  def ping(self):
+      A.ping(self)  # 而不是 super().ping()
+      print('post-ping:', self)
+</code></pre>
+</li>
+<li>
+<p>几个类的 mro</p>
+<pre><code>  ::Python
+  In [86]: bool.__mro__
+  Out[86]: (bool, int, object)
+
+  In [87]: import io
+
+  In [88]: io.BytesIO.__mro__
+  Out[88]: (_io.BytesIO, _io._BufferedIOBase, _io._IOBase, object)
+</code></pre>
+</li>
+<li>
+<p>Tkingter 的多重继承, 图(TODO):</p>
+<pre><code>  ::Python
+  In [89]: import tkinter
+  In [90]: tkinter.Text.__mro__
+  Out[90]:
+  (tkinter.Text,
+   tkinter.Widget,
+   tkinter.BaseWidget,
+   tkinter.Misc,
+   tkinter.Pack,
+   tkinter.Place,
+   tkinter.Grid,
+   tkinter.XView,
+   tkinter.YView,
+   object)
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-多重继承的真实应用tkintertodo">3. 多重继承的真实应用(Tkinter)(TODO)</h4>
+<h4 id="4-处理多重继承的建议">4. 处理多重继承的建议</h4>
+<ol>
+<li>
+<p>把接口继承和实现继承区分开</p>
+<ul>
+<li>创建子类的需求:
+<ul>
+<li>继承接口, 创建子类型, 实现&quot;是什么&quot;关系</li>
+<li>继承实现, 通过重用避免重复代码</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>使用抽象基类显示表示接口</p>
+</li>
+<li>
+<p>通过混入重用代码(mixin class)</p>
+<ul>
+<li>混入类不能实例化</li>
+<li>具体类不能只继承混入类</li>
+</ul>
+</li>
+<li>
+<p>在名称中明确指明混入</p>
+</li>
+<li>
+<p>抽象基类可以作为混入, 但混入类不能作为抽象基类</p>
+<ul>
+<li>抽象类的局限: <em>抽象类中实现的具体方法</em>只能与<em>抽象基类及其超类中的方法</em>协作</li>
+</ul>
+</li>
+<li>
+<p>不要子类化多个具体类, 以下代码中 如果 Alpha 是具体类, nameBeta 和 Gamma 必须是抽象基类或混入</p>
+<pre><code> ::Python
+ class MyConcreteClass(Alpha, Beta, Gamma):
+     ...
+</code></pre>
+</li>
+<li>
+<p>为用户提供聚合类(aggregate class), 以下代码中, Widget 类定义体是空的, 作用是把四个超类结合在一起, 同样的例子是 Django 中的 ListView 类</p>
+<pre><code> ::Python
+ class Widget(BaseWidget, Pack, Place, Grid):
+     ''' Internal classl
+     Base class for a widget which can be positioned with the geometry managers Pack, Place or Grid.'''
+     pass
+</code></pre>
+</li>
+<li>
+<p>优先使用对象组合, 而不是类继承</p>
+</li>
+<li>
+<p>分析 Tkinter (TODO)</p>
+</li>
+</ol>
+<h4 id="5-django-通用视图混入类genericview-mixin">5. Django 通用视图混入类(GenericView, Mixin)</h4>
+<ol>
+<li><a href="http://ccbv.co.uk/">Django Class-Based Views</a>, Django 类介绍, <img src="/image/generic.jpg" alt="django.views.generic.base 模块的 UML 类图" title=""></li>
+<li>view 是所有视图类的基类, 核心功能:(as_view, dispatch, http_method_not_allowed, options), RedirectView 类只继承 View, 实现了 get, head, post等方法</li>
+<li>Django 的分派机制是动态版模板方法模式, 即 View 类不强制子类实现所有处理方法, 而是让 dispatch 方法在运行时检查有没有针对特定请求的具体处理方法, 例子: TemplateView 类只用于显示内容, 只实现了 get 方法, 如果 把 POST 请求发给 TemplateView, 经继承的 View.dispatch 方法检查没有 post 方法, 就会方法 405 Method Not Allowed</li>
+<li>ListView, 是一个聚合类, 不含有代码</li>
+</ol>
+<h3 id="chapter13-正确重载运算符-todo">Chapter13 正确重载运算符 TODO###</h3>
+<h4 id="0-本章要点-3">0. 本章要点</h4>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">Author</span>
+    <span class="item-content">yangly</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">LastMod</span>
+    <span class="item-content">
+        2018-01-20
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/books/">books</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/python%E5%AD%97%E5%85%B8%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">python字典的实现原理</span>
+            <span class="prev-text nav-mobile">Prev</span>
+          </a>
+        <a class="next" href="/post/fluent_python2/">
+            <span class="next-text nav-default">《流畅的 Python》读书笔记(二)</span>
+            <span class="next-text nav-mobile">Next</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="https://github.com/yhliyr" class="iconfont icon-github" title="github"></a>
+  <a href="http://localhost:1313/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  
+
+  <span class="copyright-year">
+    &copy; 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">yhliyr</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+
+
+
+<script type="text/javascript" src="/js/main.min.c12618f9a600c40bd024996677e951e64d3487006775aeb22e200c990006c5c7.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>

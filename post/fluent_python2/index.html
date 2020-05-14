@@ -1,0 +1,2543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>《流畅的 Python》读书笔记(二) - yhliyr&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="yangly" /><meta name="description" content="[TOC] 第五部分 控制流程 Chapter14 可迭代的对象, 迭代器和生成器### 0. 本章要点 所有生成器都是迭代器 迭代器用于从集合中取出元素 生成器用于&amp;quot;凭空&amp;q" /><meta name="keywords" content="Hugo, theme, even" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.69.2 with theme even" />
+
+
+<link rel="canonical" href="http://localhost:1313/post/fluent_python2/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+<link href="/sass/main.min.c5b7928861aa2d3f0e306778c33e6689ea2b22356cfdc1a4e10e925019e911d1.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="《流畅的 Python》读书笔记(二)" />
+<meta property="og:description" content="[TOC] 第五部分 控制流程 Chapter14 可迭代的对象, 迭代器和生成器### 0. 本章要点 所有生成器都是迭代器 迭代器用于从集合中取出元素 生成器用于&quot;凭空&q" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://localhost:1313/post/fluent_python2/" />
+<meta property="article:published_time" content="2018-01-20T00:00:00+00:00" />
+<meta property="article:modified_time" content="2018-01-20T00:00:00+00:00" />
+<meta itemprop="name" content="《流畅的 Python》读书笔记(二)">
+<meta itemprop="description" content="[TOC] 第五部分 控制流程 Chapter14 可迭代的对象, 迭代器和生成器### 0. 本章要点 所有生成器都是迭代器 迭代器用于从集合中取出元素 生成器用于&quot;凭空&q">
+<meta itemprop="datePublished" content="2018-01-20T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2018-01-20T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="12546">
+
+
+
+<meta itemprop="keywords" content="books," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="《流畅的 Python》读书笔记(二)"/>
+<meta name="twitter:description" content="[TOC] 第五部分 控制流程 Chapter14 可迭代的对象, 迭代器和生成器### 0. 本章要点 所有生成器都是迭代器 迭代器用于从集合中取出元素 生成器用于&quot;凭空&q"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo"> </a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo"> </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">《流畅的 Python》读书笔记(二)</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2018-01-20 </span>
+        <div class="post-category">
+            <a href="/categories/python/"> Python </a>
+            </div>
+        
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">Contents</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#第五部分-控制流程-">第五部分 控制流程</a></li>
+        <li><a href="#chapter14-可迭代的对象-迭代器和生成器">Chapter14 可迭代的对象, 迭代器和生成器###</a></li>
+        <li><a href="#chapter15-上下文管理器和-else-块-">Chapter15 上下文管理器和 else 块</a></li>
+        <li><a href="#chapter16-协程-">Chapter16 协程</a></li>
+        <li><a href="#chapter17-使用期物future处理并发-todo--">Chapter17 使用期物(future)处理并发 TODO </a></li>
+        <li><a href="#chapter18-使用-asyncio-包处理并发-todo--">Chapter18 使用 asyncio 包处理并发 TODO </a></li>
+        <li><a href="#第六部分-元编程-">第六部分 元编程</a></li>
+        <li><a href="#chapter19-动态属性和特性-">Chapter19 动态属性和特性</a></li>
+        <li><a href="#chapter20-属性描述符-">Chapter20 属性描述符</a></li>
+        <li><a href="#chapter21-类元编程todo-">Chapter21 类元编程(TODO)</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      <p>[TOC]</p>
+<h3 id="第五部分-控制流程-">第五部分 控制流程</h3>
+<hr>
+<h3 id="chapter14-可迭代的对象-迭代器和生成器">Chapter14 可迭代的对象, 迭代器和生成器###</h3>
+<h4 id="0-本章要点">0. 本章要点</h4>
+<ul>
+<li>所有生成器都是迭代器</li>
+<li>迭代器用于从集合中取出元素</li>
+<li>生成器用于&quot;凭空&quot;生成元素, 比如 生成 斐波那契数列</li>
+<li>迭代器的用途
+<ul>
+<li>for 循环</li>
+<li>构建遍历文本文件</li>
+<li>逐行遍历文本文件</li>
+<li>列表推导, 字典推导, 集合推导</li>
+<li>元组拆包</li>
+<li>调用函数时, 使用 * 拆包实参</li>
+</ul>
+</li>
+<li>本章话题:
+<ul>
+<li>iter(&hellip;) 处理可迭代对象的方式</li>
+<li>使用 Python 实现经典的迭代器模式</li>
+<li>生成器的工作原理</li>
+<li>使用生成器函数/表达式, 来代替经典的迭代器</li>
+<li>标准库中的生成器函数</li>
+<li>使用 <code>yield from</code> 语句合并生成器</li>
+<li>使用生成器构造一个数据库转换工具来处理大型数据集</li>
+<li>生成器与协程</li>
+</ul>
+</li>
+</ul>
+<h4 id="1-sentence-类第一版-单词序列">1. Sentence 类第一版: 单词序列</h4>
+<ol>
+<li>
+<p>sentence.py</p>
+<pre><code> ::Python
+ import re
+ import reprlib
+ # reprlib: Redo the builtin repr() (representation) 
+ # but with limits on most sizes.
+
+ RE_WORD = re.compile('\w+')
+
+ class Sentence:
+     def __init__(self, text):
+         self.text = text
+         self.words = RE_WORD.findall(text)
+
+     def __getitem__(self, index):
+         return self.words[index]
+
+     def __len__(self):
+         return len(self.words)
+
+     def __repr__(self):
+         return 'Sentence(%s)' % reprlib.repr(self.text)
+
+ s = Sentence('&quot;The time has come,&quot; the Walrus said, ')
+ print(s)
+
+ for word in s:
+     print(word)
+ print(list(s))
+ # ['The', 'time', 'has', 'come', 'the', 'Walrus', 'said']
+</code></pre>
+</li>
+<li>
+<p>序列可以迭代的原因: iter 函数</p>
+<ul>
+<li>解释器需要迭代对象 x 时, 会自动调用 iter(x)</li>
+<li>iter 函数的作用:
+<ul>
+<li>检查是否实现了 <code>__iter__</code> 方法, 如果实现了就调用它, 获取一个迭代器</li>
+<li>如果没有实现 <code>__iter__</code> 方法, 但是实现了 <code>__getitem__</code> 方法, Python 会创建一个迭代器, 尝试按顺序获取元素</li>
+<li>如果 尝试失败, Python 会抛出 TypeError 异常, &ldquo;C object is not iterable&rdquo;, 其中 C 是目标对象所属的类</li>
+</ul>
+</li>
+<li>Python 序列可以迭代的原因是, 它们都实现了 <code>__getitem__</code> 方法</li>
+<li>鸭子类型(duck typing): 指忽略对象的真正类型，转而关注对象有没有实现所需的方法、签名和语义。在 Python 中指免使用 isinstance 检查对象的类型。</li>
+<li>白鹅类型(goose-typing): 白鹅类型指，只要 cls 是抽象基类，即 cls 的元类是 abc.ABCMeta，就可以使用 isinstance(obj, cls)。如果实现了 <code>__iter__</code> 方法, 就认为对象是可迭代的, 因为 abc.Iterable 类实现了 <code>__subclasshook</code> 方法</li>
+<li>检查对象 x 能否迭代: Python 3.4 后调用 iter(x)</li>
+</ul>
+</li>
+</ol>
+<h4 id="2-可迭代对象iterable-与-迭代器iterator">2. 可迭代对象(iterable) 与 迭代器(iterator)</h4>
+<ol>
+<li>
+<p>可迭代对象: 使用 iter(x) 函数可以获取迭代器的对象, 如果对象实现了能返回迭代器的 <code>__iter__</code> 方法, 那么对象就是可以迭代的, 序列都是可以迭代的</p>
+</li>
+<li>
+<p><code>Python 从可迭代对象中获取迭代器</code></p>
+<pre><code> ::python
+ In [97]: s = 'ABC'
+
+ In [99]: it = iter(s)
+
+ In [100]: it
+ Out[100]: &lt;str_iterator at 0x105793240&gt;
+
+ In [101]: while True:
+      ...:     try:
+      ...:         print(next(it))
+      ...:
+      ...:     except StopIteration:
+      ...:         del it
+      ...:         break
+      ...:
+ A
+ B
+ C
+</code></pre>
+</li>
+<li>
+<p>标准迭代器接口的两个方法:</p>
+<ul>
+<li><code>__next__</code>, 返回下一个可用元素, 如果没有, 抛出 StopIteration 异常</li>
+<li><code>__iter__</code>, 返回 self, 以便在应该使用可迭代对象的地方使用迭代器, 例如 for 循环</li>
+</ul>
+</li>
+<li>
+<p>两个接口在 collections.abc.Iterator 抽象基类中制定, Iterator 继承了 Iterable(定义了抽象方法 <code>__iter__</code>), 并实现了 <code>__next__</code> 抽象方法</p>
+</li>
+<li>
+<p>Python3 Iterator 抽象基类定义的抽象方法是 <code>it.__next__()</code>, Python2 中是 <code>it.next()</code> 方法, 如果要调用, 应该避免直接调用特殊方法, 使用 next(it)</p>
+</li>
+<li>
+<p>迭代器: 实现了<code>__iter__</code> 和 无参数的 <code>__next__</code> 方法, 返回序列中的下一个元素如果没有元素了, 抛出 StopIteration 异常</p>
+</li>
+</ol>
+<h4 id="3-sentence-类第二版-典型的迭代器">3. Sentence 类第二版: 典型的迭代器</h4>
+<ol>
+<li>
+<p>sentence_iter.py:</p>
+<pre><code> ::python
+ import re
+ import reprlib
+
+ RE_WORD = re.compile('\w+')
+
+ class Sentence:
+     def __init__(self, text):
+         self.text = text
+         self.words = RE_WORD.findall(text)
+     # def __getitem__(self, index):
+     #     return self.words[index]
+     # def __len__(self):
+     #     return len(self.words)
+     def __repr__(self):
+         return 'Sentence(%s)' % reprlib.repr(self.text)
+     def __iter__(self):
+         return SentenceIterator(self.words)
+
+ class SentenceIterator:
+     def __init__(self, words):
+         self.words = words
+         self.index = 0
+     def __next__(self):
+         try:
+             word = self.words[self.index]
+         except IndexError:
+             raise StopIteration()
+         self.index += 1
+         return word
+     def __iter__(self):
+         return self
+</code></pre>
+</li>
+<li>
+<p>迭代器与可迭代对象的区别:</p>
+<ul>
+<li>可迭代对象中有个 <code>__iter__</code> 方法, 每次实例化一个新的迭代器, 而迭代器要实现 <code>__next__</code> 方法, 返回单个元素, 实现 <code>__iter__</code> 方法, 返回迭代器本身</li>
+<li>可迭代对象一定不能是自身的迭代器</li>
+<li>可迭代对象必须实现 <code>__iter__</code> 方法, 但不能实现 <code>__next__</code> 方法</li>
+</ul>
+</li>
+<li>
+<p>设计模式中的迭代器模式:</p>
+<ul>
+<li>访问一个聚合对象的内容而无需暴露它的内部表示</li>
+<li>支持对聚合对象的多种遍历</li>
+<li>为遍历不同的聚合结构提供一个统一的接口(即支持多态迭代)</li>
+</ul>
+</li>
+<li>
+<p>为了支持上面的第二条&quot;多种遍历&rdquo;, 必须从同一个可迭代实例中获取多个独立的迭代器, 所以迭代器模式的正确实现方式是每次调用 iter(my_iterable) 都新建一个独立的迭代器, 所以示例中需要定义 SentenceIteration 类</p>
+</li>
+<li>
+<p>range 是可迭代对象, 不是迭代器</p>
+</li>
+<li>
+<p>zip, enumerate, generator, 是迭代器</p>
+</li>
+</ol>
+<h4 id="4-sentence-类第三版-生成器函数">4. Sentence 类第三版: 生成器函数</h4>
+<ol>
+<li>
+<p>sentence_gen.py:</p>
+<pre><code> ::python
+ import re
+ import reprlib
+
+ RE_WORD = re.compile('\w+')
+
+ class Sentence:
+     def __init__(self, text):
+         self.text = text
+         self.words = RE_WORD.findall(text)
+     # def __getitem__(self, index):
+     #     return self.words[index]
+     # def __len__(self):
+     #     return len(self.words)
+     def __repr__(self):
+         return 'Sentence(%s)' % reprlib.repr(self.text)
+     def __iter__(self):
+         # return SentenceIterator(self.words)
+         for word in self.words:
+             yield word
+         return # 非必要
+</code></pre>
+</li>
+<li>
+<p>生成器函数的工作原理</p>
+<ul>
+<li>生成器函数定义: 含有 yield 关键字</li>
+<li>调用生成器函数, 会返回一个生成器对象, 所以生成器函数就是生成器工厂</li>
+</ul>
+</li>
+<li>
+<p><code>Sentence.__iter__</code> 方法的作用: <code>__iter__</code> 方法是生成器函数, 调用时会构建一个实现了迭代器接口的生成器对象</p>
+</li>
+</ol>
+<h4 id="5-sentence-类第四版-惰性实现">5. Sentence 类第四版: 惰性实现</h4>
+<ol>
+<li>
+<p>惰性求值(lazy evaluation) 及早求值(eager evaluation)</p>
+</li>
+<li>
+<p>re.finditer 是 re.findall 函数的惰性版本, 返回的不是列表, 而是一个生成器, 按需生成 re.MatchObject 实例, 可以节省内存</p>
+</li>
+<li>
+<p>sentece.gen2.py:</p>
+<pre><code> ::python
+ import re
+ import reprlib
+
+ RE_WORD = re.compile('\w+')
+
+ class Sentence:
+     def __init__(self, text):
+         self.text = text
+         # self.words = RE_WORD.findall(text)
+
+     def __repr__(self):
+         return 'Sentence(%s)' % reprlib.repr(self.text)
+     def __iter__(self):
+     #     # return SentenceIterator(self.words)
+     #     for word in self.words:
+     #         yield word
+     #     return 
+         for match in RE_WORD.finditer(self.text):
+             yield match.group()
+</code></pre>
+</li>
+</ol>
+<h4 id="6-sentence-类第五版-生成器表达式">6. Sentence 类第五版: 生成器表达式</h4>
+<ol>
+<li>
+<p>生成器函数可以替换为生成器表达式</p>
+</li>
+<li>
+<p>生成器表达式可以理解为 列表推导的惰性版本</p>
+</li>
+<li>
+<p>列表推导式 [&hellip;] 与 生成器表达式 (&hellip;)的区别: gen_AB:</p>
+<pre><code> ::python
+ In [103]: def gen_AB():
+      ...:     print('start')
+      ...:     yield 'A'
+      ...:     print('continue')
+      ...:     yield 'B'
+      ...:     print('end.')
+      ...:
+ In [104]: res1 = [x*3 for x in gen_AB()]
+ start
+ continue
+ end.
+
+ In [105]: for i in res1:
+      ...:     print('--&gt;', i)
+      ...:
+ --&gt; AAA
+ --&gt; BBB
+
+ In [106]: res2 = (x*3 for x in gen_AB())
+
+ In [107]: res2
+ Out[107]: &lt;generator object &lt;genexpr&gt; at 0x10577de08&gt;
+
+ In [108]: for i in res2:
+      ...:     print('--&gt;', i)
+      ...:
+ start
+ --&gt; AAA
+ continue
+ --&gt; BBB
+ end.
+</code></pre>
+</li>
+<li>
+<p>生成器表达式 (&hellip;)会产出生成器</p>
+</li>
+<li>
+<p>sentence_genexp.py</p>
+<pre><code> ::python
+ import re
+ import reprlib
+
+ RE_WORD = re.compile('\w+')
+
+ class Sentence:
+     def __init__(self, text):
+         self.text = text
+         # self.words = RE_WORD.findall(text)
+
+     def __repr__(self):
+         return 'Sentence(%s)' % reprlib.repr(self.text)
+     def __iter__(self):
+         # for match in RE_WORD.finditer(self.text):
+         #     yield match.group()
+         return (match.group() for match in RE_WORD.finditer(self.text))
+</code></pre>
+</li>
+<li>
+<p>生成器表达式是语法糖</p>
+</li>
+</ol>
+<h4 id="7-生成器表达式的用途">7. 生成器表达式的用途</h4>
+<ul>
+<li>省内存, 简洁&hellip;</li>
+</ul>
+<h4 id="8-等差数列生成器">8. 等差数列生成器</h4>
+<ol>
+<li>
+<p>ArithmeticProgression</p>
+<pre><code> ::python
+ class ArithmeticProgression:
+     def __init__(self, begin, step, end=None):
+         self.begin = begin
+         self.step = step
+         self.end = end
+
+     def __iter__(self):
+         # 先强制把 begin 转换成 加法运算后得到的类型, 再赋值给 result
+         result = type(self.begin + self.step)(self.begin)
+         forever = self.end is None
+         index = 0
+         while forever or result &lt; self.end:
+             yield result
+             index += 1
+             result = self.begin + self.step * index
+</code></pre>
+</li>
+<li>
+<p>ariprog_gen 生成器函数</p>
+<pre><code> ::python
+ def aritprog_gen(begin, step, end=None):
+     result = type(begin + step)(begin)
+     forever = end is None
+     index = 0
+     while forever or result &lt; end:
+         yield result 
+         index += 1
+         result = begin + step * index
+</code></pre>
+</li>
+<li>
+<p>使用 itertools 模块生成等差数列</p>
+<ol>
+<li>
+<p>itertools.count, 不会停止生成</p>
+<pre><code> ::python
+ In [109]: import itertools
+
+ In [110]: gen = itertools.count(1, .5)
+
+ In [111]: gen
+ Out[111]: count(1, 0.5)
+
+ In [112]: next(gen)
+ Out[112]: 1
+
+ In [113]: next(gen)
+ Out[113]: 1.5
+</code></pre>
+</li>
+<li>
+<p>itertools.takewhile 函数会生成一个使用另一个生成器的生成器, 当条件为 False 时停止</p>
+<pre><code> ::python
+ In [123]: gen = itertools.takewhile(lambda x: x&lt;3, itertools.count(1, .5))
+
+ In [124]: gen
+ Out[124]: &lt;itertools.takewhile at 0x104a4a088&gt;
+
+ In [125]: list(gen)
+ Out[125]: [1, 1.5, 2.0, 2.5]
+</code></pre>
+</li>
+<li>
+<p>aritprog_v2.py:</p>
+<pre><code> ::python
+ def aritprog_gen(begin, step, end=None):
+     # result = type(begin + step)(begin)
+     # forever = end is None
+     # index = 0
+     # while forever or result &lt; end:
+     #     yield result 
+     #     index += 1
+     #     result = begin + step * index
+     first = type(begin + step)(begin)
+     ap_gen = itertools.count(first, step)
+     if end is not None:
+         ap_gen = itertools.takewhile(lambda n: n &lt; end, ap_gen)
+     return ap_gen
+</code></pre>
+</li>
+</ol>
+</li>
+</ol>
+<h4 id="9-标准库中的生成器函数">9. 标准库中的生成器函数</h4>
+<ol>
+<li>os.walk 遍历目录树</li>
+<li>itertools 的各种函数, 处理列表, 生成各种列表, 排序&hellip;
+<ul>
+<li>iterator.tee:  从输入的一个可迭代对象中产出多个生成器, 每个生成器都可以产出输入的各个元素</li>
+</ul>
+</li>
+</ol>
+<h4 id="10-yield-from">10. yield from</h4>
+<ul>
+<li>生成器函数需要产出另一个生成器生成的值</li>
+</ul>
+<h4 id="11-可迭代的归约函数">11. 可迭代的归约函数</h4>
+<ul>
+<li>归约函数: 接受一个可迭代的对象, 然后返回单个结果
+<ul>
+<li>all(it), it 中所有元素都为真值时返回 True, all([]) 返回 True</li>
+<li>any(it), it 中只要有元素为真值就返回 True, any([]) 返回 False</li>
+<li>functools.reduce(func, it, [initial]), 把前两个元素传给 func, 然后把计算结果和第三个元素传给 func, 依次类推</li>
+</ul>
+</li>
+</ul>
+<h4 id="12-深入分析-iter-函数">12. 深入分析 iter 函数</h4>
+<ol>
+<li>iter(x, y), 传入两个参数, 使用常规的函数或任何可调用的对象创建迭代器, 第一个参数是可调用对象, 第二个参数是哨符, 标记值, 当可调用对象返回这个值时, 触发, StopIteration 异常
+<ul>
+<li>
+<p>逐行读取文件, 直到遇到空行或者到达文件末尾为止</p>
+<pre><code>  ::python
+  with open('mydata.txt') as fp:
+      for line in iter(fp.readline, '\n'):
+          process_line(line) 
+</code></pre>
+</li>
+</ul>
+</li>
+</ol>
+<h4 id="13-案例分析-在数据库转换工具中使用生成器">13. 案例分析: 在数据库转换工具中使用生成器</h4>
+<ol>
+<li>isis2json.py, 支持读取两种数据结构, 输出 JSON 格式
+<ul>
+<li>难点: 大文件, 两种格式</li>
+<li>解决方法: 隔离读取逻辑, 写进两个生成器函数中, 一个函数支持一种输入格式. 利用生成器函数解耦了读逻辑和写逻辑, 数据量的情况下使用生成器交叉读写</li>
+</ul>
+</li>
+</ol>
+<h4 id="14-把生成器当成协程">14. 把生成器当成协程</h4>
+<ol>
+<li>send() 方法允许在客户代码和生成器之间双向交换数据, 而 <code>__next__()</code> 方法只允许客户从生成器中获取数据, 使用 send() 生成器就变成了协程</li>
+<li>生成器用于生成供迭代的数据, 协程是数据的消费者, 虽然协程使用 yield 产出值, 但与迭代无关</li>
+</ol>
+<h4 id="15-本章小结">15. 本章小结</h4>
+<ol>
+<li>本章通过编写一个类, 用于读取数据量大的文件, 并迭代里面的单词, 最终使用生成器, 以此了解了生成器的工作原理</li>
+</ol>
+<h4 id="16-延伸阅读">16. 延伸阅读</h4>
+<ol>
+<li>生成器与协程</li>
+<li>生成器与迭代器
+<ol>
+<li>
+<p>接口:</p>
+<ul>
+<li>
+<p>所有生成器都是迭代器, 生成器对象实现了迭代器协议的两个方法: <code>__next__</code>, <code>__iter__</code></p>
+</li>
+<li>
+<p>enumerate() 函数创建的对象是迭代器</p>
+<pre><code>  ::python
+  In [39]: from collections import abc
+
+  In [40]: e = enumerate('ABC')
+
+  In [41]: isinstance(e, abc.Iterator)
+  Out[41]: True
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>实现方式</p>
+<ul>
+<li>生成器两种方式: 含有 yield 关键字的函数, 或者生成器表达式</li>
+<li>两种得到的生成器对象 都属于 GeneratorType 类型, 因为 Generator 类型的实例实现了迭代器接口, 所以可以说所有生成器的都是迭代器</li>
+</ul>
+</li>
+<li>
+<p>概念:</p>
+<ul>
+<li>迭代器用于遍历集合从中产出元素</li>
+<li>生成器可以无需遍历集合就能生成值</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+<h3 id="chapter15-上下文管理器和-else-块-">Chapter15 上下文管理器和 else 块</h3>
+<h4 id="0-本章要点-1">0. 本章要点</h4>
+<ul>
+<li>with 语句和上下文管理器</li>
+<li>for, while, try 语句的 else 子句</li>
+</ul>
+<h4 id="1-if-语句之外的-else-块">1. if 语句之外的 else 块</h4>
+<ol>
+<li>else 可以在 for, while, try 中使用, 语义相当于 then
+<ul>
+<li>for: 当循环结束后(即 for 循环没有被 break 语句中止)才运行 else</li>
+<li>while: 当条件为 False 时, 执行 else(break 不执行)</li>
+<li>try: 当 try 语句没有异常抛出时运行 else</li>
+</ul>
+</li>
+<li>两种风格
+<ul>
+<li>EAFP (easier to ask for forgiveness than permission)
+<ul>
+<li>特点: 使用 try/except 语句频繁</li>
+</ul>
+</li>
+<li>LBYL (look before you leap)
+<ul>
+<li>特点: 使用 if 语句频繁</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h4 id="2-上下文管理器和-with-块">2. 上下文管理器和 with 块</h4>
+<ol>
+<li>
+<p>with 目的: 简化 try/finally 模式</p>
+</li>
+<li>
+<p>上下文管理器协议, 两个方法:</p>
+<ul>
+<li><code>__enter__</code></li>
+<li><code>__exit__</code>, 类似 finally 的作用</li>
+</ul>
+</li>
+<li>
+<p>与函数和模块不同, with 块没有定义新的作用域, 所以在 with 结束后, 依然可以访问对象的属性, 但不能在 fp 对象上执行 I/O 操作, 因为在 with 块末尾, 调用 <code>TextIOWrapper.__exit__</code> 把文件关闭了</p>
+</li>
+<li>
+<p>实现了一个上下文管理器 LookingGlass 类</p>
+<ul>
+<li>
+<p>代码:</p>
+<pre><code>  ::python        
+  class LookingGlass:
+      def __enter__(self):
+          import sys
+          # 保存原来的 write 方法
+          self.original_write = sys.stdout.write
+          # 猴子补丁
+          sys.stdout.write = self.reverse_write
+          return 'JABBERWOCKY'
+
+      def reverse_write(self, text):
+          self.original_write(text[::-1])
+
+      def __exit__(self, exc_type, exc_value, traceback):
+          import sys # 重复导入模块不会消耗很多资源, 因为 Python 会缓存导入的模块
+          sys.stdout.write = self.original_write
+          if exc_type is ZeroDivisionError:
+              print('Please DO NOT divide by zero!')
+              return True
+          # 如果 __exit__ 方法返回 None 或 True 以外的值, 
+          # with 块中的任何异常都会向上冒泡
+</code></pre>
+</li>
+<li>
+<p><code>__exit__</code> 参数介绍</p>
+<ul>
+<li>exc_type: 异常类</li>
+<li>exc_value: 异常实例</li>
+<li>traceback: traceback 对象</li>
+</ul>
+</li>
+<li>
+<p>在 with 块之外使用 LookingGlass 类</p>
+<pre><code>  ::python
+  In [8]: manager = LookingGlass()
+
+  In [9]: manager
+  Out[9]: &lt;__main__.LookingGlass at 0x10490f400&gt;
+
+  In [10]: monster = manager.__enter__() # 进入上下文, 标准的 stdou.write 都已经被替换 
+
+  In [11]: monster
+  Out[11]: 'YKCOWREBBAJ'
+
+  In [12]: monster == 'JABBERWOCKY'
+  Out[12]: eurT
+
+  In [13]: manager
+  Out[13]: &gt;004f09401x0 ta ssalGgnikooL.__niam__&lt;
+
+  In [16]: print('abc')
+  cba
+
+  In [17]: manager.__exit__(None, None, None)
+
+  In [18]: monster
+  Out[18]: 'JABBERWOCKY'
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>一些应用</p>
+<ul>
+<li><a href="https://docs.python.org/3/library/sqlite3.html#using-the-connection-as-a-context-manager">sqlite3 中管理事务</a></li>
+<li><a href="https://docs.python.org/3/library/threading.html#using-locks-conditions-and-semaphores-in-the-with-statement">threading 模块维护锁, 条件和信号</a></li>
+<li><a href="https://docs.python.org/3/library/decimal.html#decimal.localcontext">Decimal </a></li>
+<li><a href="https://docs.python.org/3/library/unittest.mock.html#patch">临时测试打补丁</a></li>
+</ul>
+</li>
+</ol>
+<h4 id="3-contextlib-模块中的使用工具todo">3. contextlib 模块中的使用工具(TODO)</h4>
+<ol>
+<li>标准库 contextlib</li>
+</ol>
+<h4 id="4-本章小结">4. 本章小结</h4>
+<ul>
+<li>自己实现了一个上下文管理器 LookingGlass 类, 说明了如何在 <code>__exit__</code> 方法中处理异常</li>
+<li>标准库中 contextlib 模块里, @contextmanager 装饰器, 把一个 yield 语句的简单生成器变成上下文管理器, 依次使用 looking_glass 生成器函数实现了 LookingGlass 类</li>
+<li>@contextmanager 装饰器, 包含了三个特性:
+<ul>
+<li>装饰器</li>
+<li>生成器</li>
+<li>with 语句</li>
+</ul>
+</li>
+</ul>
+<h3 id="chapter16-协程-">Chapter16 协程</h3>
+<h4 id="0-本章要点-2">0. 本章要点</h4>
+<ul>
+<li>yield item 会产出一个值, 提供给 next(&hellip;) 调用, 此外会暂停执行生成器, 让调用方继续工作, 直到需要使用另一个值时再调用 next()</li>
+</ul>
+<h3 id="chapter17-使用期物future处理并发-todo--">Chapter17 使用期物(future)处理并发 TODO </h3>
+<h4 id="0-本章要点-3">0. 本章要点</h4>
+<ul>
+<li>concurrent.futures 模块</li>
+<li>期物(future)概念, 表示异步执行的操作, 类比期货, 期权, 期物封装待完成的操作</li>
+</ul>
+<h4 id="1-网络下载的三种风格for-threadpool-asyncio">1. 网络下载的三种风格(for, threadpool, asyncio)</h4>
+<ol start="0">
+<li>
+<p>时间:</p>
+<ul>
+<li>flags.py           7 秒</li>
+<li>flags_threadpool.py 1.4 秒   concurrent.futures 包</li>
+<li>flags_asyncio.py   1.35 秒   asyncio 包</li>
+</ul>
+</li>
+<li>
+<p>flags.py:</p>
+<pre><code> ::python
+ import os 
+ import time 
+ import sys
+
+ import requests # requests 不是标准库, 放在最后且隔一行
+
+ POP20_CC = ('CN IN US ID BR PK NG BD RU JP \
+     MX PH VN ET EG DE IR TR CD FR').split()
+
+ BASE_URL = 'http://flupy.org/data/flags'
+
+ DEST_DIR = 'downloads/'
+
+ def save_flag(img, filename):
+     path = os.path.join(DEST_DIR, filename)
+     with open(path, 'wb') as fp:
+         fp.write(img)
+
+ def get_flag(cc):
+     url = '{}/{cc}/{cc}.gif'.format(BASE_URL, cc=cc.lower())
+     resp = requests.get(url)
+     return resp.content
+
+ def show(text):
+     print(text, end=' ')
+
+     # 在Linux，必须加flush()才能一秒输一个数字
+     # 在Windows, 都能一秒输出一个数字
+     sys.stdout.flush() 
+     # 刷新 sys.stdout 以显示, 正常情况换行才刷新缓冲
+
+ def download_many(cc_list):
+     for cc in sorted(cc_list):
+         image = get_flag(cc)
+         show(cc)
+         save_flag(image, cc.lower() + '.gif')
+
+     return len(cc_list)
+
+ def main(download_many):
+     t0 = time.time()
+     count = download_many(POP20_CC)
+     elapsed = time.time() - t0
+     msg = '\n{} flags downloaded in {:.2f}s'
+     print(msg.format(count, elapsed))
+
+ if __name__ == '__main__':
+     main(download_many)
+    
+ ######## output ###########
+ BD BR CD CN DE EG ET FR ID IN IR JP MX NG PH PK RU TR US VN 
+ 20 flags downloaded in 31.01s
+</code></pre>
+</li>
+<li>
+<p>concurrent.futures 模块</p>
+</li>
+</ol>
+<ul>
+<li>
+<p>主要有两个类: ThreadPoolExecutor 和 ProcessPoolExecutor</p>
+</li>
+<li>
+<p>flags_threadpool.py:</p>
+<pre><code>  ::python
+  from concurrent import futures
+
+  from flags import save_flag, get_flag, show, main
+
+  # 最大线程数
+  MAX_WORKERS = 20
+
+  def download_one(cc):
+      image = get_flag(cc)
+      show(cc)
+      save_flag(image, cc.lower() + '.gif')
+      return cc
+
+
+  def download_many(cc_list):
+      # 把 flags.py 中的 for 使用并发函数重写
+      workers = min(MAX_WORKERS, len(cc_list))
+      with futures.ThreadPoolExecutor(workers) as executor:
+          res = executor.map(download_one, sorted(cc_list))
+
+      return len(list(res))     
+
+  if __name__ == '__main__':
+      main(download_many)
+
+  ####### output ########
+  BD ID RU NG DE VN IN JP TR ET PK MX US CN CD FR IR EG PH BR 
+  20 flags downloaded in 5.16s
+</code></pre>
+</li>
+<li>
+<p>标准库中两个名为 Future 的类: concurrent.futures.Future 和 asyncio.Future 两个类的实例表示<strong>可能已经完成或者尚未完成的延迟计算</strong></p>
+</li>
+<li>
+<p>期物:</p>
+<ul>
+<li>期物封装 待完成的操作, 可以放入队列, 完成状态可以查询, 得到结果后可以获取结果(或异常)</li>
+<li>期物通常不应自己创建, 只能由并发框架实例化. 原因: 期物表示终将发生的事情, 而确定某件事发生的唯一方式是执行的时间已经排定</li>
+<li>客户端代码不应带改变期物的状态, 并发框架在 <strong>期物表示的延迟计算</strong> 结束后会改变 <strong>期物的状态</strong>, 而我们无法控制计算何时结束</li>
+<li>两种期物 都有 <code>.done()</code> 方法, 返回布尔值, 表明期物连接的可调用对象是否已经执行. 同样的 <code>.add_done_callback()</code> 参数是一个可调用对象, 期物运行结束后会调用指定的可调用对象</li>
+</ul>
+</li>
+<li>
+<p>flags_threadpool_ac.py</p>
+<pre><code>  ::Python
+  def download_many(cc_list):
+      cc_list = cc_list[:5]
+      with futures.ThreadPoolExecutor(max_workers=3) as executor:
+          to_do = []
+          for cc in sorted(cc_list):
+              # submit() 会为传入的可调用对象排期, 并返回一个期物
+              future = executor.submit(download_one, cc)
+              to_do.append(future)
+              msg = 'Scheduled for {}: {}'
+              print(msg.format(cc, future))
+          results = []
+
+          # as_completed 参数是一个期物列表, 返回值是一个迭代器
+          # 在期物运行结束后产出期物
+          for future in futures.as_completed(to_do):
+              # result() 返回可调用对象的结果
+              res = future.result()
+              msg = '{} result: {!r}'
+              print(msg.format(future, res))
+              results.append(res)
+      return len(results)
+
+  Scheduled for BR: &lt;Future at 0x10120aba8 state=running&gt;
+  Scheduled for CN: &lt;Future at 0x1012116d8 state=running&gt;
+  Scheduled for ID: &lt;Future at 0x101211c88 state=running&gt;
+  Scheduled for IN: &lt;Future at 0x10121d240 state=pending&gt;
+  Scheduled for US: &lt;Future at 0x10121d2e8 state=pending&gt;
+  BR ID &lt;Future at 0x10120aba8 state=finished returned str&gt; result: 'BR'
+  &lt;Future at 0x101211c88 state=finished returned str&gt; result: 'ID'
+  IN &lt;Future at 0x10121d240 state=finished returned str&gt; result: 'IN'
+  US &lt;Future at 0x10121d2e8 state=finished returned str&gt; result: 'US'
+  CN &lt;Future at 0x1012116d8 state=finished returned str&gt; result: 'CN'
+
+  5 flags downloaded in 2.99s
+</code></pre>
+</li>
+<li>
+<p>问题:</p>
+<ul>
+<li>问: Python 有 GIL 为什么 flags_threadpool.py 会比 flags.py 快 5 倍?</li>
+<li>答: I/O 密集型处理基本不会受到 GIL 的影响</li>
+<li>问: flags_asyncio.py 和 flags.py 都是单个线程, 前者为什么快 5 倍?</li>
+<li>答: 18.3</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-阻塞型-io-和-gil">2. 阻塞型 I/O 和 GIL</h4>
+<ul>
+<li>Python 标准库中的所有阻塞型 I/O 函数都会释放 GIL</li>
+<li>time.sleep() 函数也会释放 GIL</li>
+<li>所以 Python 线程不是一点用都没有</li>
+</ul>
+<h4 id="3-使用-concurrentfutures-模块启动进程从而-在-cpu-密集型作业中绕开-gil">3. 使用 concurrent.futures 模块启动进程(从而 在 CPU 密集型作业中绕开 GIL)</h4>
+<ol start="0">
+<li>
+<p><a href="https://docs.python.org/3/library/concurrent.futures.html">concurrent.futures</a> 模块实现的是真正的<strong>并行计算(parallel tasks)</strong>, 使用 <strong>ProcessPoolExecutor</strong> 类, 多进程, 适合处理 CPU 密集型任务</p>
+</li>
+<li>
+<p>ProcessPoolExecutor(进程) 与 ThreadPoolExecutor(线程) 区别</p>
+<ul>
+<li>都实现了 Executor 接口</li>
+<li><code>ThreadPoolExecutor.__init__</code>, 需要 max_workers 参数, 指定线程池中线程的数量, 而在 ProcessPoolExecutor 类中是可选的, 默认值是 os.cpu_count() 函数返回的 CPU 数量</li>
+<li>对 CPU 密集型处理, 不可能要求使用超过 CPU 数量的 workers(原文翻译的是职程)</li>
+<li>对于 I/O 密集型处理, 你可以通过 ThreadPoolExecutor 使用 10,100 或者1000 个线程, 取决于 事件本身, 和可用内存</li>
+</ul>
+</li>
+<li>
+<p>CPU 密集型任务测试方法: 使用 hashlib 模块, 实现 SHA-256 算法, 计算数组的 SHA-256 的散列值</p>
+</li>
+</ol>
+<h4 id="4-实验-executormap-方法todo">4. 实验 Executor.map 方法(TODO)</h4>
+<h4 id="5-显示下载进度并处理错误todo">5. 显示下载进度并处理错误(TODO)</h4>
+<h4 id="6-小结todo">6. 小结(TODO)</h4>
+<h4 id="7-延伸阅读todo">7. 延伸阅读(TODO)</h4>
+<ul>
+<li>CPU 密集处理建议:
+<ul>
+<li>multiprocessing</li>
+</ul>
+</li>
+<li>Go 与 Python
+<ul>
+<li>不支持宏</li>
+<li>语法比 Python 简单</li>
+<li>不支持继承, 运算符重载</li>
+</ul>
+</li>
+</ul>
+<h3 id="chapter18-使用-asyncio-包处理并发-todo--">Chapter18 使用 asyncio 包处理并发 TODO </h3>
+<h4 id="0-本章要点-4">0. 本章要点</h4>
+<ul>
+<li>asyncio: 使用<strong>事件循环驱动的协程</strong>实现并发</li>
+<li>多线程和异步任务之间的关系</li>
+<li>asyncio.Future 与 concurrent.futures.Future 之间的区别</li>
+<li>17 章 flags 异步版</li>
+<li>使用异步编程处理网络中高并发</li>
+<li>异步编程中, 协程性能好于回调</li>
+<li>将阻塞操作交给线程池从而避免阻塞事件循环</li>
+<li>asyncio 版服务器</li>
+<li>asyncio 的影响</li>
+</ul>
+<h4 id="1-线程与协程对比todo">1. 线程与协程对比(TODO)</h4>
+<ol>
+<li>区别:
+0. 线程需要使用锁来保证数据安全, 协程不需要锁, 因为任意时刻只有一个协程在运行
+<ol>
+<li>asyncio.Future 故意不阻塞</li>
+<li>从期物, 任务和协程中产出</li>
+</ol>
+</li>
+</ol>
+<h4 id="2-使用-asyncio-和-aiohttp-下载todo">2. 使用 asyncio 和 aiohttp 下载(TODO)</h4>
+<h4 id="3-避免阻塞型调用todo">3. 避免阻塞型调用(TODO)</h4>
+<h4 id="4-改进-asyncio-下载版本todo">4. 改进 asyncio 下载版本(TODO)</h4>
+<h4 id="5-从回调-到-期物和协程todo">5. 从回调 到 期物和协程(TODO)</h4>
+<h4 id="6-使用-asyncio-编写服务器todo">6. 使用 asyncio 编写服务器(TODO)</h4>
+<h4 id="7-本章小结todo">7. 本章小结(TODO)</h4>
+<hr>
+<h3 id="第六部分-元编程-">第六部分 元编程</h3>
+<hr>
+<h3 id="chapter19-动态属性和特性-">Chapter19 动态属性和特性</h3>
+<h4 id="0-本章要点-5">0. 本章要点</h4>
+<ul>
+<li>Python 中, 数据属性 和 处理数据的方法 统称 属性(attribute)</li>
+<li>特性(property)</li>
+</ul>
+<h4 id="1-使用动态属性转换数据">1. 使用动态属性转换数据</h4>
+<ol>
+<li>
+<p>osconfeed.py, 下载个 JSON 文件来用</p>
+<pre><code> ::python
+ from urllib.request import urlopen
+ import warnings
+ import os
+ import json
+
+ URL =  'http://www.oreilly.com/pub/sc/osconfeed'
+ JSON = 'data/osconfeed.json'
+
+ def load():
+     if not os.path.exists(JSON):
+         msg = 'downloading {} to {}'.format(URL, JSON)
+         warnings.warn(msg)
+         with urlopen(URL) as remote, open(JSON, 'wb') as local:
+             local.write(remote.read())
+
+     with open(JSON) as fp:
+         return json.load(fp)
+</code></pre>
+</li>
+<li>
+<p>使用类似 JavaScript 中, 用属性访问值, <code>feed['Schedule']['events'][40]['name']</code>, 可以使用 <code>feed.Schedule.events[40].name</code> 获取, 定义一个 FrozenJSON 类来模仿上述效果</p>
+</li>
+<li>
+<p>先看 FrozenJSON 的效果</p>
+<pre><code> ::python
+ &gt;&gt;&gt; from osconfeed import load
+ &gt;&gt;&gt; raw_feed = load()
+ &gt;&gt;&gt; feed = FrozenJSON(raw_feed)  # 实例化, FrozenJSON 接受一个 JSON 对象
+ &gt;&gt;&gt; len(feed.Schedule.speakers)
+ 357
+ &gt;&gt;&gt; talk = feed.Schedule.events[40]
+ &gt;&gt;&gt; talk.name
+ 'There *Will* Be Bugs'
+</code></pre>
+</li>
+<li>
+<p>FrozenJSON, explore0.py</p>
+<pre><code> ::python
+ from collections import abc 
+
+ class FrozenJSON:
+     &quot;&quot;&quot;
+     提供一个只读接口, 使用属性表示法 访问 JSON 类对象
+     &quot;&quot;&quot;
+     def __init__(self, mapping):
+         # mapping 的作用: 1.确保传入的是字典或能转换成字典 2.创建一个副本
+         self.__data = dict(mapping)
+
+     def __getattr__(self, name):
+         print(type(name))
+         # 如果是对象原来的属性就返回原来的属性
+         if hasattr(self.__data, name):
+             return getattr(self.__data, name)
+         else:
+             try: 
+                 value = self.__data[name]
+             except  KeyError:
+                 raise AttributeError('{} object has no attribute {}'.format(self.__class__.__name__, name))
+             else:
+                 return FrozenJSON.build(value)
+
+     @classmethod
+     def build(cls, obj):
+         print('obj',obj)
+         # 如果是映射(字典), 构建一个 FrozenJSON 对象(迭代下去)
+         if isinstance(obj, abc.Mapping):
+             return cls(obj)
+         # 如果是列表
+         elif isinstance(obj, abc.MutableSequence):
+             return [cls.build(item) for item in obj]
+         # 如果是单纯的一个值
+         else:
+             return obj
+
+ g = FrozenJSON({&quot;name&quot;:&quot;wher&quot;, &quot;age&quot;:12})
+ print(g.name)
+</code></pre>
+</li>
+<li>
+<p>处理无效属性名(属性名为关键字), explore1.py</p>
+<pre><code> ::python
+ import keyword
+ def __init__(self, mapping):
+     self.__data = {}
+     for key, value in mapping.items():
+         # 或者 Python3 中 str.isidentifier()
+         if keyword.iskeyword(key):
+             key += '_'
+         self.__data[key] = value
+</code></pre>
+</li>
+<li>
+<p><code>__new__</code> 方法创建对象的灵活性</p>
+<ul>
+<li>
+<p>其他语言所谓的<strong>构造方法</strong>, 其实是<code>__new__</code></p>
+</li>
+<li>
+<p>类方法, 但不用 @classmethod 装饰器</p>
+</li>
+<li>
+<p>必须返回一个实例, 以作为 <code>__init__</code> 方法的参数</p>
+</li>
+<li>
+<p><code>__new__</code> 也可以返回其他类的实例, 这样解释器不会调用<code>__init__</code>方法了</p>
+</li>
+<li>
+<p>code:</p>
+<pre><code>  ::python
+  # 构建对象的伪代码
+  def object_maker(the_class, some_arg):
+      new_object = the_class.__new__(some_arg)
+      if isinstance(new_object, the_class):
+          the_class.__init__(new_object, some_arg)
+      return new_object
+
+  x = Foo('bar') 
+  # 就相当于:
+  x = object_maker(Foo, 'bar')
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>explore2.py, 使用 <code>__new__</code> 方法取代 build方法, 构建可能是也可能不是 FrozenJSON 实例的新对象</p>
+<pre><code> ::Python
+ class FrozenJSON:
+     &quot;&quot;&quot;
+     提供一个只读接口, 使用属性表示法 访问 JSON 类对象
+     &quot;&quot;&quot;
+     def __new__(cls, arg):
+         if isinstance(arg, abc.Mapping):
+             # 调用 object.__new__(FrozenJSON), 
+             return super().__new__(cls)
+         elif isinstance(arg, abc.MutableSequence):
+             return [cls(item) for item in arg]
+         else:
+             return arg
+
+     def __init__(self, mapping):
+         # mapping 的作用: 1.确保传入的是字典或能转换成字典 2.创建一个副本
+         self.__data = dict(mapping) # 转换成字典
+
+     def __getattr__(self, name):
+         print(type(name))
+         # 如果是对象原来自带的属性就返回原来的属性
+         if hasattr(self.__data, name):
+             return getattr(self.__data, name)
+         else:
+             try: 
+                 value = self.__data[name]
+             except  KeyError:
+                 raise AttributeError(
+                     '{} object has no attribute {}'.format(self.__class__.__name__, name))
+             else:
+                 # return FrozenJSON.build(value)
+                 return FrozenJSON(self.__data[name])
+</code></pre>
+</li>
+<li>
+<p>使用 shelve 模块调整 OSCON 数据源的结构(TODO)</p>
+<ol>
+<li>
+<p>目的: 访问编号, 得到对象(类似于外键)</p>
+</li>
+<li>
+<p>shelve.open 高阶函数, 返回 shelve.Shelf 实例</p>
+<ul>
+<li>是 abc.MutableMapping 的子类, 可以处理映射</li>
+<li>shelve.Shelf 类有可以管理 I/O 的方法, sync, close, 也是上下文管理器</li>
+<li>保存键值对的方法, 新值赋予键</li>
+<li>键必须是字符串</li>
+<li>值必须是可以 pickle 的对象</li>
+</ul>
+</li>
+<li>
+<p>schedule1.py</p>
+<pre><code> ::python
+ import warnings
+ import osconfeed
+
+ DB_NAME = 'data/schedule1_db'
+ CONFERENCE =  'conference.115'
+
+ class Record:
+     def __init__(self, **kwargs):
+         #  更新 __dict__ 字典, 能够快速更新属性
+         self.__dict__.update(kwargs)
+
+ def load_db(db):
+     raw_data = osconfeed.load()
+     warnings.warn('loading ' + DB_NAME)
+     for collection, re_list in raw_data['Schedule'].items():
+         record_type = collection[:-1] # 去除末尾字符
+         for record in rec_list:
+             key = '{}.{}'.format(record_type, record['serial'])
+             record['serial'] = key
+             db[key] = Record(**record)
+
+             # record 字典实例样式:
+             # {
+             #     'serial': 'conference.115',
+             #     ...
+             #     'serial': 'event.33457'
+             # }
+</code></pre>
+</li>
+<li>
+<p>使用 schedule1.py</p>
+<pre><code> ::python
+ In [10]: db = shelve.open(DB_NAME)
+
+ In [11]: if CONFERENCE not in db:
+     ...:     load_db(db)
+     ...:
+ /Library/Frameworks/Python.framework/Versions/3.5/bin/ipython:15: UserWarning: loading data/schedule1_db
+
+ In [12]: speaker = db['speaker.3471']
+ In [13]: type(speaker)
+ Out[13]: __main__.Record
+
+ In [15]: from schedule1 import *
+
+ In [16]: speaker.name
+ Out[16]: 'Anna Martelli Ravenscroft'
+ In [17]: db.close()
+</code></pre>
+</li>
+<li>
+<p>Record 类与 FrozenJSON 类的区别, 即 Record 类没有的功能:</p>
+<ul>
+<li>FrozenJSON 类需要递归转换嵌套的映射和列表</li>
+<li>FrozenJSON 类需要访问内嵌<code>__data</code>属性</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>
+<p>使用特性获取链接记录(schedule2.py)</p>
+<ol>
+<li>
+<p>实现目的: 扩展 schedule1.py, 从 event 中的编号获取对象全部, 实现类似于外键, 但得到的不是键, 是链接的模型对象</p>
+</li>
+<li>
+<p>doctest:</p>
+<pre><code> ::python
+ # 测试的 event:
+       # {
+       #   &quot;serial&quot;: 33950,
+       #   &quot;name&quot;: &quot;There *Will* Be Bugs&quot;,
+       #   &quot;event_type&quot;: &quot;40-minute conference session&quot;,
+       #   &quot;time_start&quot;: &quot;2014-07-23 14:30:00&quot;,
+       #   &quot;time_stop&quot;: &quot;2014-07-23 15:10:00&quot;,
+       #   &quot;venue_serial&quot;: 1449,
+       #   &quot;description&quot;: &quot;If you\u0026#39;re pushing the envelope of programming (or of your own skills)... and even when you’re not... there *will* be bugs in your code.  Don\u0026#39;t panic!  We cover the attitudes and skills (not taught in most schools) to minimize your bugs, track them, find them, fix them, ensure they never recur, and deploy fixes to your users.\r\n&quot;,
+       #   &quot;website_url&quot;: &quot;https://conferences.oreilly.com/oscon/oscon2014/public/schedule/detail/33950&quot;, 
+       #   &quot;speakers&quot;: [3471,5199],
+       #   &quot;categories&quot;: [
+       #     &quot;Python&quot;
+       #   ]
+       # },
+
+ In [3]: import shelve
+
+ In [4]: db = shelve.open(DB_NAME)
+ In [5]: DbRecord.set_db(db)
+
+ In [7]: if CONFERENCE not in db:
+    ...:     load_db(db)
+    ...:
+
+ In [8]: event = DbRecord.fetch('event.33950')
+
+ In [9]: event
+ Out[9]: &lt;Event 'There *Will* Be Bugs'&gt;
+
+ In [10]: repr(event)
+ Out[10]: &quot;&lt;Event 'There *Will* Be Bugs'&gt;&quot;
+
+ In [11]: event.venue
+ Out[11]: &lt;DbRecord serial='venue.1449'&gt;
+
+ In [12]: event.venue.name
+ Out[12]: 'Portland 251'
+ In [17]: for spkr in event.speakers:
+     ...:     print('{0.serial}: {0.name}'.format(spkr))
+     ...:
+ speaker.3471: Anna Martelli Ravenscroft
+ speaker.5199: Alex Martelli
+ In [18]: db.close()
+</code></pre>
+</li>
+<li>
+<p>DbRecord, Record 的子类, 添加了<code>__db</code>类属性, 用于设置和获取<code>__db</code>属性的<code>set_db</code>和<code>get_db</code>静态方法, 用于从数据库中获取记录的 fetch 类方法, 以及辅助测试和调试的<code>__repr__</code>实例方法</p>
+</li>
+<li>
+<p>Event, DbRecord 类的子类, 添加了用于获取所链接记录的 venue 和 speakers 属性, 以及特殊的<code>__repr__</code>方法</p>
+</li>
+<li>
+<p>特性是用于管理实例属性的类属性</p>
+</li>
+<li>
+<p>schedule2.py</p>
+<pre><code> ::python
+ import warnings
+ import inspect
+ import osconfeed
+
+ DB_NAME = 'data/schedule2_db'
+ CONFERENCE =  'conference.115'
+
+ class Record:
+     def __init__(self, **kwargs):
+         #  更新 __dict__ 字典, 能够快速更新属性
+         self.__dict__.update(kwargs)
+     # 用于测试
+     def __eq__(self, other):
+         if isinstance(other, Record):
+             return self.__dict__ == other.__dict__
+         else:
+             return NotImplemented
+
+ class MissingDatabaseError(RuntimeError):
+     &quot;&quot;&quot;需要数据库但没有指定数据库时抛出&quot;&quot;&quot;
+     # 自定义的异常通常是标志类, 没有定义体, 写 &quot;&quot;&quot;xxx&quot;&quot;&quot; 比写 pass 好
+
+ class DbRecord(Record):
+     __db = None
+
+     # 静态方法, 参数没有 实例,类, 不过调用多少次都是一样的, 
+     # 用子类 Event 调用, __db 也是在 DbRecord 中 
+     @staticmethod 
+     def set_db(db):
+         DbRecord.__db = db
+
+     @staticmethod   # 返回值始终是 DbRecord.__db
+     def get_db():
+         return DbRecord.__db
+
+     # 类方法: 子类可以定制
+     @classmethod
+     def fetch(cls, ident):
+         db = cls.get_db()
+         try:
+             return db[ident]
+         except TypeError:
+             if db is None:
+                 msg = &quot;database not set; call '{}.set_db(my_db)'&quot;
+                 raise MissingDatabaseError(msg.format(cls.__name))
+             else:
+                 raise
+
+     def __repr__(self):
+         if hasattr(self, 'serial'):
+             cls_name = self.__class__.__name__
+             return '&lt;{} serial={!r}&gt;'.format(cls_name, self.serial)
+         else:
+             return super().__repr__()
+
+ class Event(DbRecord):
+
+     @property
+     def venue(self):
+         key = 'venue.{}'.format(self.venue_serial)
+         return self.__class__.fetch(key)
+         # 不用 self.fetch(key) 的原因: Event 实例有可能键为 fetch
+
+     @property
+     def speakers(self):
+         if not hasattr(self, '_speaker_objs'):
+             spkr_serials = self.__dict__['speakers']
+             fetch = self.__class__.fetch
+             self._speaker_objs = [fetch('speaker.{}'.format(key))
+                                   for key in spkr_serials]
+
+         return self._speaker_objs
+
+     def __repr__(self):
+         if hasattr(self, 'name'):
+             cls_name = self.__class__.__name__
+             return '&lt;{} {!r}&gt;'.format(cls_name, self.name)
+         else:
+             return super().__repr__()
+
+ def load_db(db):
+     raw_data = osconfeed.load()
+     warnings.warn('loading ' + DB_NAME)
+     for collection, rec_list in raw_data['Schedule'].items():
+         record_type = collection[:-1] # 去除末尾字符
+         cls_name = record_type.capitalize()
+         # 从全局作用域中获取 cls_name 所对应的对象, 如果找不到就使用 DbRecord
+         cls = globals().get(cls_name, DbRecord)
+         if inspect.isclass(cls) and issubclass(cls, DbRecord):
+             factory = cls  
+         else:
+             factory = DbRecord
+
+         for record in rec_list:
+             key = '{}.{}'.format(record_type, record['serial'])
+             record['serial'] = key
+             # db[key] = Record(**record) schedule1.py
+             db[key] = factory(**record)
+</code></pre>
+</li>
+</ol>
+</li>
+</ol>
+<h4 id="2-使用特性property验证属性-使用property实现可写特性">2. 使用特性(@property)验证属性, 使用<code>@property</code>实现可写特性</h4>
+<ol>
+<li>
+<p>散装商品, bulkfood_v1.py, 无法限制属性设置, 例如数量为负</p>
+<pre><code> ::python
+ class LineItem:
+
+     def __init__(self, description, weight, price):
+         self.description = description
+         self.weight = weight
+         self.price = price
+
+     def subtotal(self):
+         return self.weight * self.price
+</code></pre>
+</li>
+<li>
+<p>bulkfood_v2.py, 使用 property 限制属性的读写, 且保持接口不变</p>
+<ul>
+<li>
+<p>bulkfood_v2 只是限制 weight, 如果 price 也限制, 代码就会重复</p>
+</li>
+<li>
+<p>去除重复的方法: 抽象</p>
+<ol>
+<li>使用特性工厂函数, @property</li>
+<li>描述符</li>
+</ol>
+</li>
+<li>
+<p>bulkfood_v2.py</p>
+<pre><code>  ::Python
+  class LineItem:
+
+      def __init__(self, description, weight, price):
+          self.description = description
+          self.weight = weight
+          self.price = price
+
+      def subtotal(self):
+          return self.weight * self.price
+
+      @property
+      def weight(self):
+          return self.__weight
+
+      @weight.setter
+      def weight(self, value):
+          if value &gt; 0:
+              self.__weight = value
+          else:
+              raise  ValueError('value must be &gt; 0')
+</code></pre>
+</li>
+</ul>
+</li>
+</ol>
+<h4 id="3-特性-property-全解析">3. 特性 property 全解析</h4>
+<ol>
+<li>
+<p>property</p>
+<ul>
+<li>property 是一个类</li>
+<li>调用 构造方法 和调用 工厂函数 没有区别, 只要能返回新的可调用对象, 代替被装饰的函数, 二者都可以用作装饰器</li>
+<li>property, 构造方法签名:
+<ul>
+<li><code>property(fget=None, fset=None, fdel=None, doc=None</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>bulkfood_v2b.py, property 非装饰器版本</p>
+<pre><code> ::Python
+ class LineItem:
+
+     def __init__(self, description, weight, price):
+         self.description = description
+         self.weight = weight
+         self.price = price
+
+     def subtotal(self):
+         return self.weight * self.price
+
+     def get_weight(self):
+         return self.__weight
+
+     def set_weight(self, value):
+         if value &gt; 0:
+             self.__weight = value
+         else:
+             raise ValueError('value must be &gt; 0')
+
+     weight = property(get_weight, set_weight)
+
+     # @property
+     # def weight(self):
+     #     return self.__weight
+
+     # @weight.setter
+     # def weight(self, value):
+     #     if value &gt; 0:
+     #         self.__weight = value
+     #     else:
+     #         raise  ValueError('value must be &gt; 0')
+</code></pre>
+</li>
+<li>
+<p>特性 property 会覆盖实例属性</p>
+<ul>
+<li>
+<p>总结: 实例属性(<code>obj.attr</code>) 不会从 obj, 开始寻找 attr, 而是从 <code>obj.__class__</code>, 开始, 而且, 仅当类中没有名为 attr 的特性时, Python 才会从 obj 中找, (特性其实是覆盖的描述符)</p>
+</li>
+<li>
+<p>property 是类属性, 但是管理的是实例属性</p>
+</li>
+<li>
+<p>普通情况下, 实例属性会覆盖类属性</p>
+<pre><code>  ::Python
+  In [4]: class Class:
+     ...:     data = 'class data attr'
+
+     ...:     @property
+     ...:     def prop(self):
+     ...:         return 'the prop value'
+     ...:
+  In [5]: obj = Class()
+
+  In [6]: vars(obj)
+  Out[6]: {}
+
+  In [7]: obj.data
+  Out[7]: 'class data attr'
+
+  In [8]: obj.data = 'bar'
+
+  In [9]: vars(obj)
+  Out[9]: {'data': 'bar'}
+
+  In [10]: obj.data
+  Out[10]: 'bar'
+
+  In [11]: Class.data
+  Out[11]: 'class data attr'
+</code></pre>
+</li>
+<li>
+<p>而 property 则不会</p>
+<pre><code>  ::Python
+  In [17]: Class.prop
+  Out[17]: &lt;property at 0x1045c93b8&gt;
+
+  In [18]: obj.prop
+  Out[18]: 'the prop value'
+
+  In [19]: obj.prop = '实例属性' # 无法设置 property 实例属性
+  ---------------------------------------------------------------------------
+  AttributeError                            Traceback (most recent call last)
+  &lt;ipython-input-19-854f59eccc74&gt; in &lt;module&gt;()
+  ----&gt; 1 obj.prop = '实例属性'
+
+  AttributeError: can't set attribute
+
+  In [20]: obj.__dict__['prop'] = 'foo'
+
+  In [21]: vars(obj)
+  Out[21]: {'data': 'bar', 'prop': 'foo'}
+
+  In [22]: obj.prop 
+  Out[22]: 'the prop value'
+  # 在实例的 `__dict__` 中设置属性, 仍然被 property 属性覆盖, 无法读取
+        
+  # property 对象被销毁了, 实例对象就可读取了
+  In [23]: Class.prop = '新 property 属性'
+
+  In [24]: obj.prop
+  Out[24]: 'foo'
+
+  In [25]: Class.prop
+  Out[25]: '新 property 属性'
+</code></pre>
+</li>
+<li>
+<p>新增 property 属性, 会覆盖实例属性</p>
+<pre><code>  ::python
+  In [26]: obj.data
+  Out[26]: 'bar'
+
+  In [27]: Class.data
+  Out[27]: 'class data attr'
+
+  In [28]: Class.data = property(lambda self: '设置 property 新值')
+
+  In [30]: obj.data
+  Out[30]: '设置 property 新值'
+
+  In [31]: del Class.data # 删完了, 实例属性又可以访问了
+
+  In [32]: obj.data
+  Out[32]: 'bar'
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>property(特性) 的文档</p>
+<ul>
+<li>help() 函数会从<code>__doc__</code>中提取</li>
+<li>为 property 设置 doc:
+<ul>
+<li>
+<p><code>weight = property(get_weight, set_weight, doc='weight in kilograms')</code></p>
+</li>
+<li>
+<p>如果类名为 Foo, help(Foo) 会多出:</p>
+<pre><code>  ::Python
+   |  ----------------------------------------------------------------------
+   |  Data descriptors defined here:
+   |
+   |  __dict__
+   |      dictionary for instance variables (if defined)
+   |
+   |  __weakref__
+   |      list of weak references to the object (if defined)
+   |
+   |  weight
+   |      weight in kilograms
+  (END)
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h4 id="4-定义一个特性工厂函数">4. 定义一个特性工厂函数,</h4>
+<ol>
+<li>
+<p>quantity(翻译: 量), 属性不能为 0 或 负数</p>
+<ul>
+<li>
+<p>工厂函数: 源于设计模式, python核心编程：工厂函数看上去有点像函数，实质上他们是类，当你调用它们时，实际上是生成了该类型的一个实例，就像工厂生产货物一样.</p>
+</li>
+<li>
+<p>所以这里的特性工厂函数就是, 根据响应参数, 返回一个 property 特性</p>
+</li>
+<li>
+<p>bulkfood_v2prop.py</p>
+<pre><code>  ::python
+  class LineItem:
+      # 使用 特性工厂函数 quantity 将 property weight 设置为类属性
+      weight = quantity('weight')
+      price = quantity('price')
+
+      def __init__(self, description, weight, price):
+          self.description = description
+          self.weight = weight # property 激活, 确保不能为负
+          self.price = price
+
+      def subtotal(self):
+          return self.weight * self.price
+</code></pre>
+</li>
+<li>
+<p>需要改进的地方 <code>weight = quantity('weight')</code>, 要输入两次 weight</p>
+<ul>
+<li>因为赋值语句右边先计算, 需要先初始化才能赋值</li>
+<li>解决方法: 类装饰器或元类, 20 章, 21 章</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>bulkfood_v2prop.py</p>
+<pre><code> ::python
+ def quantity(storage_name):
+     # instance 不是 self 的原因: 
+     # qty_getter 不在类定义体中, instance 代表把属性存到 LineItem 实例中
+     def qty_getter(instance):
+         return instance.__dict__[storage_name]
+
+     def qty_setter(instance, value):
+         if value &gt; 0:
+             instance.__dict__[storage_name] = value
+         else:
+             raise ValueError('value must be &gt; 0')
+     return property(qty_getter, qty_setter)
+     # 使用 闭包, 将 storage_name 封闭在上下文中, 再次运行都会读取
+
+ class LineItem:
+     # 设置为类属性
+     weight = quantity('weight')
+     price = quantity('price')
+
+     def __init__(self, description, weight, price):
+         self.description = description
+         self.weight = weight
+         self.price = price
+
+     def subtotal(self):
+         return self.weight * self.price
+
+ In [43]: nutmeg = LineItem('Moluccan nutmeg', 8, 13.95) # numeg(肉豆蔻)
+ In [44]: nutmeg.weight, nutmeg.price
+ Out[44]: (8, 13.95)
+
+ In [47]: sorted(vars(nutmeg).items())
+ Out[47]: [('description', 'Moluccan nutmeg'), ('price', 13.95), ('weight', 8)]
+</code></pre>
+</li>
+</ol>
+<h4 id="5-处理属性删除操作">5. 处理属性删除操作</h4>
+<ul>
+<li>
+<p>blackknight.py, 除了使用 deleter, 还可以使用<code>__delattr__</code></p>
+<pre><code>  ::python
+  class BlackKnight:
+      def __init__(self):
+          self.members = ['an arm', 'another arm', 
+                          'a leg', 'another leg']
+          self.phrases = [&quot;'Tis but a scratch.&quot;,
+                          &quot;It's just a flesh wound.&quot;,
+                          &quot;I'm invincible!&quot;, # 不可侵犯
+                          &quot;All right, we'll call it a draw.&quot;]  
+                          # 好吧, 算是平局!             
+
+      @property
+      def member(self):
+          print('next member is:')
+          return self.members[0]
+
+      @member.deleter
+      def member(self):
+          text = 'BLACK KNIGHT (loses {})\n-- {}'
+          print(text.format(self.members.pop(0), self.phrases.pop(0)))
+
+  In [49]: knight = BlackKnight()
+
+  next member is:
+  next member is:
+  In [50]: knight.member
+  next member is:
+  Out[50]: 'an arm'
+
+  In [51]: knight.member
+  next member is:
+  Out[51]: 'an arm'
+
+  In [52]: del knight.member
+  BLACK KNIGHT (loses an arm)
+  -- 'Tis but a scratch
+
+  In [53]: knight.member
+  next member is:
+  Out[53]: 'another arm'
+
+  In [54]: del knight.member
+  BLACK KNIGHT (loses another arm)
+  -- It's just a flesh wound.
+
+  In [55]: del knight.member
+  BLACK KNIGHT (loses a leg)
+  -- I'm invinceble!
+
+  In [56]: del knight.member
+  BLACK KNIGHT (loses another leg)
+  -- All right, we'll call it a draw.
+</code></pre>
+</li>
+</ul>
+<h4 id="6-处理重要属性和函数">6. 处理重要属性和函数</h4>
+<ol>
+<li>和属性有关的特殊属性, 魔法方法
+<ul>
+<li><code>__class__</code>, 对象所属类的引用(即<code>obj.__class__</code>和<code>type(obj)</code>作用相同), 某些特殊方法<code>__getattr__</code>只在对象的类中寻找, 不在实例中寻找</li>
+<li><code>__dict__</code>, 映射(dict), 存储对象或类的<strong>可写</strong>属性, 有<code>__dict__</code>属性的对象, 任何时候都能设置新属性, 如果类有<code>__slots__</code>属性, 其实例可能就没有<code>__dict__</code>属性</li>
+<li><code>__slots__</code>, 字符串组成的元组, 作用是限制类有哪些属性, 指明允许有的属性</li>
+</ul>
+</li>
+<li>处理属性的内置函数
+<ul>
+<li><code>dir([object])</code>, 列出大部分属性, 不包括例如<code>__mro__</code>, <code>__bases__</code>, <code>__name__</code>, 不指定对象, 则列出当前作用域中的名称</li>
+<li><code>getattr(object, name[, default])</code>, object 对应名为 name 属性, 获取属性可能来自对象所属的类或超类, 没有找到的话, 抛出 AttributeError, 或者 返回 default 参数的值</li>
+<li><code>hasattr(object, name)</code>, 如果 object 对象中存在指定属性, 或者能够以某种方式获取指定的属性(例如继承), 返回 True, 实现方式: 调用 <code>getattr(object, name)</code>, 看是否抛出 AttributeError 异常</li>
+<li><code>setattr(object, name, value)</code>, 设置属性, 创建新属性或者覆盖旧属性</li>
+<li><code>vars([object])</code>
+<ul>
+<li>返回 object 对象<code>__dict__</code>属性,</li>
+<li>若 object 所属的类定义了<code>__slots__</code>, 且 object 没有<code>__dict__</code>属性, 则会报错, <code>vars() argument must have __dict__ attribute</code></li>
+<li>若没有指定参数, 则与<code>locals()</code>函数一样, 表示本地作用域的字典</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>处理属性的特殊方法
+<ul>
+<li>直接操作<code>__dict__</code>来读写属性, 不会触发 getattr, hasattr, setattr 函数</li>
+<li>触发<code>__getattribute__</code>: <code>obj.attr</code>点号获取 和 <code>getattr(obj, 'attr', 42)</code>内置函数</li>
+<li><code>__delattr__</code>: 使用 del 删除属性</li>
+<li><code>__dir__</code>: dir(obj)</li>
+<li><code>__getattr__</code>: 仅当在 obj, Class, 超类中找不到指定的属性时会调用</li>
+<li><code>__getattribute__</code>: 优先级高, 点号, getattr, hasattr 都会触发, 当此方法触发 AttributeError 异常时, 才会调用<code>__getattr__</code>, 为了在获取 obj 实例属性时不导致无限递归, <code>__getattribute__</code>方法的实现要使用 <code>super().__getattribute__(obj, name)</code></li>
+<li><code>__setattr__(self, name, value)</code>: 点号和 setattr 会触发</li>
+</ul>
+</li>
+</ol>
+<h4 id="7本章小结">7.本章小结</h4>
+<p>pass</p>
+<h4 id="8-延伸阅读">8. 延伸阅读</h4>
+<p>pass</p>
+<h3 id="chapter20-属性描述符-">Chapter20 属性描述符</h3>
+<h4 id="0-本章要点-6">0. 本章要点</h4>
+<ul>
+<li>描述符是对多个属性运用相同存取逻辑的一种方式, 是实现了特定协议的类, 这个协议包括 <code>__get__</code>, <code>__set__</code> 和 <code>__delete__</code>, 实现其中一种就可以</li>
+<li>用法: 创建一个实例, 作为另一个类的类属性</li>
+<li>作用: 简单的说描述符会改变对象属性的获取、设置和删除方式。(访问属性不再从<code>__dict__</code> 中获取, 而是调用描述符的<code>__get__</code> 方法)</li>
+<li>应用:
+<ul>
+<li>装饰器, 属性, 绑定和非绑定方法, 静态方法, 类方法, <code>__slots__</code>等</li>
+<li>Django 的 paginator.py 模块</li>
+<li>Django ORM, SQL Alchelmy 等 ORM 中的字段类型是描述符, 把数据库中字段里的数据与 Python 对应的属性对应起来</li>
+</ul>
+</li>
+<li>其他:
+<ul>
+<li><a href="https://docs.python.org/3/howto/descriptor.html">Python3.7 Descriptor HowTO Guide</a></li>
+<li><a href="https://docs.python.org/2/reference/datamodel.html#implementing-descriptors">实例属性不会调用描述符<code>__get__</code>方法</a></li>
+<li></li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>The default behavior for attribute access is to get, set, or delete the attribute from an object’s dictionary. For instance, a.x has a lookup chain starting witha.<strong>dict</strong>[&lsquo;x&rsquo;], then type(a).<strong>dict</strong>[&lsquo;x&rsquo;], and continuing through the base classes of type(a) excluding metaclasses. If the looked-up value is an object defining one of the descriptor methods, then Python may override the default behavior and invoke the descriptor method instead. Where this occurs in the precedence chain depends on which descriptor methods were defined.&mdash;&ndash;摘自官方文档</p>
+</blockquote>
+<h4 id="1-描述符示例-验证属性">1. 描述符示例: 验证属性</h4>
+<ul>
+<li>避免重复编写读写方法和设值方法的解决方法
+<ol>
+<li>以面向对象方式: 描述符</li>
+<li>上一章中, 以函数式编程模式: 特性工厂函数, 高阶函数, 在闭包中存储 storage_name 等设置, 由参数决定创建哪些存取函数, 再使用存取函数构建一个特性实例</li>
+</ol>
+</li>
+</ul>
+<ol>
+<li>
+<p>LineItem 类第 3 版: 一个简单的描述符</p>
+<ul>
+<li>
+<p>Quantity 描述符类, 实现了<code>__set__</code></p>
+</li>
+<li>
+<p>LineItem 类(托管类)有两个属性, weight 和 price 属性, 使用描述符 Quantity 类的实例 来实现, weight 和 price 分别有两个, 一个类属性一个是实例属性</p>
+</li>
+<li>
+<p>定义:</p>
+<ul>
+<li>描述符类,
+<ul>
+<li>实现描述符协议的类, Quantity 类</li>
+</ul>
+</li>
+<li>托管类,
+<ul>
+<li>把描述符声明为类属性的类, LineItem 类</li>
+</ul>
+</li>
+<li>描述符实例,
+<ul>
+<li>描述符类的各个实例, 托管类的类属性, weight, price</li>
+</ul>
+</li>
+<li>托管实例,
+<ul>
+<li>托管类的实例, LineItem 的实例</li>
+</ul>
+</li>
+<li>储存属性,
+<ul>
+<li>托管实例中存储自身托管属性的属性, LineItem 实例的 weight, 和 price 属性</li>
+</ul>
+</li>
+<li>托管属性
+<ul>
+<li>托管类中由描述符实例处理的公开属性</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>Quantity 实例是 LineItem 类的类属性</p>
+</li>
+<li>
+<p><code>Quantity.__set__</code> 中, self 是描述符实例, instance 是托管实例, <strong>管理实例属性的描述符</strong>应该把值存储在<strong>托管实例</strong>中, 因此, Python 才为描述符中的那个方法(<code>__set__</code>)提供了 instance 参数</p>
+</li>
+<li>
+<p>bulkfood_v3.py:</p>
+<pre><code>  ::Python
+  class Quantity:
+      def __init__(self, storage_name):
+          self.storage_name = storage_name
+
+      def __set__(self, instance, value):
+          # self 是描述符实例(即LineITem.weight 或 LineItem.price)
+          # instance 是托管实例
+          if value &gt; 0:
+              instance.__dict__[self.storage_name] = value
+              # 如果使用 setattr 函数会再次书法 __set__ 方法, 导致无限递归
+          else:
+              raise ValueError('value must be &gt; 0')
+
+  class LineItem:
+      # 绑定描述符给 weight 属性
+      weight = Quantity('weight') 
+      price = Quantity('price')
+
+      def __init__(self, description, weight, price):
+          self.description = description
+          self.weight = weight
+          self.price = price
+
+      def subtotal(self):
+          return self.weight * self.price
+</code></pre>
+</li>
+<li>
+<p>LineItem 类中, <code>weight = QUantity('weight')</code> 麻烦而且容易出错, 不能使用 <code>weight = Quantity()</code> 的原因是, 先计算赋值等式右边&mdash;创建描述符实例, 此时必须要指定属性名称, 下一节是解决这一问题的简单方法, 优雅的解决方法是 21 章类装饰器或者元类</p>
+</li>
+</ul>
+</li>
+<li>
+<p>LineItem 类第 4 版: 自动获取储存属性的名称,</p>
+<ul>
+<li>
+<p>其实就是把属性名称用数字代替(类似主键)换上, 实例化一次, 主键自增 1</p>
+</li>
+<li>
+<p>bulkfood_v4.py</p>
+<pre><code>  ::Python
+  class Quantity:
+      __counter = 0 # 统计 Quantity 实例的数量
+
+      def __init__(self):
+          cls = self.__class__ # cls 是 Quantity 类的引用
+          prefix = cls.__name__
+          index = cls.__counter
+          # 每个描述符实例的 storage_name 都是独一无二
+          self.storage_name = '_{}#{}'.format(prefix, index)
+          cls.__counter += 1
+
+      def __get__(self, instance, owner):
+          print(self.storage_name)
+          if instance is None: 
+              return self # 如果不是通过实例调用, 返回描述符自身
+          else:
+              return getattr(instance, self.storage_name)
+
+      def __set__(self, instance, value):
+          # self 是描述符实例(即LineITem.weight 或 LineItem.price)
+          # instance 是托管实例
+          if value &gt; 0:
+              setattr(instance, self.storage_name, value)
+              # instance.__dict__[self.storage_name] = value
+              # 这里不会造成 无限递归的原因: 托管属性 和 储存属性的名称不同
+              # 即描述符实例 set/get 的属性不同于托管实例 set/get 的属性
+          else:
+              raise ValueError('value must be &gt; 0')
+
+  class LineItem:
+      weight = Quantity() 
+      price = Quantity()
+
+      def __init__(self, description, weight, price):
+          self.description = description
+          self.weight = weight
+          self.price = price
+
+      def subtotal(self):
+          return self.weight * self.price
+
+  truffle = LineItem('White truffle', 100, 1)
+  print(truffle.weight, truffle.price)
+  # output:
+  _Quantity#0
+  _Quantity#1
+  100 1
+</code></pre>
+</li>
+<li>
+<p>bulkfood_v4c.py, 将描述符类拆分出来, 类似 Django model 的用法, Django 的模型字段就是描述符</p>
+<pre><code>  ::Python    
+  import model_v4c as model
+
+  class LineItem:
+      weight = model.Quantity() 
+      price = model.Quantity()
+
+      def __init__(self, description, weight, price):
+          self.description = description
+          self.weight = weight
+          self.price = price
+
+      def subtotal(self):
+          return self.weight * self.price
+</code></pre>
+</li>
+<li>
+<p>bulkfood_v4prop.py, 使用特性工厂函数, 解决 <code>weight = Quantity('weight')</code>, weight 出现两次的问题</p>
+<pre><code>  ::Python
+  # property 工厂函数
+  def quantity(storage_name):
+
+      try:
+          quantity.counter += 1
+      except AttributeError:
+          quantity.counter = 0
+      storage_name = '_{}:{}'.format('quantiry', quantity.counter)
+
+      # instance 不是 self 的原因: 
+      # qty_getter 不在类定义体中, instance 代表把属性存到 LineItem 实例中
+      def qty_getter(instance):
+          # return instance.__dict__[storage_name] 使用 getattr 和 setattr
+          return getattr(instance, storage_name)
+
+      def qty_setter(instance, value):
+          if value &gt; 0:
+              # instance.__dict__[storage_name] = value
+              setattr(instance, storage_name, value)
+          else:
+              raise ValueError('value must be &gt; 0')
+      return property(qty_getter, qty_setter)
+      # 使用 闭包, 将 storage_name 封闭在上下文中, 再次运行都会读取
+</code></pre>
+</li>
+<li>
+<p>特性工厂函数 与 描述符类比较</p>
+<ul>
+<li>
+<p>特性工厂函数使用: 闭包原理, 局部变量为 storage_name, 使用闭包保持状态, 缺点: 要重用, 只能复制粘贴;</p>
+</li>
+<li>
+<p>描述符: 使用子类扩展, 易重用扩展, 易于理解;</p>
+<pre><code>  ::Python
+  def quantity():
+      try:
+          quantity.counter += 1
+      except AtrributeError:
+          quantity.counter = 0
+
+      storage_name = '_{}:{}'.format('quantity', quantity.counter)
+
+      def qty_getter(instance):
+          return getattr(instance, storage_name)
+
+      def qty_settter(instance, value):
+          if value &gt; 0:
+              setattr(instance, storage_name, value)
+          else:
+              raise ValueError('value must be &gt; 0')
+
+      return property(qty_getter, qty_setter)
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>LineItem 类第 5 版: 新型描述符(TODO)</p>
+</li>
+</ol>
+<h4 id="2-覆盖型与非覆盖型描述符对比">2. 覆盖型与非覆盖型描述符对比</h4>
+<ol start="0">
+<li>
+<p>实现<code>__set__</code>方法的是覆盖型描述符, 反之是非覆盖型描述符</p>
+</li>
+<li>
+<p>覆盖型描述符, descriptorkinds.py</p>
+<pre><code> ::python
+ # 辅助函数
+ def cls_name(obj_or_cls):
+     cls = type(obj_or_cls)
+     if cls is type:
+         cls = obj_or_cls
+     return cls.__name__.split('.')[-1]
+
+ def display(obj):
+     cls = type(obj)
+     if cls is type:
+         return '&lt;class {}&gt;'.format(obj.__name__)
+     elif cls in [type(None), int]:
+         return repr(obj)
+     else:
+         return repr(obj)
+
+ def print_args(name, *args):
+     pseudo_args = ', '.join(display(x) for x in args)
+     print('-&gt; {}.__{}__({})'.format(cls_name(args[0]), name, pseudo_args))
+
+ # 重要的类:
+ class Overriding:
+     &quot;&quot;&quot; 数据描述符或强制描述符, 典型的覆盖型描述符&quot;&quot;&quot;
+     def __get__(self, instance, owner):
+         print_args('get', self, instance, owner)
+
+     def __set__(self, instance, value):
+         print_args('set', self, instance, value)
+
+ class OverridingNoGet:
+     &quot;&quot;&quot; 没有__get__方法的覆盖型描述符&quot;&quot;&quot;
+     def __set__(self, instance, value):
+         print_args('set', self, instance, value)
+
+ class NonOverriding:
+     &quot;&quot;&quot; 非数据描述符或遮盖型描述符, 没有 __set__, 非覆盖型描述符&quot;&quot;&quot;
+     def __get__(self, instance, owner):
+         print_args('get', self, instance, owner)
+
+ class Managed:
+     &quot;&quot;&quot; 托管类 &quot;&quot;&quot;
+     over = Overriding()
+     over_no_get = OverridingNoGet()
+     non_over = NonOverriding()
+
+     def spam(self):
+         print('-&gt; Managed.spam({})'.format(display(self)))
+</code></pre>
+</li>
+<li>
+<p>交互模式下测试 descriptorkinds.py</p>
+<pre><code> ::python
+ In [4]: obj = Managed
+
+ In [5]: obj = Managed()
+
+ In [7]: obj.over
+ -&gt; Overriding.__get__(&lt;descriptorkinds.Overriding object at 0x104484438&gt;, &lt;descriptorkinds.Managed object at 0x104572978&gt;, &lt;class Managed&gt;)
+
+ In [8]: Managed.over
+ -&gt; Overriding.__get__(&lt;descriptorkinds.Overriding object at 0x104484438&gt;, None, &lt;class Managed&gt;)
+
+ In [9]: obj.over = 7
+ -&gt; Overriding.__set__(&lt;descriptorkinds.Overriding object at 0x104484438&gt;, &lt;descriptorkinds.Managed object at 0x104572978&gt;, 7)
+
+ In [10]: obj.over
+ -&gt; Overriding.__get__(&lt;descriptorkinds.Overriding object at 0x104484438&gt;, &lt;descriptorkinds.Managed object at 0x104572978&gt;, &lt;class Managed&gt;)
+
+ In [11]: obj.__dict__['over'] = 8
+
+ In [12]: obj.over
+ -&gt; Overriding.__get__(&lt;descriptorkinds.Overriding object at 0x104484438&gt;, &lt;descriptorkinds.Managed object at 0x104572978&gt;, &lt;class Managed&gt;)
+
+ In [13]: vars(obj)
+ Out[13]: {'over': 8}
+</code></pre>
+<ul>
+<li>[8] 直接用托管类触发描述符的<code>__get__</code>方法, instance 是 None</li>
+<li>不管是直接赋值[9]还是通过<code>obj.__dict__</code>赋值[11], obj.over 都会被 Managed.over 描述符覆盖</li>
+</ul>
+</li>
+<li>
+<p>没有<code>__get__</code>方法的覆盖型描述符</p>
+<pre><code> ::Python
+ In [16]: obj.over_no_get
+ Out[16]: &lt;descriptorkinds.OverridingNoGet at 0x1044845f8&gt;
+
+ In [17]: Managed.over_no_get
+ Out[17]: &lt;descriptorkinds.OverridingNoGet at 0x1044845f8&gt;
+
+ In [18]: obj.over_no_get = 7
+ -&gt; OverridingNoGet.__set__(&lt;descriptorkinds.OverridingNoGet object at 0x1044845f8&gt;, &lt;descriptorkinds.Managed object at 0x104572978&gt;, 7)
+
+ In [19]: obj.over_no_get
+ Out[19]: &lt;descriptorkinds.OverridingNoGet at 0x1044845f8&gt;
+
+ In [20]: obj.__dict__['over_no_get'] = 9
+
+ In [21]: obj.over_no_get
+ Out[21]: 9
+
+ In [22]: obj.over_no_get = 7
+ -&gt; OverridingNoGet.__set__(&lt;descriptorkinds.OverridingNoGet object at 0x1044845f8&gt;, &lt;descriptorkinds.Managed object at 0x104572978&gt;, 7)
+
+ In [23]: obj.over_no_get
+ Out[23]: 9
+</code></pre>
+<ul>
+<li>obj 直接赋值时, 会被描述符<code>__set__</code>覆盖, 而通过<code>__dict__</code>赋值会覆盖描述符,</li>
+<li>即, 写操作经由描述符处理, 读取时实例属性会覆盖描述符</li>
+</ul>
+</li>
+<li>
+<p>非覆盖型描述符(没有<code>__set__</code>)</p>
+<pre><code> ::python
+ In [24]: obj = Managed()
+
+ In [25]: obj.non_over
+ -&gt; NonOverriding.__get__(&lt;descriptorkinds.NonOverriding object at 0x1044849e8&gt;, &lt;descriptorkinds.Managed object at 0x104770908&gt;, &lt;class Managed&gt;)
+
+ In [26]: obj.non_over = 7
+
+ In [27]: obj.non_over
+ Out[27]: 7
+
+ In [28]: Managed.non_over
+ -&gt; NonOverriding.__get__(&lt;descriptorkinds.NonOverriding object at 0x1044849e8&gt;, None, &lt;class Managed&gt;)
+
+ In [30]: del obj.non_over
+
+ In [31]: obj.non_over
+ -&gt; NonOverriding.__get__(&lt;descriptorkinds.NonOverriding object at 0x1044849e8&gt;, &lt;descriptorkinds.Managed object at 0x104770908&gt;, &lt;class Managed&gt;)
+</code></pre>
+<ul>
+<li>[27] obj 有实例属性 non_over, 把 Managed 类的同名描述符遮盖了</li>
+<li>[30][31] 删除实例属性 non_over 后, 读取 obj.non_over 会触发类中描述符的<code>__get__</code>方法, instance 参数是托管实例</li>
+</ul>
+</li>
+<li>
+<p>在类中覆盖描述符</p>
+<ol>
+<li>
+<p>不管描述符是不是覆盖型, 类属性赋值都能覆盖描述符;</p>
+<pre><code> ::python
+ In [30]: del obj.non_over
+
+ In [32]: Managed.over = 1
+
+ -&gt; NonOverriding.__get__(&lt;descriptorkinds.NonOverriding object at 0x1044849e8&gt;, None, &lt;class Managed&gt;)
+ In [33]: Managed.over_no_get = 2
+
+ In [34]: Managed.non_over = 3
+
+ In [35]: obj.over, obj.over_no_get, obj.non_over
+ Out[35]: (1, 2, 3)
+</code></pre>
+</li>
+</ol>
+</li>
+</ol>
+<h4 id="3-方法即描述符">3. 方法即描述符</h4>
+<ol>
+<li>
+<p>方法是非覆盖型描述符</p>
+<ul>
+<li>
+<p>用户定义的函数都有<code>__get__</code>, 又属于绑定方法(bound method), 相当于一个描述符绑定到类上</p>
+</li>
+<li>
+<p>obj.spam 和 Managed.spam 是不同的对象, 原因:</p>
+<ul>
+<li>通过托管类访问时[37], 函数的<code>__get__</code>方法会返回自身的引用</li>
+<li>通过实例访问时[36], 函数的<code>__get__</code>方法返回的是绑定方法的对象: 一种可调用的对象, 里面包装着函数, 并把托管实例绑定给函数的第一个参数(self), 同 functools.partial 函数</li>
+</ul>
+</li>
+<li>
+<p>没有实现<code>__set__</code>方法, 是非覆盖型描述符[38][39]</p>
+<pre><code>  ::Python
+  In [36]: obj.spam
+  Out[36]: &lt;bound method Managed.spam of &lt;descriptorkinds.Managed object at 0x104770908&gt;&gt;
+
+  In [37]: Managed.spam
+  Out[37]: &lt;function descriptorkinds.Managed.spam&gt;
+
+  In [38]: obj.spam = 7
+
+  In [39]: obj.spam
+  Out[39]: 7
+
+  class Managed:
+      &quot;&quot;&quot; 托管类 &quot;&quot;&quot;
+      over = Overriding()
+      over_no_get = OverridingNoGet()
+      non_over = NonOverriding()
+
+      def spam(self):
+          print('-&gt; Managed.spam({})'.format(display(self)))
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>method_is_descriptor.py</p>
+<pre><code> ::python
+ import collections
+
+ class Text(collections.UserString):
+
+     def __repr__(self):
+         return 'Text({!r})'.format(self.data)
+
+     def reverse(self):
+         return self[::-1]
+</code></pre>
+</li>
+<li>
+<p>测试 method_is_descriptor.py</p>
+<pre><code> ::Python
+ In [46]: from method_id_descriptor import *
+
+ In [47]: word = Text('forward')
+
+ In [48]: word
+ Out[48]: Text('forward')
+
+ In [49]: word.reverse()
+ Out[49]: Text('drawrof')
+
+ In [50]: Text.reverse(Text('backward'))
+ Out[50]: Text('drawkcab')
+
+ In [51]: type(Text.reverse), type(word.reverse)
+ Out[51]: (function, method)
+ # 类方法类型是 function, 实例方法类型是 method
+
+ In [52]: list(map(Text.reverse, ['repaid', (10, 20, 30), Text('stressed')]))
+ Out[52]: ['diaper', (30, 20, 10), Text('desserts')]
+
+ In [53]: Text.reverse.__get__(None, Text)
+ Out[53]: &lt;function method_id_descriptor.Text.reverse&gt;
+
+ In [54]: Text.reverse.__get__(word)
+ Out[54]: &lt;bound method Text.reverse of Text('forward')&gt;
+
+ In [55]: word.reverse
+ Out[55]: &lt;bound method Text.reverse of Text('forward')&gt;
+
+ In [56]: word.reverse.__self__   
+ Out[56]: Text('forward')
+ # 绑定方法对象__self__属性是对实例的引用
+
+ In [57]: word.reverse.__func__ is Text.reverse
+ Out[57]: True
+ # 绑定方法的__func__属性是依附在托管类上那个原始函数的引用
+
+ In [58]: word.reverse.__call__
+ Out[58]: &lt;method-wrapper '__call__' of method object at 0x103d65bc8&gt;
+ # 此方法会调用__func__属性引用的原始函数, 函数的第一个参数是其__self__属性
+ # 这就是形参 self 的隐式绑定方式
+</code></pre>
+</li>
+</ol>
+<h4 id="4-描述符用法建议">4. 描述符用法建议</h4>
+<ol>
+<li>使用特性 property 保持简单</li>
+<li>只读描述符必须有<code>__set__</code>方法,</li>
+<li>用于验证的描述符可以只有<code>__set__</code>方法</li>
+<li>仅有<code>__get__</code>方法的描述符可以实现高度缓存</li>
+<li>非特殊的方法可以被实例属性遮盖</li>
+</ol>
+<h4 id="5-描述符的文档字符串和覆盖删除操作todo">5. 描述符的文档字符串和覆盖删除操作(TODO)</h4>
+<h4 id="6-本章小结">6. 本章小结</h4>
+<ul>
+<li>术语:
+<ul>
+<li>覆盖型描述符 == 数据描述符(data descriptor) == 强制描述符</li>
+<li>非覆盖型描述符 == 非数据描述符(non data descriptor) == 遮盖型描述符</li>
+</ul>
+</li>
+</ul>
+<h3 id="chapter21-类元编程todo-">Chapter21 类元编程(TODO)</h3>
+<!-- raw HTML omitted -->
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">Author</span>
+    <span class="item-content">yangly</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">LastMod</span>
+    <span class="item-content">
+        2018-01-20
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/books/">books</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/fluent_python/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">《流畅的 Python》读书笔记(一)</span>
+            <span class="prev-text nav-mobile">Prev</span>
+          </a>
+        
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="https://github.com/yhliyr" class="iconfont icon-github" title="github"></a>
+  <a href="http://localhost:1313/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  
+
+  <span class="copyright-year">
+    &copy; 
+    2020
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">yhliyr</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+
+
+
+<script type="text/javascript" src="/js/main.min.c12618f9a600c40bd024996677e951e64d3487006775aeb22e200c990006c5c7.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>
